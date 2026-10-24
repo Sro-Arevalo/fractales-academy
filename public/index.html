@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2d201c">
+  <meta name="description" content="Plataforma de gestión académica de Fractales Academy. Aprende, crece y trasciende.">
+  <title>Fractales Academy · Plataforma académica</title>
+  <link rel="icon" href="/assets/logo-original.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Saltar al contenido</a>
+  <section class="login-page" id="loginView" aria-label="Iniciar sesión">
+    <div class="login-art">
+      <div class="login-texture" aria-hidden="true"></div>
+      <div class="login-art-head">
+        <span class="login-head-logo"><img src="/assets/logo-original.png" alt=""></span>
+        <span>FRACTALES <b>ACADEMY</b><small>EDUCACIÓN QUE TRASCIENDE</small></span>
+      </div>
+      <div class="login-art-bottom">
+        <span class="hero-overline"><span class="pulse-dot"></span> NUESTRA COMUNIDAD ACADÉMICA</span>
+        <h1>Aprende.<br><em>Crece.</em><br>Trasciende<span>.</span></h1>
+        <p>Tu esfuerzo merece un gran comienzo. Un espacio que conecta a estudiantes y academia para lograr más.</p>
+        <div class="login-art-separator"></div>
+        <div class="login-art-foot"><span>FRACTALES ACADEMY</span><span>Morales · San Martín, Perú</span></div>
+      </div>
+      <div class="art-corner" aria-hidden="true"></div>
+    </div>
+    <div class="login-area">
+      <div class="login-box">
+        <div class="brand-mobile"><img src="/assets/logo-original.png" alt=""> <span>FRACTALES <strong>ACADEMY</strong></span></div>
+        <div class="login-form-heading">
+          <span class="eyebrow eyebrow-with-line">PORTAL ACADÉMICO</span>
+          <h2>Nos alegra<br>verte de nuevo<span class="accent-dot">.</span></h2>
+          <p class="muted login-sub">Accede al espacio donde tus metas toman forma.</p>
+        </div>
+        <form id="loginForm">
+          <label for="loginUser">Usuario</label>
+          <div class="login-field-wrap"><span class="field-leading-icon" aria-hidden="true">@</span><input id="loginUser" name="usuario" type="text" placeholder="Tu usuario de acceso" maxlength="80" autocomplete="username" required></div>
+          <div class="password-heading"><label for="loginPass">Contraseña</label><span class="hint-short">Acceso seguro</span></div>
+          <div class="password-wrap"><span class="field-leading-icon" aria-hidden="true">✳</span><input id="loginPass" name="clave" type="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required><button type="button" class="show-password" id="togglePass" aria-label="Mostrar u ocultar contraseña">Mostrar</button></div>
+          <div id="loginError" class="form-error" role="alert" hidden></div>
+          <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">Ingresar a mi cuenta <span aria-hidden="true">↗</span></button>
+        </form>
+        <div class="login-support"><span class="lock-icon" aria-hidden="true">♢</span><span>¿No tienes una cuenta? Solicita tus credenciales a la administración.</span></div>
+        <div class="login-bottom"><span>© <span id="loginYear">2026</span> Fractales Academy</span><a href="https://www.instagram.com/fractales_academy/" target="_blank" rel="noopener noreferrer">Nuestra comunidad ↗</a></div>
+      </div>
+    </div>
+  </section>
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar" aria-label="Menú principal">
+      <div class="brand"><div class="brand-icon"><img src="/assets/logo-original.png" alt="Logo de Fractales Academy"></div><div class="brand-wordmark">FRACTALES <strong>ACADEMY</strong><span>PLATAFORMA ACADÉMICA</span></div><button id="closeSidebar" class="sidebar-close" aria-label="Cerrar menú">×</button></div>
+      <div class="sidebar-caption"><span class="status-spark"></span> ESPACIO INSTITUCIONAL</div>
+      <nav class="nav-scroll" id="navContent" aria-label="Secciones de la aplicación"></nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-mini-card"><div class="mini-card-spark">✦</div><strong>Aprende, crece<br>y trasciende.</strong><small>Juntos construimos tu futuro.</small></div>
+        <a href="https://www.instagram.com/fractales_academy/" target="_blank" rel="noopener noreferrer" class="social-link"><span class="footer-nav-icon">◎</span> <span>Instagram oficial</span><span class="sidebar-arrow">↗</span></a>
+        <button class="sidebar-logout" id="logoutButton"><span class="footer-nav-icon" aria-hidden="true">⇥</span> Cerrar sesión</button>
+      </div>
+    </aside>
+    <div class="overlay" id="mobileOverlay" hidden></div>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-left"><button id="menuButton" class="icon-button mobile-menu" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button><div><div class="top-kicker">FRACTALES ACADEMY <span class="breadcrumb-separator">/</span> <span id="crumb">INICIO</span></div><h2 id="pageTitle">Panel general</h2></div></div>
+        <div class="topbar-right"><span class="date-top" id="today"></span><button class="header-search" id="quickFindButton" title="Buscar un módulo (Ctrl+K)"><span aria-hidden="true">⌕</span> <span>Buscar módulo</span><kbd>Ctrl K</kbd></button><span class="role-pill" id="roleBadge">Administrador</span><button class="user-profile" id="profileButton" title="Cambiar contraseña" aria-label="Configuración de contraseña"><span class="user-avatar" id="avatarInitials">FA</span><span class="user-profile-copy"><b id="profileName">Mi cuenta</b><small>Mi perfil</small></span><span class="profile-chevron" aria-hidden="true">⌄</span></button></div>
+      </header>
+      <main class="main-content" id="content" tabindex="-1" aria-live="polite"></main>
+      <footer class="workspace-footer"><span>© <span id="footerYear">2026</span> Fractales Academy</span><span>Plataforma de gestión académica <span class="footer-heart">✦</span></span></footer>
+    </div>
+  </div>
+  <div class="modal-root" id="modalRoot" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

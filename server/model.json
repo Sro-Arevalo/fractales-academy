@@ -1,0 +1,1936 @@
+{
+  "ALUMNO": {
+    "name": "ALUMNO",
+    "label": "Estudiantes",
+    "category": "Principal",
+    "pk": [
+      "DNI_Alu"
+    ],
+    "columns": [
+      {
+        "name": "DNI_Alu",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Alu",
+        "type": "varchar",
+        "length": 120,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Correo_Alu",
+        "type": "varchar",
+        "length": 150,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Fech_Nac",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Cel_Alu",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Dir_Alu",
+        "type": "varchar",
+        "length": 200,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Nomb_Apoderado",
+        "type": "varchar",
+        "length": 120,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "DNI_Apoderado",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Cel_Apoderado",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Correo_Apoderado",
+        "type": "varchar",
+        "length": 150,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "PARENTESCO_Cod_Paren",
+        "type": "varchar",
+        "length": 5,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "PARENTESCO",
+          "column": "Cod_Paren"
+        }
+      },
+      {
+        "name": "CARRERA_Cod_Carrera",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "CARRERA",
+          "column": "Cod_Carrera"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "CARRERA_Cod_Carrera"
+        ],
+        "table": "CARRERA",
+        "references": [
+          "Cod_Carrera"
+        ]
+      },
+      {
+        "columns": [
+          "PARENTESCO_Cod_Paren"
+        ],
+        "table": "PARENTESCO",
+        "references": [
+          "Cod_Paren"
+        ]
+      }
+    ],
+    "display": [
+      "Nomb_Alu",
+      "DNI_Alu"
+    ]
+  },
+  "Aula": {
+    "name": "Aula",
+    "label": "Aulas",
+    "category": "Académico",
+    "pk": [
+      "Cod_Aula"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Aula",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Aula",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Capacidad",
+        "type": "smallint",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activa",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Aula",
+      "Cod_Aula"
+    ]
+  },
+  "CARRERA": {
+    "name": "CARRERA",
+    "label": "Carreras profesionales",
+    "category": "Académico",
+    "pk": [
+      "Cod_Carrera"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Carrera",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Carrera",
+        "type": "varchar",
+        "length": 120,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Carrera",
+      "Cod_Carrera"
+    ]
+  },
+  "CONCEPTO_PAGO": {
+    "name": "CONCEPTO_PAGO",
+    "label": "Conceptos de pago",
+    "category": "Administración",
+    "pk": [
+      "Cod_Concepto"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Concepto",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Concepto",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Concepto",
+      "Cod_Concepto"
+    ]
+  },
+  "CURSOS": {
+    "name": "CURSOS",
+    "label": "Cursos",
+    "category": "Académico",
+    "pk": [
+      "Cod_Curso"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Curso",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Curso",
+        "type": "varchar",
+        "length": 100,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activa",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Curso",
+      "Cod_Curso"
+    ]
+  },
+  "Ciclo": {
+    "name": "Ciclo",
+    "label": "Ciclos académicos",
+    "category": "Académico",
+    "pk": [
+      "Cod_Ciclo"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Ciclo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Programa_Cod_Programa",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Programa",
+          "column": "Cod_Programa"
+        }
+      },
+      {
+        "name": "Nomb_Ciclo",
+        "type": "varchar",
+        "length": 100,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Modalidad",
+        "type": "varchar",
+        "length": 12,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Fech_Inicio",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Fech_Fin",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Nro_Mensualidades",
+        "type": "tinyint",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Precio_Mensual",
+        "type": "decimal",
+        "length": 10,
+        "scale": 2,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "ESTADO_CICLO_Cod_Estado",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ESTADO_CICLO",
+          "column": "Cod_Estado_Ciclo"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "ESTADO_CICLO_Cod_Estado"
+        ],
+        "table": "ESTADO_CICLO",
+        "references": [
+          "Cod_Estado_Ciclo"
+        ]
+      },
+      {
+        "columns": [
+          "Programa_Cod_Programa"
+        ],
+        "table": "Programa",
+        "references": [
+          "Cod_Programa"
+        ]
+      }
+    ],
+    "display": [
+      "Nomb_Ciclo",
+      "Cod_Ciclo"
+    ]
+  },
+  "Docente": {
+    "name": "Docente",
+    "label": "Docentes",
+    "category": "Principal",
+    "pk": [
+      "DNI_Doc"
+    ],
+    "columns": [
+      {
+        "name": "DNI_Doc",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nom_Doc",
+        "type": "varchar",
+        "length": 120,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Cel_Doc",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Especialidad",
+        "type": "varchar",
+        "length": 120,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nom_Doc",
+      "DNI_Doc"
+    ]
+  },
+  "Docente_Asignatura": {
+    "name": "Docente_Asignatura",
+    "label": "Asignaturas por docente",
+    "category": "Académico",
+    "pk": [
+      "CURSOS_Cod_Curso",
+      "Docente_DNI_Doc"
+    ],
+    "columns": [
+      {
+        "name": "CURSOS_Cod_Curso",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": {
+          "table": "CURSOS",
+          "column": "Cod_Curso"
+        }
+      },
+      {
+        "name": "Docente_DNI_Doc",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": {
+          "table": "Docente",
+          "column": "DNI_Doc"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "Docente_DNI_Doc"
+        ],
+        "table": "Docente",
+        "references": [
+          "DNI_Doc"
+        ]
+      },
+      {
+        "columns": [
+          "CURSOS_Cod_Curso"
+        ],
+        "table": "CURSOS",
+        "references": [
+          "Cod_Curso"
+        ]
+      }
+    ],
+    "display": [
+      "CURSOS_Cod_Curso",
+      "Docente_DNI_Doc"
+    ]
+  },
+  "ESTADO_CICLO": {
+    "name": "ESTADO_CICLO",
+    "label": "Estados de ciclo",
+    "category": "Administración",
+    "pk": [
+      "Cod_Estado_Ciclo"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Estado_Ciclo",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Estado_Ciclo",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Estado_Ciclo",
+      "Cod_Estado_Ciclo"
+    ]
+  },
+  "ESTADO_EXAMEN_GRUPO": {
+    "name": "ESTADO_EXAMEN_GRUPO",
+    "label": "Estados de simulacro",
+    "category": "Administración",
+    "pk": [
+      "Cod_Estado_Examen"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Estado_Examen",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Estado_Examen",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Estado_Examen",
+      "Cod_Estado_Examen"
+    ]
+  },
+  "ESTADO_MATRICULA": {
+    "name": "ESTADO_MATRICULA",
+    "label": "Estados de matrícula",
+    "category": "Administración",
+    "pk": [
+      "Cod_Estado_Matricula"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Estado_Matricula",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Estado_Matricula",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Estado_Matricula",
+      "Cod_Estado_Matricula"
+    ]
+  },
+  "ESTADO_PAGO": {
+    "name": "ESTADO_PAGO",
+    "label": "Estados de pago",
+    "category": "Administración",
+    "pk": [
+      "Cod_Estado"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Estado",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Estado",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Estado",
+      "Cod_Estado"
+    ]
+  },
+  "Examen": {
+    "name": "Examen",
+    "label": "Simulacros",
+    "category": "Principal",
+    "pk": [
+      "Cod_Examen"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Examen",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Examen",
+        "type": "nvarchar",
+        "length": 150,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Descripcion",
+        "type": "nvarchar",
+        "length": 300,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "puntaje_maximo",
+        "type": "decimal",
+        "length": 8,
+        "scale": 2,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Examen",
+      "Cod_Examen"
+    ]
+  },
+  "Examen_Grupo": {
+    "name": "Examen_Grupo",
+    "label": "Simulacros por grupo",
+    "category": "Principal",
+    "pk": [
+      "Cod_examen_grupo"
+    ],
+    "columns": [
+      {
+        "name": "Cod_examen_grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Fech_programada",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Hr_inicio",
+        "type": "time",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Duracion_minutos",
+        "type": "smallint",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Estado",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Publicado",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Examen_Cod_Examen",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Examen",
+          "column": "Cod_Examen"
+        }
+      },
+      {
+        "name": "Grupo_Cod_Grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Grupo",
+          "column": "Cod_Grupo"
+        }
+      },
+      {
+        "name": "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ESTADO_EXAMEN_GRUPO",
+          "column": "Cod_Estado_Examen"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen"
+        ],
+        "table": "ESTADO_EXAMEN_GRUPO",
+        "references": [
+          "Cod_Estado_Examen"
+        ]
+      },
+      {
+        "columns": [
+          "Examen_Cod_Examen"
+        ],
+        "table": "Examen",
+        "references": [
+          "Cod_Examen"
+        ]
+      },
+      {
+        "columns": [
+          "Grupo_Cod_Grupo"
+        ],
+        "table": "Grupo",
+        "references": [
+          "Cod_Grupo"
+        ]
+      }
+    ],
+    "display": [
+      "Cod_examen_grupo",
+      "Grupo_Cod_Grupo"
+    ]
+  },
+  "Grupo": {
+    "name": "Grupo",
+    "label": "Grupos académicos",
+    "category": "Principal",
+    "pk": [
+      "Cod_Grupo"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Grupo",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Cupo_Max",
+        "type": "smallint",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Turno_Cod_Turno",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Turno",
+          "column": "Cod_Turno"
+        }
+      },
+      {
+        "name": "Aula_Cod_Aula",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Aula",
+          "column": "Cod_Aula"
+        }
+      },
+      {
+        "name": "Ciclo_Cod_Ciclo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Ciclo",
+          "column": "Cod_Ciclo"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "Aula_Cod_Aula"
+        ],
+        "table": "Aula",
+        "references": [
+          "Cod_Aula"
+        ]
+      },
+      {
+        "columns": [
+          "Ciclo_Cod_Ciclo"
+        ],
+        "table": "Ciclo",
+        "references": [
+          "Cod_Ciclo"
+        ]
+      },
+      {
+        "columns": [
+          "Turno_Cod_Turno"
+        ],
+        "table": "Turno",
+        "references": [
+          "Cod_Turno"
+        ]
+      }
+    ],
+    "display": [
+      "Nomb_Grupo",
+      "Cod_Grupo"
+    ]
+  },
+  "Horario": {
+    "name": "Horario",
+    "label": "Horarios",
+    "category": "Principal",
+    "pk": [
+      "Cod_Horario"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Horario",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Dia_Semana",
+        "type": "tinyint",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Hr_Inicio",
+        "type": "time",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Hr_Fin",
+        "type": "time",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Grupo_Cod_Grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Grupo",
+          "column": "Cod_Grupo"
+        }
+      },
+      {
+        "name": "TIPO_BLOQUE_Cod_Tipo",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "TIPO_BLOQUE",
+          "column": "Cod_Tipo"
+        }
+      },
+      {
+        "name": "Docente_Asignatura_CURSOS_Cod_Curso",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Docente_Asignatura",
+          "column": "CURSOS_Cod_Curso"
+        }
+      },
+      {
+        "name": "Docente_Asignatura_Docente_DNI_Doc",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Docente_Asignatura",
+          "column": "Docente_DNI_Doc"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "Docente_Asignatura_CURSOS_Cod_Curso",
+          "Docente_Asignatura_Docente_DNI_Doc"
+        ],
+        "table": "Docente_Asignatura",
+        "references": [
+          "CURSOS_Cod_Curso",
+          "Docente_DNI_Doc"
+        ]
+      },
+      {
+        "columns": [
+          "Grupo_Cod_Grupo"
+        ],
+        "table": "Grupo",
+        "references": [
+          "Cod_Grupo"
+        ]
+      },
+      {
+        "columns": [
+          "TIPO_BLOQUE_Cod_Tipo"
+        ],
+        "table": "TIPO_BLOQUE",
+        "references": [
+          "Cod_Tipo"
+        ]
+      }
+    ],
+    "display": [
+      "Cod_Horario",
+      "Dia_Semana"
+    ]
+  },
+  "MATRICULA": {
+    "name": "MATRICULA",
+    "label": "Matrículas",
+    "category": "Principal",
+    "pk": [
+      "Cod_Matricula"
+    ],
+    "columns": [
+      {
+        "name": "ALUMNO_DNI_Alu",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ALUMNO",
+          "column": "DNI_Alu"
+        }
+      },
+      {
+        "name": "Cod_Matricula",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "ESTADO_MATRICULA_Cod_Estado_Matricula",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ESTADO_MATRICULA",
+          "column": "Cod_Estado_Matricula"
+        }
+      },
+      {
+        "name": "Fech_Matricula",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Observaciones",
+        "type": "varchar",
+        "length": 250,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Grupo_Cod_Grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Grupo",
+          "column": "Cod_Grupo"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "ALUMNO_DNI_Alu"
+        ],
+        "table": "ALUMNO",
+        "references": [
+          "DNI_Alu"
+        ]
+      },
+      {
+        "columns": [
+          "ESTADO_MATRICULA_Cod_Estado_Matricula"
+        ],
+        "table": "ESTADO_MATRICULA",
+        "references": [
+          "Cod_Estado_Matricula"
+        ]
+      },
+      {
+        "columns": [
+          "Grupo_Cod_Grupo"
+        ],
+        "table": "Grupo",
+        "references": [
+          "Cod_Grupo"
+        ]
+      }
+    ],
+    "display": [
+      "Cod_Matricula",
+      "ALUMNO_DNI_Alu"
+    ]
+  },
+  "Nota_Examen": {
+    "name": "Nota_Examen",
+    "label": "Notas de simulacros",
+    "category": "Principal",
+    "pk": [
+      "Cod_Nota"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Nota",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Puntaje_total",
+        "type": "decimal",
+        "length": 8,
+        "scale": 2,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Fech_registro",
+        "type": "datetime2",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "MATRICULA_Cod_Matricula",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "MATRICULA",
+          "column": "Cod_Matricula"
+        }
+      },
+      {
+        "name": "Examen_Grupo_Cod_examen_grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Examen_Grupo",
+          "column": "Cod_examen_grupo"
+        }
+      },
+      {
+        "name": "Grupo_Cod_Grupo",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Examen_Grupo",
+          "column": "Grupo_Cod_Grupo"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "Examen_Grupo_Cod_examen_grupo",
+          "Grupo_Cod_Grupo"
+        ],
+        "table": "Examen_Grupo",
+        "references": [
+          "Cod_examen_grupo",
+          "Grupo_Cod_Grupo"
+        ]
+      },
+      {
+        "columns": [
+          "MATRICULA_Cod_Matricula",
+          "Grupo_Cod_Grupo"
+        ],
+        "table": "MATRICULA",
+        "references": [
+          "Cod_Matricula",
+          "Grupo_Cod_Grupo"
+        ]
+      }
+    ],
+    "display": [
+      "Cod_Nota",
+      "Puntaje_total"
+    ]
+  },
+  "PARENTESCO": {
+    "name": "PARENTESCO",
+    "label": "Parentescos",
+    "category": "Administración",
+    "pk": [
+      "Cod_Paren"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Paren",
+        "type": "varchar",
+        "length": 5,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Tipo_Paren",
+        "type": "varchar",
+        "length": 40,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Tipo_Paren",
+      "Cod_Paren"
+    ]
+  },
+  "Pago": {
+    "name": "Pago",
+    "label": "Pagos y pensiones",
+    "category": "Principal",
+    "pk": [
+      "Cod_Pago"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Pago",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "CONCEPTO_PAGO_Cod_Concepto",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "CONCEPTO_PAGO",
+          "column": "Cod_Concepto"
+        }
+      },
+      {
+        "name": "Nro_Mensualidad",
+        "type": "tinyint",
+        "length": null,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Monto",
+        "type": "decimal",
+        "length": 10,
+        "scale": 2,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Fech_Vencimiento",
+        "type": "date",
+        "length": null,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "ESTADO_PAGO_Cod_Estado",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ESTADO_PAGO",
+          "column": "Cod_Estado"
+        }
+      },
+      {
+        "name": "Fech_Pago",
+        "type": "datetime2",
+        "length": 0,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Medio_Pago",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Usuario_Cod_Usuario",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "Usuario",
+          "column": "Cod_Usuario"
+        }
+      },
+      {
+        "name": "ALUMNO_DNI_Alu",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ALUMNO",
+          "column": "DNI_Alu"
+        }
+      },
+      {
+        "name": "MATRICULA_Cod_Matricula",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "MATRICULA",
+          "column": "Cod_Matricula"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "ALUMNO_DNI_Alu"
+        ],
+        "table": "ALUMNO",
+        "references": [
+          "DNI_Alu"
+        ]
+      },
+      {
+        "columns": [
+          "CONCEPTO_PAGO_Cod_Concepto"
+        ],
+        "table": "CONCEPTO_PAGO",
+        "references": [
+          "Cod_Concepto"
+        ]
+      },
+      {
+        "columns": [
+          "ESTADO_PAGO_Cod_Estado"
+        ],
+        "table": "ESTADO_PAGO",
+        "references": [
+          "Cod_Estado"
+        ]
+      },
+      {
+        "columns": [
+          "MATRICULA_Cod_Matricula",
+          "ALUMNO_DNI_Alu"
+        ],
+        "table": "MATRICULA",
+        "references": [
+          "Cod_Matricula",
+          "ALUMNO_DNI_Alu"
+        ]
+      },
+      {
+        "columns": [
+          "Usuario_Cod_Usuario"
+        ],
+        "table": "Usuario",
+        "references": [
+          "Cod_Usuario"
+        ]
+      }
+    ],
+    "display": [
+      "Cod_Pago",
+      "Monto"
+    ]
+  },
+  "Programa": {
+    "name": "Programa",
+    "label": "Programas académicos",
+    "category": "Académico",
+    "pk": [
+      "Cod_Programa"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Programa",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Programa",
+        "type": "varchar",
+        "length": 100,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Descripcion",
+        "type": "varchar",
+        "length": 250,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Programa",
+      "Cod_Programa"
+    ]
+  },
+  "ROL": {
+    "name": "ROL",
+    "label": "Roles de acceso",
+    "category": "Administración",
+    "pk": [
+      "Cod_Rol"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Rol",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Rol",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Rol",
+      "Cod_Rol"
+    ]
+  },
+  "TIPO_BLOQUE": {
+    "name": "TIPO_BLOQUE",
+    "label": "Tipos de bloque",
+    "category": "Administración",
+    "pk": [
+      "Cod_Tipo"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Tipo",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Tipo",
+        "type": "varchar",
+        "length": 60,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Tipo",
+      "Cod_Tipo"
+    ]
+  },
+  "Turno": {
+    "name": "Turno",
+    "label": "Turnos",
+    "category": "Académico",
+    "pk": [
+      "Cod_Turno"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Turno",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Turno",
+        "type": "varchar",
+        "length": 15,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Hr_Inicio",
+        "type": "time",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Hr_Fin",
+        "type": "time",
+        "length": 0,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      }
+    ],
+    "fks": [],
+    "display": [
+      "Nomb_Turno",
+      "Cod_Turno"
+    ]
+  },
+  "Usuario": {
+    "name": "Usuario",
+    "label": "Usuarios",
+    "category": "Administración",
+    "pk": [
+      "Cod_Usuario"
+    ],
+    "columns": [
+      {
+        "name": "Cod_Usuario",
+        "type": "varchar",
+        "length": 20,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": true,
+        "references": null
+      },
+      {
+        "name": "Nomb_Usuario",
+        "type": "varchar",
+        "length": 80,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Clave_Hash",
+        "type": "varchar",
+        "length": 255,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "ROL_Cod_Rol",
+        "type": "varchar",
+        "length": 10,
+        "scale": null,
+        "required": true,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ROL",
+          "column": "Cod_Rol"
+        }
+      },
+      {
+        "name": "Activo",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "Debe_Cambiar_Clave",
+        "type": "bit",
+        "length": null,
+        "scale": null,
+        "required": true,
+        "default": true,
+        "pk": false,
+        "references": null
+      },
+      {
+        "name": "ALUMNO_DNI_Alu",
+        "type": "varchar",
+        "length": 8,
+        "scale": null,
+        "required": false,
+        "default": false,
+        "pk": false,
+        "references": {
+          "table": "ALUMNO",
+          "column": "DNI_Alu"
+        }
+      }
+    ],
+    "fks": [
+      {
+        "columns": [
+          "ALUMNO_DNI_Alu"
+        ],
+        "table": "ALUMNO",
+        "references": [
+          "DNI_Alu"
+        ]
+      },
+      {
+        "columns": [
+          "ROL_Cod_Rol"
+        ],
+        "table": "ROL",
+        "references": [
+          "Cod_Rol"
+        ]
+      }
+    ],
+    "display": [
+      "Nomb_Usuario",
+      "Cod_Usuario"
+    ]
+  }
+}
