@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2d201c">
+  <meta name="description" content="Plataforma de gestión académica de Fractales Academy. Aprende, crece y trasciende.">
+  <title>Fractales Academy · DEMO (datos ficticios) · Fractales Academy</title>
+  <link rel="icon" href="public/assets/logo-original.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>/* Fractales Academy — identidad visual institucional, edición 2.0 */
+:root {
+  color-scheme: light;
+  --brown:#2d201c; --brown2:#412d24; --brown3:#66432c;
+  --ink:#302a25; --inksoft:#574b41; --orange:#f47524; --orange-dark:#cc5814;
+  --amber:#af8651; --cream:#faf9f6; --soft:#f6f0e8; --white:#fff;
+  --muted:#8b837b; --line:#ede9e2; --line-dark:#e4dcd2;
+  --success:#187c63; --danger:#bc4841; --info:#466da6;
+  --shadow:0 10px 35px rgba(46,29,18,.07);
+  --shadow-xl:0 25px 80px rgba(38,21,10,.16);
+  --ease:cubic-bezier(.22,1,.36,1);
+  font-family:'DM Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--cream); color:var(--ink); font-synthesis:none;
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {margin:0;min-width:320px;font-size:14px;line-height:1.55;background:var(--cream)}
+body.modal-open {overflow:hidden}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+a {text-decoration:none;color:inherit}
+img {max-width:100%;display:block}
+[hidden] {display:none!important}
+h1,h2,h3,h4,p {margin-top:0}
+h1,h2,h3,h4 {font-family:Manrope,'DM Sans',sans-serif;line-height:1.22;letter-spacing:-.045em}
+p {line-height:1.67}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible {outline:3px solid #f6a773;outline-offset:3px}
+::selection {background:#fcd4af;color:#492719}
+.skip-link {position:fixed;top:-65px;left:14px;padding:12px 17px;background:#fff;z-index:110;border-radius:9px}
+.skip-link:focus {top:12px}
+.muted {color:var(--muted)}
+.eyebrow,.tiny-label {font-size:10px;letter-spacing:.18em;color:var(--orange-dark);font-weight:800}
+.eyebrow-with-line {display:inline-flex;align-items:center;gap:11px}
+.eyebrow-with-line:before {content:"";width:23px;height:2px;background:var(--orange)}
+.btn {display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;border:1px solid transparent;border-radius:11px;font-size:13px;font-weight:800;min-height:43px;line-height:1.2;transition:transform .2s var(--ease),background .2s,box-shadow .2s,filter .2s;white-space:nowrap}
+.btn:not(:disabled):hover {transform:translateY(-2px)}
+.btn:active:not(:disabled) {transform:translateY(0)}
+.btn:disabled {opacity:.55;cursor:not-allowed}
+.btn-primary {background:var(--orange);color:white;box-shadow:0 7px 17px #f4711829}
+.btn-primary:not(:disabled):hover {background:var(--orange-dark);box-shadow:0 12px 22px #f471183b}
+.btn-secondary {background:#fff;color:#51443a;border:1px solid var(--line-dark)}
+.btn-secondary:hover {background:var(--soft)}
+.btn-danger {background:#fff2ef;color:var(--danger);border:1px solid #f8dcd5}
+.btn-danger:hover {background:#ffe5e0}
+.btn-sm {font-size:11.5px;padding:8px 11px;min-height:34px;border-radius:8px;gap:6px}
+.btn-ghost {background:transparent;border-color:#fff4;color:#fff}
+.inline-icon {width:17px;height:17px;stroke-width:1.8;vertical-align:middle;flex-shrink:0}
+/* LOGIN */
+.login-page {min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:49% 51%;background:#fff}
+.login-art {position:relative;overflow:hidden;isolation:isolate;padding:clamp(28px,3.1vw,58px) clamp(28px,4.3vw,76px);display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(ellipse at 8% 94%,#865035 0%,transparent 58%),linear-gradient(150deg,#37211a,#170f0d);color:#fff}
+.login-texture {position:absolute;inset:0;z-index:-2;background:linear-gradient(160deg,rgba(23,13,10,.77),rgba(31,18,14,.8)),url('public/assets/banner-fractales.png') 33% center / cover;opacity:.82;filter:saturate(.68)}
+.login-art:before {content:"";position:absolute;top:14%;right:-125px;width:min(47vw,530px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(244,113,24,.32);box-shadow:0 0 0 38px #f4711808,0 0 0 85px #f4711807;pointer-events:none}
+.login-art:after {content:"";position:absolute;width:55vw;height:55vw;bottom:-37vw;left:-14vw;border:1px solid #fff2;border-radius:50%;pointer-events:none}
+.login-art-head,.login-art-bottom {position:relative;z-index:1}
+.login-art-head {display:flex;align-items:center;gap:13px;font-size:16px;letter-spacing:.105em;font-weight:600;line-height:1.16}
+.login-head-logo {width:56px;height:56px;border-radius:13px;background:#fff;display:grid;place-items:center;padding:4px;box-shadow:0 5px 15px #0002}
+.login-head-logo img {height:100%;width:100%;object-fit:contain;border-radius:9px}
+.login-art-head b {display:block;font-weight:800}
+.login-art-head small {display:block;font-size:9px;letter-spacing:.21em;color:#c8aba0;margin-top:7px}
+.login-art-bottom {max-width:680px;padding:60px 0 0;animation:lift-in .85s var(--ease) both}
+.hero-overline {font-size:11px;letter-spacing:.21em;font-weight:750;color:#fbc18b;display:inline-flex;align-items:center;gap:11px}
+.pulse-dot {width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px #f4711831;animation:pulse 3s infinite}
+.login-art h1 {font-size:clamp(48px,6.2vw,104px);font-weight:800;letter-spacing:-.073em;line-height:1.055;margin:25px 0 28px}
+.login-art h1 em {font-style:normal;color:#ffa85d}
+.login-art h1>span {color:var(--orange)}
+.login-art-bottom>p {font-size:clamp(14px,1.15vw,18px);font-weight:450;color:#e5d4c7;max-width:460px;line-height:1.75}
+.login-art-separator {height:1px;background:linear-gradient(90deg,#ffffff61,transparent);max-width:420px;margin:clamp(28px,5vw,78px) 0 20px}
+.login-art-foot {display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:470px;font-size:10px;color:#d9c6bb;letter-spacing:.12em;font-weight:650}
+.art-corner {position:absolute;top:49%;right:-80px;width:160px;height:160px;background:var(--orange);opacity:.85;transform:rotate(45deg);border-radius:38px;filter:blur(85px);pointer-events:none}
+.login-area {display:flex;justify-content:center;align-items:center;padding:44px clamp(26px,5vw,105px);min-width:0}
+.login-box {width:min(100%,450px);animation:lift-in .6s var(--ease) .08s both}
+.login-form-heading {margin-bottom:42px}
+.login-box h2 {font-size:clamp(32px,3.2vw,49px);font-weight:800;line-height:1.16;margin:20px 0 16px;letter-spacing:-.063em}
+.login-sub {font-size:14px;margin:0}
+.accent-dot {color:var(--orange)}
+.login-box form label,.field label {display:block;font-size:12px;font-weight:800;color:#40372f;margin-bottom:9px}
+.login-field-wrap,.password-wrap {position:relative;margin-bottom:23px}
+.login-field-wrap input,.password-wrap input,.field input,.field select,.field textarea,.search-input {width:100%;border:1px solid var(--line-dark);border-radius:11px;background:#fff;color:var(--ink);height:49px;padding:0 14px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.login-field-wrap input,.password-wrap input {padding-left:43px;height:54px;background:#fdfcfb}
+.login-field-wrap input:focus,.password-wrap input:focus,.field input:focus,.field select:focus,.field textarea:focus,.search-input:focus {border-color:#f1a16a;box-shadow:0 0 0 4px #f4711815;background:#fff}
+.field-leading-icon {position:absolute;top:50%;left:17px;transform:translateY(-50%);color:#a59a90;font-size:17px;pointer-events:none;font-weight:800}
+.password-heading {display:flex;justify-content:space-between;align-items:center}
+.hint-short {font-size:11px;color:#9b938c}
+.password-wrap input {padding-right:88px}
+.show-password {position:absolute;right:9px;top:9px;height:36px;border:0;background:#f1ece7;color:#66564b;padding:0 12px;border-radius:7px;font-size:11px;font-weight:750}
+.show-password:hover {background:#e9ded2}
+.login-submit {width:100%;height:55px;justify-content:space-between;font-size:13px;padding:0 21px;margin-top:10px;border-radius:11px}
+.login-submit>span {font-size:21px;font-weight:400}
+.login-support {margin:24px 0 70px;background:#faf7f2;border:1px solid #f1ebe2;border-radius:11px;padding:14px;display:flex;align-items:center;gap:12px;font-size:12px;color:#7d7065;line-height:1.55}
+.lock-icon {display:grid;place-items:center;background:#f0e4d9;border-radius:8px;color:#98633b;width:31px;height:31px;flex-shrink:0;font-size:17px}
+.login-bottom {display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:19px;font-size:11px;color:#aaa096}
+.login-bottom a {color:#a45622;font-weight:700}
+.brand-mobile {display:none}
+.form-error {background:#fff1ef;color:#a63832;padding:12px 14px;border-radius:10px;margin:7px 0 14px;border:1px solid #f6d6d2;font-size:12px}
+/* APP LAYOUT */
+.app-shell {display:flex;min-height:100vh;min-height:100dvh}
+.sidebar {background:var(--brown);width:264px;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;height:100dvh;color:#e3d7ce;z-index:30;box-shadow:8px 0 30px #3220170b}
+.brand {display:flex;align-items:center;gap:12px;min-height:94px;padding:20px 20px 17px;border-bottom:1px solid #ffffff12}
+.brand-icon {width:47px;height:47px;padding:3px;background:#fff;border-radius:12px;overflow:hidden;flex-shrink:0;display:grid;place-items:center}
+.brand-icon img {width:100%;height:100%;object-fit:contain;border-radius:8px}
+.brand-wordmark {color:#fff;font-size:12px;letter-spacing:.14em;font-weight:600;line-height:1.2;white-space:nowrap}
+.brand-wordmark strong {display:block;color:#fff;font-size:15px;letter-spacing:.13em}
+.brand-wordmark span {display:block;color:#a9988b;font-size:8px;letter-spacing:.145em;margin-top:8px;font-weight:700}
+.sidebar-close {display:none}
+.sidebar-caption {display:flex;align-items:center;gap:9px;color:#a79788;font-size:9px;font-weight:800;letter-spacing:.16em;padding:24px 25px 11px}
+.status-spark {width:6px;height:6px;background:#e98b4a;border-radius:50%;box-shadow:0 0 0 4px #f471181b}
+.nav-scroll {flex:1;padding:7px 12px 20px;overflow-y:auto;scrollbar-color:#665045 transparent;scrollbar-width:thin;overscroll-behavior:contain}
+.nav-label {margin:24px 13px 9px;color:#967f70;font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.nav-label:first-child {margin-top:12px}
+.nav-item {width:100%;background:transparent;color:#c7b7aa;border:1px solid transparent;display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:10px;font-size:12px;font-weight:650;margin:2px 0;position:relative;transition:background .2s,color .2s,transform .2s}
+.nav-item:hover {background:#ffffff0c;color:#fff;transform:translateX(2px)}
+.nav-item.active {background:linear-gradient(96deg,#f4771f,#e66611);box-shadow:0 6px 17px #bb4a0b26;color:#fff;font-weight:800}
+.nav-item.active:after {content:"";position:absolute;right:9px;width:4px;height:4px;border-radius:50%;background:#fff9}
+.nav-ico {display:grid;place-items:center;width:24px;height:24px;flex-shrink:0;opacity:.9}
+.nav-ico .inline-icon {width:17px;height:17px}
+.sidebar-bottom {padding:10px 12px 19px;border-top:1px solid #ffffff10}
+.sidebar-mini-card {border-radius:12px;overflow:hidden;padding:18px 16px;background:radial-gradient(circle at 100% 0,#c067312a,transparent 70%),#513125;border:1px solid #e0a27726;margin:0 1px 12px;position:relative}
+.sidebar-mini-card strong {font-family:Manrope,'DM Sans',sans-serif;line-height:1.4;color:#fff;display:block;font-size:13px}
+.sidebar-mini-card small {display:block;color:#c9ad9b;font-size:10px;margin-top:8px}
+.mini-card-spark {position:absolute;right:15px;top:11px;color:#eaa370;font-size:26px}
+.social-link,.sidebar-logout {background:transparent;border:0;width:100%;display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:9px;color:#cfbaac;font-size:12px;font-weight:600;text-align:left}
+.social-link:hover,.sidebar-logout:hover {background:#fff1;color:#fff}
+.footer-nav-icon {width:21px;font-size:17px;text-align:center}
+.sidebar-arrow {margin-left:auto}
+.workspace {flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar {height:88px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding:0 clamp(21px,3.1vw,52px);position:sticky;top:0;z-index:15}
+.topbar-left,.topbar-right {display:flex;align-items:center;gap:17px;min-width:0}
+.top-kicker {color:#a19a92;font-size:9px;font-weight:800;letter-spacing:.14em;margin-bottom:4px;white-space:nowrap}
+.top-kicker #crumb {color:#a96a39}
+.breadcrumb-separator {color:#d4c6b8;padding:0 5px}
+.topbar h2 {font-size:18px;font-weight:800;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:410px}
+.date-top {font-size:11px;color:#908980;white-space:nowrap;text-transform:capitalize}
+.header-search {border:1px solid var(--line);background:#faf9f7;color:#8b837c;display:flex;align-items:center;gap:9px;border-radius:9px;padding:10px 11px;font-size:11px;white-space:nowrap}
+.header-search:hover {background:#f5f0e9;border-color:#e9dac9}
+.header-search>span:first-child {font-size:18px;color:#8c7667;line-height:1}
+kbd {display:inline-block;margin-left:17px;color:#ad9e93;background:#fff;padding:3px 6px;font-size:9px;font-family:inherit;border-radius:4px;border:1px solid #efe6dc}
+.role-pill {border-radius:20px;background:#fff2e6;border:1px solid #ffead8;color:#bb5a18;font-size:10px;font-weight:800;white-space:nowrap;padding:8px 12px}
+.user-profile {border:0;background:transparent;display:flex;align-items:center;gap:9px;text-align:left;padding:0 0 0 13px;border-left:1px solid var(--line)}
+.user-avatar {width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:var(--brown);color:white;font-size:12px;font-weight:800;letter-spacing:.03em;flex-shrink:0}
+.user-profile-copy {display:flex;flex-direction:column;max-width:108px;line-height:1.32}
+.user-profile-copy b {font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-profile-copy small {font-size:10px;color:#aa9f94;margin-top:4px}
+.profile-chevron {font-size:15px;color:#aaa}
+.icon-button {border:0;background:transparent;color:var(--ink);display:grid;place-items:center;border-radius:8px;width:35px;height:35px}
+.mobile-menu {display:none}
+.main-content {flex:1;width:100%;max-width:1730px;margin:0 auto;padding:34px clamp(21px,3.1vw,52px) 68px;animation:content-in .38s var(--ease) both}
+.workspace-footer {display:flex;justify-content:space-between;gap:20px;padding:18px clamp(21px,3.1vw,52px) 22px;border-top:1px solid var(--line);color:#a29a91;font-size:10px}
+.footer-heart {color:var(--orange)}
+/* DASHBOARD */
+.welcome-line {display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}
+.welcome-line h2 {font-size:clamp(21px,2.3vw,30px);font-weight:800;margin:6px 0 6px}
+.welcome-line p {margin:0;color:var(--muted);font-size:13px}
+.today-chip {display:inline-flex;align-items:center;gap:7px;font-weight:750;font-size:11px;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:30px;white-space:nowrap;color:#847b72}
+.banner-card {background:linear-gradient(103deg,#311e18,#66412d);border-radius:19px;overflow:hidden;position:relative;margin-bottom:24px;display:grid;grid-template-columns:1.03fr .97fr;min-height:222px;box-shadow:0 13px 32px #50312416}
+.banner-copy {padding:32px clamp(24px,3vw,50px);position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.banner-copy>.eyebrow {color:#ffac70;font-size:9px}
+.banner-copy h2 {font-size:clamp(25px,3vw,42px);font-weight:800;letter-spacing:-.065em;line-height:1.18;margin:13px 0 10px}
+.banner-copy h2 span {color:#ffa05d}
+.banner-copy p {color:#e9d0c0;max-width:350px;font-size:12px;margin:0 0 18px}
+.banner-mini-btn {border:1px solid #ffffff43;background:#ffffff13;color:#fff;align-self:flex-start;padding:10px 14px;border-radius:9px;font-size:11px;font-weight:800;display:flex;gap:10px;align-items:center}
+.banner-mini-btn:hover {background:#ffffff2b}
+.banner-photo {min-height:222px;position:relative;overflow:hidden}
+.banner-photo img {width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:44% center;filter:saturate(.94)}
+.banner-photo:after {content:"";position:absolute;inset:0;background:linear-gradient(90deg,#3c241b 0%,#3c241b22 45%,transparent 100%)}
+.banner-photo:before {content:"";position:absolute;top:24px;right:30px;width:65px;height:65px;border:2px solid #fff7;border-radius:50%;z-index:1}
+.stats-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:23px}
+.stat-card {border:1px solid var(--line);background:#fff;border-radius:15px;min-width:0;padding:20px 20px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s var(--ease),box-shadow .25s,border-color .25s}
+.stat-card:hover {transform:translateY(-4px);box-shadow:0 14px 30px #3a261313;border-color:#e6d9cd}
+.stat-card:after {content:"";height:3px;position:absolute;left:20px;right:20px;bottom:0;border-radius:3px;background:var(--card-accent,#f47118);opacity:.8}
+.stat-card:nth-child(2) {--card-accent:#8562c2}
+.stat-card:nth-child(3) {--card-accent:#dcaa48}
+.stat-card:nth-child(4) {--card-accent:#36a285}
+.stat-top {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:17px}
+.stat-top span {font-size:11px;font-weight:750;color:#7f776f;line-height:1.45}
+.stat-icon {width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:#fff1e6;color:#d96413;flex-shrink:0}
+.stat-card:nth-child(2) .stat-icon {background:#f1eaff;color:#8562c2}
+.stat-card:nth-child(3) .stat-icon {background:#fcf4e4;color:#bd882e}
+.stat-card:nth-child(4) .stat-icon {background:#e8f7f2;color:#25846d}
+.stat-icon .inline-icon {width:19px;height:19px}
+.stat-value {font-family:Manrope,'DM Sans',sans-serif;font-size:clamp(23px,2.4vw,32px);font-weight:800;letter-spacing:-.055em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-hint {font-size:10px;color:#9d948b;margin-top:8px;line-height:1.4}
+.dashboard-section-title {font-size:16px;font-weight:800;margin:24px 0 13px;display:flex;align-items:center;gap:10px}
+.section-grid {display:grid;grid-template-columns:1.15fr 1fr;gap:17px;margin-bottom:26px}
+.panel {background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:var(--shadow)}
+.panel-head {padding:19px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px solid var(--line)}
+.panel-head h3 {font-size:14px;margin:0;font-weight:800;letter-spacing:-.025em}
+.panel-head p {margin:5px 0 0;color:#a49a91;font-size:11px}
+.panel-inner {padding:13px 23px}
+.link-action {color:var(--orange-dark);background:transparent;border:0;font-weight:800;font-size:11px;white-space:nowrap;padding:6px}
+.link-action:hover {text-decoration:underline}
+.item-row {display:flex;align-items:center;gap:13px;min-height:68px;padding:12px 0;border-bottom:1px solid #f2eee8}
+.item-row:last-child {border-bottom:0}
+.item-icon {width:39px;height:39px;border-radius:12px;display:grid;place-items:center;background:#fff2e7;color:var(--orange-dark);flex-shrink:0}
+.item-row-content {min-width:0;flex:1}
+.item-row-content strong {display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+.item-row-content small {display:block;color:#9b938b;margin-top:5px;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag {border-radius:30px;display:inline-block;font-size:10px;color:#786f65;background:#f5f1ee;padding:5px 10px;font-weight:800;white-space:nowrap}
+.tag.good {background:#e7f7ef;color:#238064}
+.tag.warn {background:#fff4e2;color:#996019}
+.tag.bad {background:#ffecea;color:#a74741}
+.tag.info {background:#eaf3ff;color:#4270aa}
+.quick-actions {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.quick-action {display:flex;align-items:center;text-align:left;gap:11px;padding:17px 15px;background:#fff;border:1px solid var(--line);border-radius:12px;font-size:11px;font-weight:800;transition:transform .2s var(--ease),border-color .2s,box-shadow .2s;color:var(--ink)}
+.quick-action:hover {transform:translateY(-3px);border-color:#f3bb8e;box-shadow:0 10px 20px #f4711810}
+.quick-action-symbol {width:36px;height:36px;background:#fff4e9;border-radius:10px;display:grid;place-items:center;color:var(--orange-dark);flex-shrink:0}
+.quick-action-arrow {margin-left:auto;color:#a89a8f;font-size:16px}
+/* TABLE MODULES */
+.module-header {display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px}
+.module-header h2 {font-size:clamp(22px,2.4vw,31px);margin:8px 0 7px;font-weight:800}
+.module-header p {font-size:12px;margin:0;color:var(--muted)}
+.module-toolbar {display:flex;align-items:center;justify-content:space-between;gap:15px;padding:17px 19px}
+.search-wrap {max-width:390px;width:100%;position:relative}
+.search-wrap span {position:absolute;top:50%;left:14px;transform:translateY(-50%);color:#9a8d80;font-size:20px}
+.search-input {height:41px;padding-left:40px;background:#faf9f7;font-size:12px}
+.search-meta {color:#948980;font-size:11px;white-space:nowrap}
+.table-scroll {width:100%;overflow:auto;scrollbar-color:#ded4c6 transparent;scrollbar-width:thin}
+table {border-collapse:collapse;width:100%;text-align:left;white-space:nowrap}
+thead th {text-transform:uppercase;letter-spacing:.1em;font-size:9px;font-weight:800;color:#8d8379;background:#fcfaf8;border-bottom:1px solid var(--line);padding:16px 19px}
+tbody td {font-size:12px;border-bottom:1px solid #f0ede7;padding:15px 19px;color:#665c53}
+tbody tr {transition:background .15s}
+tbody tr:hover {background:#fffcf9}
+tbody tr:last-child td {border-bottom:0}
+.td-title {font-weight:800;color:#372c25}
+.actions-cell {display:flex;align-items:center;gap:7px}
+.table-bottom {display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 19px;border-top:1px solid var(--line);font-size:11px;color:#978d83}
+.pager {display:flex;gap:8px}
+.pager button {border:1px solid var(--line-dark);border-radius:8px;padding:8px 11px;background:#fff;font-size:11px;color:#5c5046}
+.pager button:not(:disabled):hover {background:#fff6ee;border-color:#e8b890}
+.pager button:disabled {opacity:.45;cursor:not-allowed}
+.empty-state {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;padding:66px 25px;color:#958a80;font-size:12px}
+.empty-state .big {display:grid;place-items:center;width:54px;height:54px;background:#fff3e9;border-radius:16px;color:#d8712d;font-size:24px;margin-bottom:4px}
+.empty-state strong {font-size:14px;color:#423a32}
+.empty-state p {margin:0;max-width:360px}
+.loading {display:flex;gap:13px;flex-direction:column;align-items:center;justify-content:center;color:#9a9087;padding:70px 20px;font-size:12px}
+.loading:before {content:"";width:32px;height:32px;border:3px solid #f3e5da;border-top-color:var(--orange);border-radius:50%;animation:spin .75s linear infinite}
+.helper {background:#fff5e8;border:1px solid #f3dfc5;color:#8a572c;border-radius:11px;padding:13px 16px;font-size:12px;margin-bottom:18px}
+.helper strong {font-weight:800}
+/* MODALS AND FORMS */
+.modal-root {position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:#20100cc9;backdrop-filter:blur(5px);padding:20px;animation:veil .23s both}
+.modal {background:#fff;border-radius:17px;width:min(100%,810px);max-height:min(90vh,850px);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-xl);animation:modal-pop .32s var(--ease) both}
+.modal-head {border-bottom:1px solid var(--line);padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.modal-head h2 {font-size:19px;margin:0;font-weight:800}
+.modal-head p {font-size:11px;color:#958b80;margin:6px 0 0}
+.modal .panel-inner {overflow-y:auto;padding:24px}
+.modal>form,.modal>#recordForm {overflow-y:auto;min-height:0}
+.modal .form-grid {overflow-y:auto}
+.close-modal {width:36px;height:36px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:#76685e;font-size:22px;display:grid;place-items:center;flex-shrink:0}
+.close-modal:hover {background:#f4e7dc}
+.form-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px 17px;padding:25px 26px}
+.field {min-width:0}
+.field.full {grid-column:1/-1}
+.field label {font-size:11.5px;margin-bottom:8px}
+.field input,.field select,.field textarea {font-size:12px;height:44px;border-radius:9px;background:#fdfbf9}
+.field textarea {height:93px;padding-top:12px;resize:vertical}
+.field input:disabled {background:#f3f0eb;color:#8b8176}
+.field-note {font-size:10.5px;color:#958a80;margin:6px 0 0}
+.required-mark {color:var(--orange)}
+.form-actions {padding:17px 26px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;gap:10px;background:#fff;flex-shrink:0}
+.password-info {font-size:12px;color:#867a70;margin:0 26px 23px}
+.toast {position:fixed;right:24px;bottom:24px;z-index:90;display:none;align-items:center;gap:11px;max-width:min(440px,calc(100vw - 36px));padding:14px 19px;background:var(--brown);color:#fff;border-radius:12px;box-shadow:0 15px 39px #190f0b37;font-weight:650;font-size:12px;animation:toast-appear .35s var(--ease) both}
+.toast.open {display:flex}
+.toast.error {background:#963d37}
+.toast-symbol {width:26px;height:26px;border:1px solid #fff4;border-radius:50%;display:grid;place-items:center;font-size:14px;flex-shrink:0}
+/* STUDENT */
+.student-hero {background:linear-gradient(115deg,#352019,#5b3728);position:relative;overflow:hidden;border-radius:17px;display:flex;justify-content:space-between;align-items:center;gap:25px;padding:36px clamp(22px,3vw,48px);margin-bottom:24px;color:#fff}
+.student-hero:before {content:"";width:280px;height:280px;right:-50px;top:-110px;position:absolute;border:1px solid #f3a26350;border-radius:50%;box-shadow:0 0 0 35px #f3a2630b,0 0 0 70px #f3a26309}
+.student-hero .eyebrow {color:#ffb779}
+.student-hero h2 {font-size:clamp(23px,3vw,35px);margin:11px 0 9px;font-weight:800}
+.student-hero p {margin:0;color:#e3cfc0;font-size:12px}
+.student-hero img {width:91px;height:91px;padding:6px;background:#fff;border-radius:16px;object-fit:contain;position:relative;z-index:1;box-shadow:0 8px 24px #0002}
+.student-tabs {display:flex;gap:6px;flex-wrap:wrap;padding:5px;background:#fff;border:1px solid var(--line);border-radius:11px;width:fit-content;max-width:100%;margin-bottom:20px}
+.student-tab {border:0;background:transparent;color:#81776f;border-radius:8px;padding:10px 15px;font-size:11px;font-weight:800;transition:background .2s,color .2s}
+.student-tab:hover {background:#f9f5ef}
+.student-tab.active {background:var(--brown);color:#fff;box-shadow:0 4px 10px #41251b1a}
+.student-content {animation:content-in .28s var(--ease) both;padding-bottom:10px}
+.wide-panel {margin-bottom:17px}
+.info-foot {font-size:11px;color:#8b837b;margin-top:13px}
+.overlay {display:none}
+/* COMMAND PALETTE */
+.command-modal {width:min(100%,600px);align-self:flex-start;margin-top:min(14vh,105px)}
+.command-search {padding:14px 19px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line)}
+.command-search input {border:0;outline:none;flex:1;min-width:0;font-size:15px;padding:6px 0}
+.command-results {padding:10px;overflow-y:auto;max-height:min(55vh,420px)}
+.command-result {width:100%;border:0;background:transparent;text-align:left;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;color:#40372e}
+.command-result:hover,.command-result:focus-visible {background:#fff5eb}
+.command-result-icon {background:#f8eee6;color:#aa612b;display:grid;place-items:center;width:36px;height:36px;border-radius:10px}
+.command-result strong {display:block;font-size:12px;font-weight:800}
+.command-result small {display:block;color:#968b81;font-size:10px;margin-top:2px}
+.command-result-arrow {margin-left:auto;color:#aa9587}
+.command-empty {padding:25px;text-align:center;font-size:12px;color:#91877c}
+.command-footer {display:flex;justify-content:space-between;gap:15px;padding:12px 18px;border-top:1px solid var(--line);font-size:10px;color:#968e87}
+/* MOTION */
+@keyframes lift-in {from{opacity:0;transform:translateY(19px)}to{opacity:1;transform:translateY(0)}}
+@keyframes content-in {from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modal-pop {from{opacity:0;transform:translateY(15px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes veil {from{opacity:0}to{opacity:1}}
+@keyframes toast-appear {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin {to{transform:rotate(360deg)}}
+@keyframes pulse {0%,100%{box-shadow:0 0 0 4px #f4711820}50%{box-shadow:0 0 0 9px #f4711808}}
+@media(max-width:1350px){.sidebar{width:245px}.topbar-right{gap:10px}.date-top{display:none}.stats-grid{gap:12px}.quick-actions{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.role-pill{display:none}.user-profile-copy,.profile-chevron{display:none}.section-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{height:79px}.login-art h1{font-size:clamp(52px,6vw,78px)}}
+@media(max-width:900px){
+  .sidebar {position:fixed;top:0;bottom:0;left:0;transform:translateX(-102%);transition:transform .28s var(--ease);width:264px}
+  .sidebar.open {transform:translateX(0)}
+  .sidebar-close {display:grid;place-items:center;background:#fff1;border:0;color:#fff;width:28px;height:28px;border-radius:7px;margin-left:auto;font-size:21px}
+  .overlay:not([hidden]) {display:block;position:fixed;inset:0;background:#170c0bad;z-index:29;backdrop-filter:blur(3px)}
+  .mobile-menu {display:grid;background:#f8f4f0}
+  .main-content {padding:25px 24px 50px}
+  .login-page {grid-template-columns:43% 57%}
+  .login-art {padding:32px}
+  .login-art h1 {font-size:52px}
+  .login-area {padding:30px}
+}
+@media(max-width:650px){
+  .login-page{display:block;background:#fff}
+  .login-art{display:none}
+  .login-area {min-height:100vh;min-height:100dvh;align-items:center;padding:29px 25px}
+  .brand-mobile{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.13em;font-weight:700;margin-bottom:55px;color:var(--brown)}
+  .brand-mobile img{width:47px;height:47px;border-radius:9px}
+  .brand-mobile strong{display:block;font-size:14px}
+  .login-box h2{font-size:35px}
+  .login-form-heading{margin-bottom:32px}
+  .login-support{margin-bottom:42px}
+  .topbar {height:74px;padding:0 15px}
+  .topbar-left,.topbar-right{gap:9px}
+  .topbar h2{max-width:170px;font-size:15px}
+  .top-kicker{font-size:8px;letter-spacing:.09em}
+  .header-search{padding:8px 10px}
+  .header-search span:not(:first-child),.header-search kbd{display:none}
+  .user-avatar{width:33px;height:33px;border-radius:10px}
+  .user-profile{padding-left:8px}
+  .main-content{padding:23px 15px 46px}
+  .welcome-line{margin-bottom:16px}
+  .welcome-line h2{font-size:22px}
+  .welcome-line p{font-size:11px}
+  .today-chip{display:none}
+  .banner-card{grid-template-columns:1fr;min-height:0}
+  .banner-copy{padding:29px 25px}
+  .banner-copy h2{font-size:29px}
+  .banner-photo{display:none}
+  .stats-grid{gap:10px;margin-bottom:18px}
+  .stat-card{padding:15px 13px}
+  .stat-top{margin-bottom:10px;align-items:flex-start}
+  .stat-top span{font-size:10px}
+  .stat-icon{width:30px;height:30px;border-radius:9px}
+  .stat-icon .inline-icon{width:16px;height:16px}
+  .stat-value{font-size:24px}
+  .stat-hint{font-size:9px}
+  .section-grid{gap:12px}
+  .panel-head{padding:16px}
+  .panel-inner{padding:12px 16px}
+  .quick-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .quick-action{padding:12px 10px;gap:8px;font-size:10px}
+  .quick-action-symbol{width:30px;height:30px}
+  .quick-action-arrow{display:none}
+  .module-header{align-items:flex-start;flex-direction:column;gap:13px}
+  .module-header h2{font-size:24px}
+  .module-toolbar{padding:12px;gap:9px}
+  .module-toolbar .search-meta{font-size:9px}
+  .search-input{font-size:11px}
+  .table-bottom{padding:14px 12px;font-size:10px}
+  .actions-cell{gap:5px}
+  .modal-root{padding:9px;align-items:center}
+  .modal{max-height:93dvh;border-radius:13px}
+  .modal-head{padding:18px}
+  .modal-head h2{font-size:17px}
+  .form-grid{grid-template-columns:1fr;padding:18px;gap:14px}
+  .form-actions{padding:14px 18px}
+  .student-hero{padding:25px 20px}
+  .student-hero img{width:62px;height:62px}
+  .student-hero h2{font-size:24px}
+  .student-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .student-tab{padding:10px 6px}
+  .workspace-footer{padding:17px 15px;font-size:9px}
+  .workspace-footer span:last-child{display:none}
+  .toast{right:14px;bottom:14px}
+}
+@media(max-width:385px){.stats-grid{grid-template-columns:1fr 1fr}.stat-value{font-size:21px}.stat-icon{width:26px;height:26px}.role-pill{display:none}.login-area{padding:24px 18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* v3 · Student-first UI. No modifica las rutas del backend. */
+body {background:radial-gradient(ellipse at 90% 0%,#faeadc 0,transparent 38%),var(--cream)}
+.main-content {background:transparent}
+.panel,.stat-card {box-shadow:0 9px 30px #59381b0b}
+.panel {border-color:#eadfd3}
+.sidebar {background:linear-gradient(180deg,#291c19,#33221b 62%,#201916)}
+.nav-item.active {background:linear-gradient(100deg,#ff892b,#e56718);box-shadow:0 7px 21px #bd510b37}
+.btn-primary,.login-submit {background:linear-gradient(135deg,#ff922f,#ef6b1d)}
+.btn-primary:not(:disabled):hover {background:linear-gradient(135deg,#ff9e3b,#db5b0c)}
+.topbar {background:#fffdfbdc;backdrop-filter:blur(16px)}
+.login-art {background:#2d1e17}
+.login-texture{background:linear-gradient(145deg,#1b0f0ec9,#28140fac),url('public/assets/banner-fractales.png') center/cover}
+.student-page {max-width:1480px;margin:auto;animation:student-fade-in .45s var(--ease) both}
+.student-welcome {min-height:295px;position:relative;isolation:isolate;overflow:hidden;border-radius:26px;margin-bottom:23px;display:flex;align-items:center;background:#654434 url('public/assets/aula-fractales.webp') center 54%/cover;box-shadow:0 20px 52px #7c4c2c20}
+.student-welcome-overlay {position:absolute;inset:0;z-index:-1;background:linear-gradient(91deg,#35211cf5 0%,#402821ec 37%,#5033239a 60%,#50332305 100%)}
+.student-welcome-copy {position:relative;z-index:2;padding:clamp(26px,4vw,55px);max-width:680px;color:#fff}
+.student-eyebrow {display:inline-flex;align-items:center;gap:9px;background:#ffffff1b;border:1px solid #ffffff35;padding:8px 12px;border-radius:30px;color:#ffdfb4;font-weight:800;font-size:10px;letter-spacing:.12em}
+.student-eyebrow i {width:7px;height:7px;border-radius:50%;background:#ffb761;box-shadow:0 0 0 4px #ffb76124;animation:student-pulse 3s infinite}
+.student-welcome h2 {margin:20px 0 14px;font-size:clamp(27px,3vw,46px);font-weight:800;letter-spacing:-.046em;line-height:1.17;text-wrap:balance}
+.student-welcome p {font-size:14px;color:#ffeedf;max-width:495px;line-height:1.7;margin:0}
+.student-hello-hand {display:inline-block;transform-origin:75% 75%;animation:student-wave 5s ease-in-out infinite}
+.student-hero-actions {display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}
+.student-hero-button {background:#fff;color:#493124;border:0;border-radius:13px;padding:12px 17px;display:inline-flex;gap:12px;align-items:center;font-weight:800;transition:transform .22s,box-shadow .22s}
+.student-hero-button:hover {transform:translateY(-3px);box-shadow:0 9px 20px #20100b40}
+.student-date {display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:#f8dcc4}
+.student-floating-note {position:absolute;right:42px;bottom:30px;background:#fffef9f0;backdrop-filter:blur(12px);border:1px solid #ffedd4;border-radius:16px;padding:15px 20px 15px 44px;min-width:184px;box-shadow:0 18px 40px #32130f33;display:grid;gap:2px;animation:student-float 5s ease-in-out infinite}
+.student-floating-note>span {position:absolute;left:15px;top:15px;color:#eb721d;font-size:22px}
+.student-floating-note strong {font-size:14px;color:#513025}
+.student-floating-note small {font-size:11px;color:#897569}
+.student-floating-spark {pointer-events:none;position:absolute;color:#fff2b4;font-size:24px;opacity:.95;animation:student-float 4s ease-in-out infinite}
+.spark-one {top:35px;right:14%}.spark-two {top:90px;right:28%;animation-delay:-2s;font-size:13px}
+.student-modern-tabs {width:100%;max-width:700px;border-color:#eadcc9;background:#fff;padding:7px;border-radius:15px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 21px;box-shadow:0 6px 28px #55351a0d}
+.student-modern-tabs .student-tab {display:flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:12px 8px;font-weight:800;font-size:12px;white-space:nowrap}
+.student-modern-tabs .student-tab:hover {background:#fff1e3;color:#9d4914}
+.student-modern-tabs .student-tab.active {background:linear-gradient(120deg,#f5842b,#e66a20);color:#fff;box-shadow:0 7px 16px #d8681b29}
+.student-modern-tabs .student-tab.active:hover {color:white}
+.student-content {animation:student-fade-in .35s var(--ease) both}
+.student-kpis {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:23px}
+.student-metric {padding:22px;position:relative;overflow:hidden;border-radius:18px;border:1px solid #f0e7dc;background:#fff;box-shadow:0 8px 28px #65381808;transition:transform .23s,box-shadow .23s}
+.student-metric:hover {transform:translateY(-5px);box-shadow:0 15px 35px #573b1b15}
+.student-metric:after {content:'';position:absolute;top:-41px;right:-42px;width:135px;height:135px;border-radius:50%;background:var(--metric-tint);opacity:.45}
+.student-metric-symbol {display:grid;place-items:center;border-radius:14px;background:var(--metric-tint);color:var(--metric-ink);width:42px;height:42px;position:relative;z-index:1}
+.student-metric p {font-size:12px;margin:16px 0 1px;color:#685c50;font-weight:800}
+.student-metric strong {font-size:32px;font-family:Manrope,system-ui,sans-serif;letter-spacing:-.055em;color:#3e2c23;display:block}
+.student-metric small {font-size:11px;color:#887c72}
+.student-metric.tangerine {--metric-tint:#fff0db;--metric-ink:#df7016}
+.student-metric.teal {--metric-tint:#e4f6ef;--metric-ink:#16876a}
+.student-metric.violet {--metric-tint:#efebff;--metric-ink:#7564bc}
+.student-metric.rose {--metric-tint:#fff0ee;--metric-ink:#c7635c}
+.student-dashboard-grid {display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.8fr);align-items:start;gap:20px}
+.student-dashboard-main,.student-dashboard-side {display:grid;gap:20px;min-width:0}
+.student-block,.student-aside-panel {border:1px solid #eee3d7;background:#fff;border-radius:19px;padding:24px;box-shadow:0 8px 30px #5739180a;min-width:0}
+.student-block-heading {display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:19px}
+.student-block-heading h3 {font-size:20px;margin:6px 0 5px;font-weight:850;letter-spacing:-.04em;color:#3f3028}
+.student-block-heading p {font-size:12px;color:#8c8076;margin:0}
+.student-access-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.student-access-card {position:relative;text-align:left;min-height:176px;padding:18px 15px;background:#fcfaf6;border:1px solid #f0e8df;border-radius:15px;display:flex;flex-direction:column;align-items:start;transition:transform .22s,background .22s,box-shadow .22s,border-color .22s}
+.student-access-card:hover {transform:translateY(-4px);background:#fff;box-shadow:0 11px 24px #43271013;border-color:#eac29f}
+.access-illustration {width:48px;height:48px;border-radius:14px;display:grid;place-items:center;margin-bottom:13px;transition:transform .23s}
+.student-access-card:hover .access-illustration {transform:rotate(-8deg) scale(1.1)}
+.access-illustration.blue {background:#e4efff;color:#4b7bc3}.access-illustration.violet {background:#eee8ff;color:#8263b6}.access-illustration.peach {background:#fff0df;color:#d87722}
+.student-access-card strong {font-size:13px;color:#43352b}.student-access-card small {font-size:11px;color:#8b8076;line-height:1.5;margin-top:5px;padding-right:10px}
+.access-arrow {position:absolute;right:13px;top:19px;color:#a58e79;font-size:16px}
+.student-groups {display:grid;gap:10px}
+.student-group-card {display:flex;align-items:center;gap:15px;background:#fcfaf6;border:1px solid #f0e6da;border-radius:14px;padding:16px;transition:transform .2s}
+.student-group-card:hover {transform:translateX(3px)}
+.student-group-card>div:nth-child(2) {flex:1;min-width:0}
+.group-tile-art {width:54px;height:54px;border-radius:15px;background:linear-gradient(130deg,#f8c78a,#f18742);display:grid;place-items:center;color:#fff;flex-shrink:0}
+.student-group-card h4 {font-size:14px;letter-spacing:-.025em;margin:3px 0 2px;color:#433127}
+.student-group-card p {margin:0;color:#95877d;font-size:11px}
+.pill-soft {font-size:10px;padding:6px 9px;border-radius:9px;background:#eaf8f0;color:#21836a;font-weight:800;max-width:140px;text-align:center}
+.student-story-card {position:relative;overflow:hidden;background:linear-gradient(155deg,#d9f2e9,#f5fff9);border-radius:20px;padding:18px 24px 24px;border:1px solid #cee7db;min-height:315px}
+.student-story-card img {height:166px;width:100%;object-fit:contain;filter:drop-shadow(0 8px 18px #46662d17);animation:student-float 6s ease-in-out infinite}
+.student-story-card h3 {font-size:22px;line-height:1.23;margin:9px 0;color:#276954;letter-spacing:-.05em}
+.student-story-card p {font-size:12px;margin:0;color:#598472}
+.student-aside-title {display:flex;gap:10px;align-items:center;color:#e77a29;margin-bottom:13px}
+.student-aside-title h3 {font-size:15px;color:#47362d;margin:0}
+.student-exam-list {display:grid;gap:11px}
+.student-exam {padding:11px 11px 11px 13px;border-left:3px solid #f48734;background:#fcf7f1;border-radius:8px;display:grid;gap:2px}
+.exam-date {font-size:10px;color:#bc5c21;font-weight:800}
+.student-exam strong {font-size:12px;color:#46352b}
+.student-exam small {color:#9b8a7c;font-size:11px}
+.student-empty {background:#fffdfa;border:1px dashed #e9ddcf;border-radius:15px;min-height:150px;padding:25px 18px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#bf8b59;gap:5px}
+.student-empty strong {font-size:14px;color:#5c4836}
+.student-empty p {font-size:11px;color:#927f6d;max-width:270px;margin:0}
+.student-timetable,.student-result-list,.student-payment-list {display:grid;gap:12px}
+.student-day {background:#fffaf4;border:1px solid #f0e7dc;border-radius:15px;padding:18px}
+.student-day-title {display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.student-day-title h4 {font-size:15px;margin:0;flex:1;color:#4b3429}
+.student-day-title>span:last-child {font-size:11px;color:#9d8a7e}
+.day-dot {width:10px;height:10px;border-radius:50%;background:#f08432;box-shadow:0 0 0 4px #f0843219}
+.student-classes {display:grid;gap:8px}
+.student-class {padding:13px;background:#fff;border:1px solid #f0e9dd;display:flex;align-items:center;gap:20px;border-radius:11px}
+.class-clock {font-size:11px;font-weight:800;color:#b95d21;display:flex;align-items:center;gap:6px;min-width:130px}
+.student-class strong {font-size:13px;color:#43342c;display:block}
+.student-class small {font-size:11px;color:#97887e;display:block;margin-top:3px}
+.student-result {padding:19px;background:#fffdf9;border:1px solid #f2e8df;border-radius:13px}
+.student-result-head {display:flex;justify-content:space-between;align-items:center;gap:13px;margin-bottom:14px}
+.student-result h4 {margin:5px 0 2px;font-size:14px;color:#44352b}
+.student-result p {font-size:11px;color:#97877a;margin:0}
+.result-score {min-width:90px;text-align:right}
+.result-score strong {display:block;color:#e57221;font-size:22px;letter-spacing:-.04em}
+.result-score small {color:#a39686;font-size:10px}
+.student-progress-track {height:8px;border-radius:15px;background:#f6e7d6;overflow:hidden}
+.student-progress-track span {display:block;height:100%;border-radius:15px;background:linear-gradient(90deg,#f39b43,#df6b24);animation:student-grow .85s var(--ease) both}
+.student-payment {display:flex;align-items:center;gap:14px;border:1px solid #f0e8db;border-radius:14px;padding:15px;background:#fffdfa}
+.payment-icon {width:43px;height:43px;border-radius:13px;background:#fff0e0;display:grid;place-items:center;color:#c87427;flex-shrink:0}
+.payment-details {flex:1;min-width:0}
+.payment-details strong {display:block;color:#4c392c;font-size:12px}
+.payment-details small {display:block;color:#948479;font-size:11px;margin-top:3px}
+.payment-amount {display:flex;flex-direction:column;align-items:end;gap:4px}
+.payment-amount b {font-size:14px;color:#54382b}
+.payment-status {font-size:10px;padding:4px 9px;border-radius:10px;font-weight:800}
+.payment-status.paid {background:#e5f5e8;color:#287651}.payment-status.pending {background:#fff0df;color:#ba692c}.payment-status.neutral {background:#f0ecf5;color:#7b6c96}
+@keyframes student-float {0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+@keyframes student-wave {0%,10%,25%,100%{transform:rotate(0)}14%,20%{transform:rotate(16deg)}17%,23%{transform:rotate(-9deg)}}
+@keyframes student-pulse {0%,100%{box-shadow:0 0 0 4px #ffb76124}50%{box-shadow:0 0 0 9px #ffb76100}}
+@keyframes student-fade-in {from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@keyframes student-grow {from{width:0}}
+@media(max-width:1180px){.student-dashboard-grid{grid-template-columns:minmax(0,1fr)}.student-dashboard-side{grid-template-columns:1fr 1fr}.student-welcome{background-position:66% center}}
+@media(max-width:800px){.student-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.student-floating-note{display:none}.student-dashboard-side{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.student-welcome{min-height:310px;border-radius:18px;background-position:72% center}.student-welcome-overlay{background:linear-gradient(90deg,#35221bed,#39241be2 70%,#39241b80)}.student-welcome-copy{padding:27px 21px}.student-welcome h2{font-size:28px}.student-welcome p{font-size:12px}.student-floating-spark{display:none}.student-modern-tabs{grid-template-columns:repeat(4,minmax(0,1fr));padding:5px;gap:2px}.student-modern-tabs .student-tab{flex-direction:column;gap:5px;padding:9px 1px;font-size:10px}.student-modern-tabs .student-tab .inline-icon{width:17px}.student-kpis{gap:9px}.student-metric{padding:15px}.student-metric strong{font-size:27px}.student-metric p{font-size:10px}.student-metric small{font-size:10px}.student-dashboard-side{grid-template-columns:1fr}.student-access-grid{grid-template-columns:1fr}.student-access-card{min-height:95px;padding:13px 14px 13px 77px;justify-content:center}.access-illustration{position:absolute;left:14px;top:19px;width:47px;height:47px;margin:0}.student-block,.student-aside-panel{padding:18px}.student-group-card{flex-wrap:wrap}.student-group-card .pill-soft{margin-left:69px}.student-class{align-items:flex-start;flex-direction:column;gap:6px}.student-payment{gap:9px}.payment-amount b{font-size:12px}}
+@media(max-width:390px){.student-welcome h2{font-size:25px}.student-eyebrow{font-size:9px}.student-metric{padding:12px}.student-modern-tabs .student-tab{font-size:9px}.student-block-heading h3{font-size:18px}}
+@media(prefers-reduced-motion:reduce){.student-hello-hand,.student-story-card img,.student-floating-note,.student-floating-spark,.student-progress-track span,.student-page{animation:none!important}}
+</style>
+  
+</head>
+<body>
+  <a class="skip-link" href="#content">Saltar al contenido</a>
+  <section class="login-page" id="loginView" aria-label="Iniciar sesión">
+    <div class="login-art">
+      <div class="login-texture" aria-hidden="true"></div>
+      <div class="login-art-head">
+        <span class="login-head-logo"><img src="public/assets/logo-original.png" alt=""></span>
+        <span>FRACTALES <b>ACADEMY</b><small>EDUCACIÓN QUE TRASCIENDE</small></span>
+      </div>
+      <div class="login-art-bottom">
+        <span class="hero-overline"><span class="pulse-dot"></span> NUESTRA COMUNIDAD ACADÉMICA</span>
+        <h1>Aprende.<br><em>Crece.</em><br>Trasciende<span>.</span></h1>
+        <p>Tu esfuerzo merece un gran comienzo. Un espacio que conecta a estudiantes y academia para lograr más.</p>
+        <div class="login-art-separator"></div>
+        <div class="login-art-foot"><span>FRACTALES ACADEMY</span><span>Morales · San Martín, Perú</span></div>
+      </div>
+      <div class="art-corner" aria-hidden="true"></div>
+    </div>
+    <div class="login-area">
+      <div class="login-box">
+        <div class="brand-mobile"><img src="public/assets/logo-original.png" alt=""> <span>FRACTALES <strong>ACADEMY</strong></span></div>
+        <div class="login-form-heading">
+          <span class="eyebrow eyebrow-with-line">PORTAL ACADÉMICO</span>
+          <h2>Nos alegra<br>verte de nuevo<span class="accent-dot">.</span></h2>
+          <p class="muted login-sub">Accede al espacio donde tus metas toman forma.</p>
+        </div>
+        <form id="loginForm">
+          <label for="loginUser">Usuario</label>
+          <div class="login-field-wrap"><span class="field-leading-icon" aria-hidden="true">@</span><input id="loginUser" name="usuario" type="text" placeholder="Tu usuario de acceso" maxlength="80" autocomplete="username" required></div>
+          <div class="password-heading"><label for="loginPass">Contraseña</label><span class="hint-short">Acceso seguro</span></div>
+          <div class="password-wrap"><span class="field-leading-icon" aria-hidden="true">✳</span><input id="loginPass" name="clave" type="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required><button type="button" class="show-password" id="togglePass" aria-label="Mostrar u ocultar contraseña">Mostrar</button></div>
+          <div id="loginError" class="form-error" role="alert" hidden></div>
+          <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">Ingresar a mi cuenta <span aria-hidden="true">↗</span></button>
+        </form>
+        <div class="login-support"><span class="lock-icon" aria-hidden="true">♢</span><span>¿No tienes una cuenta? Solicita tus credenciales a la administración.</span></div>
+        <div class="login-bottom"><span>© <span id="loginYear">2026</span> Fractales Academy</span><a href="https://www.instagram.com/fractales_academy/" target="_blank" rel="noopener noreferrer">Nuestra comunidad ↗</a></div>
+      </div>
+    </div>
+  </section>
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar" aria-label="Menú principal">
+      <div class="brand"><div class="brand-icon"><img src="public/assets/logo-original.png" alt="Logo de Fractales Academy"></div><div class="brand-wordmark">FRACTALES <strong>ACADEMY</strong><span>PLATAFORMA ACADÉMICA</span></div><button id="closeSidebar" class="sidebar-close" aria-label="Cerrar menú">×</button></div>
+      <div class="sidebar-caption"><span class="status-spark"></span> ESPACIO INSTITUCIONAL</div>
+      <nav class="nav-scroll" id="navContent" aria-label="Secciones de la aplicación"></nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-mini-card"><div class="mini-card-spark">✦</div><strong>Aprende, crece<br>y trasciende.</strong><small>Juntos construimos tu futuro.</small></div>
+        <a href="https://www.instagram.com/fractales_academy/" target="_blank" rel="noopener noreferrer" class="social-link"><span class="footer-nav-icon">◎</span> <span>Instagram oficial</span><span class="sidebar-arrow">↗</span></a>
+        <button class="sidebar-logout" id="logoutButton"><span class="footer-nav-icon" aria-hidden="true">⇥</span> Cerrar sesión</button>
+      </div>
+    </aside>
+    <div class="overlay" id="mobileOverlay" hidden></div>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-left"><button id="menuButton" class="icon-button mobile-menu" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button><div><div class="top-kicker">FRACTALES ACADEMY <span class="breadcrumb-separator">/</span> <span id="crumb">INICIO</span></div><h2 id="pageTitle">Panel general</h2></div></div>
+        <div class="topbar-right"><span class="date-top" id="today"></span><button class="header-search" id="quickFindButton" title="Buscar un módulo (Ctrl+K)"><span aria-hidden="true">⌕</span> <span>Buscar módulo</span><kbd>Ctrl K</kbd></button><span class="role-pill" id="roleBadge">Administrador</span><button class="user-profile" id="profileButton" title="Cambiar contraseña" aria-label="Configuración de contraseña"><span class="user-avatar" id="avatarInitials">FA</span><span class="user-profile-copy"><b id="profileName">Mi cuenta</b><small>Mi perfil</small></span><span class="profile-chevron" aria-hidden="true">⌄</span></button></div>
+      </header>
+      <main class="main-content" id="content" tabindex="-1" aria-live="polite"></main>
+      <footer class="workspace-footer"><span>© <span id="footerYear">2026</span> Fractales Academy</span><span>Plataforma de gestión académica <span class="footer-heart">✦</span></span></footer>
+    </div>
+  </div>
+  <div class="modal-root" id="modalRoot" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="demo-switch" role="group" aria-label="Cambiar entre perfiles ficticios"><span>DEMO · DATOS FICTICIOS</span><button type="button" id="viewStudent" class="on">Estudiante</button><button type="button" id="viewAdmin">Administrador</button></div><style>.demo-switch{position:fixed;z-index:90;bottom:12px;left:12px;display:flex;align-items:center;gap:5px;background:#2d2119;color:white;border-radius:14px;padding:7px;box-shadow:0 11px 32px #20130d53;font:700 11px system-ui;flex-wrap:wrap;max-width:calc(100vw - 24px)}.demo-switch span{padding:5px}.demo-switch button{font-size:11px;border:0;border-radius:9px;padding:9px;color:#fff;background:#ffffff27;cursor:pointer}.demo-switch button.on{color:#472511;background:#ffbc79}@media(max-width:650px){.demo-switch{bottom:7px;left:7px;gap:2px}.demo-switch span{font-size:9px}}</style><script>// PREVISUALIZACIÓN LOCAL: datos ficticios, sin acceso ni escritura en Azure/SQL Server.
+(() => {
+const model={"ALUMNO": {"name": "ALUMNO", "label": "Estudiantes", "category": "Principal", "pk": ["DNI_Alu"], "columns": [{"name": "DNI_Alu", "type": "varchar", "length": 8, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Alu", "type": "varchar", "length": 120, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Correo_Alu", "type": "varchar", "length": 150, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Fech_Nac", "type": "date", "length": null, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Cel_Alu", "type": "varchar", "length": 15, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Dir_Alu", "type": "varchar", "length": 200, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Nomb_Apoderado", "type": "varchar", "length": 120, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "DNI_Apoderado", "type": "varchar", "length": 8, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Cel_Apoderado", "type": "varchar", "length": 15, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Correo_Apoderado", "type": "varchar", "length": 150, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "PARENTESCO_Cod_Paren", "type": "varchar", "length": 5, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "PARENTESCO", "column": "Cod_Paren"}}, {"name": "CARRERA_Cod_Carrera", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "CARRERA", "column": "Cod_Carrera"}}], "fks": [{"columns": ["CARRERA_Cod_Carrera"], "table": "CARRERA", "references": ["Cod_Carrera"]}, {"columns": ["PARENTESCO_Cod_Paren"], "table": "PARENTESCO", "references": ["Cod_Paren"]}], "display": ["Nomb_Alu", "DNI_Alu"]}, "Aula": {"name": "Aula", "label": "Aulas", "category": "Académico", "pk": ["Cod_Aula"], "columns": [{"name": "Cod_Aula", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Aula", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Capacidad", "type": "smallint", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Activa", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Aula", "Cod_Aula"]}, "CARRERA": {"name": "CARRERA", "label": "Carreras profesionales", "category": "Académico", "pk": ["Cod_Carrera"], "columns": [{"name": "Cod_Carrera", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Carrera", "type": "varchar", "length": 120, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Carrera", "Cod_Carrera"]}, "CONCEPTO_PAGO": {"name": "CONCEPTO_PAGO", "label": "Conceptos de pago", "category": "Administración", "pk": ["Cod_Concepto"], "columns": [{"name": "Cod_Concepto", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Concepto", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Concepto", "Cod_Concepto"]}, "CURSOS": {"name": "CURSOS", "label": "Cursos", "category": "Académico", "pk": ["Cod_Curso"], "columns": [{"name": "Cod_Curso", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Curso", "type": "varchar", "length": 100, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Activa", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Curso", "Cod_Curso"]}, "Ciclo": {"name": "Ciclo", "label": "Ciclos académicos", "category": "Académico", "pk": ["Cod_Ciclo"], "columns": [{"name": "Cod_Ciclo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Programa_Cod_Programa", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Programa", "column": "Cod_Programa"}}, {"name": "Nomb_Ciclo", "type": "varchar", "length": 100, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Modalidad", "type": "varchar", "length": 12, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Fech_Inicio", "type": "date", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Fech_Fin", "type": "date", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Nro_Mensualidades", "type": "tinyint", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Precio_Mensual", "type": "decimal", "length": 10, "scale": 2, "required": true, "default": true, "pk": false, "references": null}, {"name": "ESTADO_CICLO_Cod_Estado", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ESTADO_CICLO", "column": "Cod_Estado_Ciclo"}}], "fks": [{"columns": ["ESTADO_CICLO_Cod_Estado"], "table": "ESTADO_CICLO", "references": ["Cod_Estado_Ciclo"]}, {"columns": ["Programa_Cod_Programa"], "table": "Programa", "references": ["Cod_Programa"]}], "display": ["Nomb_Ciclo", "Cod_Ciclo"]}, "Docente": {"name": "Docente", "label": "Docentes", "category": "Principal", "pk": ["DNI_Doc"], "columns": [{"name": "DNI_Doc", "type": "varchar", "length": 8, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nom_Doc", "type": "varchar", "length": 120, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Cel_Doc", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Especialidad", "type": "varchar", "length": 120, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}], "fks": [], "display": ["Nom_Doc", "DNI_Doc"]}, "Docente_Asignatura": {"name": "Docente_Asignatura", "label": "Asignaturas por docente", "category": "Académico", "pk": ["CURSOS_Cod_Curso", "Docente_DNI_Doc"], "columns": [{"name": "CURSOS_Cod_Curso", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": {"table": "CURSOS", "column": "Cod_Curso"}}, {"name": "Docente_DNI_Doc", "type": "varchar", "length": 8, "scale": null, "required": true, "default": false, "pk": true, "references": {"table": "Docente", "column": "DNI_Doc"}}], "fks": [{"columns": ["Docente_DNI_Doc"], "table": "Docente", "references": ["DNI_Doc"]}, {"columns": ["CURSOS_Cod_Curso"], "table": "CURSOS", "references": ["Cod_Curso"]}], "display": ["CURSOS_Cod_Curso", "Docente_DNI_Doc"]}, "ESTADO_CICLO": {"name": "ESTADO_CICLO", "label": "Estados de ciclo", "category": "Administración", "pk": ["Cod_Estado_Ciclo"], "columns": [{"name": "Cod_Estado_Ciclo", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Estado_Ciclo", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Estado_Ciclo", "Cod_Estado_Ciclo"]}, "ESTADO_EXAMEN_GRUPO": {"name": "ESTADO_EXAMEN_GRUPO", "label": "Estados de simulacro", "category": "Administración", "pk": ["Cod_Estado_Examen"], "columns": [{"name": "Cod_Estado_Examen", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Estado_Examen", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Estado_Examen", "Cod_Estado_Examen"]}, "ESTADO_MATRICULA": {"name": "ESTADO_MATRICULA", "label": "Estados de matrícula", "category": "Administración", "pk": ["Cod_Estado_Matricula"], "columns": [{"name": "Cod_Estado_Matricula", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Estado_Matricula", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Estado_Matricula", "Cod_Estado_Matricula"]}, "ESTADO_PAGO": {"name": "ESTADO_PAGO", "label": "Estados de pago", "category": "Administración", "pk": ["Cod_Estado"], "columns": [{"name": "Cod_Estado", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Estado", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Estado", "Cod_Estado"]}, "Examen": {"name": "Examen", "label": "Simulacros", "category": "Principal", "pk": ["Cod_Examen"], "columns": [{"name": "Cod_Examen", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Examen", "type": "nvarchar", "length": 150, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Descripcion", "type": "nvarchar", "length": 300, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "puntaje_maximo", "type": "decimal", "length": 8, "scale": 2, "required": true, "default": false, "pk": false, "references": null}, {"name": "activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Examen", "Cod_Examen"]}, "Examen_Grupo": {"name": "Examen_Grupo", "label": "Simulacros por grupo", "category": "Principal", "pk": ["Cod_examen_grupo"], "columns": [{"name": "Cod_examen_grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Fech_programada", "type": "date", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Hr_inicio", "type": "time", "length": 0, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Duracion_minutos", "type": "smallint", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Estado", "type": "varchar", "length": 15, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Publicado", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Examen_Cod_Examen", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Examen", "column": "Cod_Examen"}}, {"name": "Grupo_Cod_Grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Grupo", "column": "Cod_Grupo"}}, {"name": "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ESTADO_EXAMEN_GRUPO", "column": "Cod_Estado_Examen"}}], "fks": [{"columns": ["ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen"], "table": "ESTADO_EXAMEN_GRUPO", "references": ["Cod_Estado_Examen"]}, {"columns": ["Examen_Cod_Examen"], "table": "Examen", "references": ["Cod_Examen"]}, {"columns": ["Grupo_Cod_Grupo"], "table": "Grupo", "references": ["Cod_Grupo"]}], "display": ["Cod_examen_grupo", "Grupo_Cod_Grupo"]}, "Grupo": {"name": "Grupo", "label": "Grupos académicos", "category": "Principal", "pk": ["Cod_Grupo"], "columns": [{"name": "Cod_Grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Grupo", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Cupo_Max", "type": "smallint", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Turno_Cod_Turno", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Turno", "column": "Cod_Turno"}}, {"name": "Aula_Cod_Aula", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Aula", "column": "Cod_Aula"}}, {"name": "Ciclo_Cod_Ciclo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Ciclo", "column": "Cod_Ciclo"}}], "fks": [{"columns": ["Aula_Cod_Aula"], "table": "Aula", "references": ["Cod_Aula"]}, {"columns": ["Ciclo_Cod_Ciclo"], "table": "Ciclo", "references": ["Cod_Ciclo"]}, {"columns": ["Turno_Cod_Turno"], "table": "Turno", "references": ["Cod_Turno"]}], "display": ["Nomb_Grupo", "Cod_Grupo"]}, "Horario": {"name": "Horario", "label": "Horarios", "category": "Principal", "pk": ["Cod_Horario"], "columns": [{"name": "Cod_Horario", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Dia_Semana", "type": "tinyint", "length": null, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Hr_Inicio", "type": "time", "length": 0, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Hr_Fin", "type": "time", "length": 0, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Grupo_Cod_Grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Grupo", "column": "Cod_Grupo"}}, {"name": "TIPO_BLOQUE_Cod_Tipo", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "TIPO_BLOQUE", "column": "Cod_Tipo"}}, {"name": "Docente_Asignatura_CURSOS_Cod_Curso", "type": "varchar", "length": 10, "scale": null, "required": false, "default": false, "pk": false, "references": {"table": "Docente_Asignatura", "column": "CURSOS_Cod_Curso"}}, {"name": "Docente_Asignatura_Docente_DNI_Doc", "type": "varchar", "length": 8, "scale": null, "required": false, "default": false, "pk": false, "references": {"table": "Docente_Asignatura", "column": "Docente_DNI_Doc"}}], "fks": [{"columns": ["Docente_Asignatura_CURSOS_Cod_Curso", "Docente_Asignatura_Docente_DNI_Doc"], "table": "Docente_Asignatura", "references": ["CURSOS_Cod_Curso", "Docente_DNI_Doc"]}, {"columns": ["Grupo_Cod_Grupo"], "table": "Grupo", "references": ["Cod_Grupo"]}, {"columns": ["TIPO_BLOQUE_Cod_Tipo"], "table": "TIPO_BLOQUE", "references": ["Cod_Tipo"]}], "display": ["Cod_Horario", "Dia_Semana"]}, "MATRICULA": {"name": "MATRICULA", "label": "Matrículas", "category": "Principal", "pk": ["Cod_Matricula"], "columns": [{"name": "ALUMNO_DNI_Alu", "type": "varchar", "length": 8, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ALUMNO", "column": "DNI_Alu"}}, {"name": "Cod_Matricula", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "ESTADO_MATRICULA_Cod_Estado_Matricula", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ESTADO_MATRICULA", "column": "Cod_Estado_Matricula"}}, {"name": "Fech_Matricula", "type": "date", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Observaciones", "type": "varchar", "length": 250, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Grupo_Cod_Grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Grupo", "column": "Cod_Grupo"}}], "fks": [{"columns": ["ALUMNO_DNI_Alu"], "table": "ALUMNO", "references": ["DNI_Alu"]}, {"columns": ["ESTADO_MATRICULA_Cod_Estado_Matricula"], "table": "ESTADO_MATRICULA", "references": ["Cod_Estado_Matricula"]}, {"columns": ["Grupo_Cod_Grupo"], "table": "Grupo", "references": ["Cod_Grupo"]}], "display": ["Cod_Matricula", "ALUMNO_DNI_Alu"]}, "Nota_Examen": {"name": "Nota_Examen", "label": "Notas de simulacros", "category": "Principal", "pk": ["Cod_Nota"], "columns": [{"name": "Cod_Nota", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Puntaje_total", "type": "decimal", "length": 8, "scale": 2, "required": true, "default": false, "pk": false, "references": null}, {"name": "Fech_registro", "type": "datetime2", "length": 0, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "MATRICULA_Cod_Matricula", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "MATRICULA", "column": "Cod_Matricula"}}, {"name": "Examen_Grupo_Cod_examen_grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Examen_Grupo", "column": "Cod_examen_grupo"}}, {"name": "Grupo_Cod_Grupo", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "Examen_Grupo", "column": "Grupo_Cod_Grupo"}}], "fks": [{"columns": ["Examen_Grupo_Cod_examen_grupo", "Grupo_Cod_Grupo"], "table": "Examen_Grupo", "references": ["Cod_examen_grupo", "Grupo_Cod_Grupo"]}, {"columns": ["MATRICULA_Cod_Matricula", "Grupo_Cod_Grupo"], "table": "MATRICULA", "references": ["Cod_Matricula", "Grupo_Cod_Grupo"]}], "display": ["Cod_Nota", "Puntaje_total"]}, "PARENTESCO": {"name": "PARENTESCO", "label": "Parentescos", "category": "Administración", "pk": ["Cod_Paren"], "columns": [{"name": "Cod_Paren", "type": "varchar", "length": 5, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Tipo_Paren", "type": "varchar", "length": 40, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Tipo_Paren", "Cod_Paren"]}, "Pago": {"name": "Pago", "label": "Pagos y pensiones", "category": "Principal", "pk": ["Cod_Pago"], "columns": [{"name": "Cod_Pago", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "CONCEPTO_PAGO_Cod_Concepto", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "CONCEPTO_PAGO", "column": "Cod_Concepto"}}, {"name": "Nro_Mensualidad", "type": "tinyint", "length": null, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Monto", "type": "decimal", "length": 10, "scale": 2, "required": true, "default": false, "pk": false, "references": null}, {"name": "Fech_Vencimiento", "type": "date", "length": null, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "ESTADO_PAGO_Cod_Estado", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ESTADO_PAGO", "column": "Cod_Estado"}}, {"name": "Fech_Pago", "type": "datetime2", "length": 0, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Medio_Pago", "type": "varchar", "length": 10, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Usuario_Cod_Usuario", "type": "varchar", "length": 20, "scale": null, "required": false, "default": false, "pk": false, "references": {"table": "Usuario", "column": "Cod_Usuario"}}, {"name": "ALUMNO_DNI_Alu", "type": "varchar", "length": 8, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ALUMNO", "column": "DNI_Alu"}}, {"name": "MATRICULA_Cod_Matricula", "type": "varchar", "length": 20, "scale": null, "required": false, "default": false, "pk": false, "references": {"table": "MATRICULA", "column": "Cod_Matricula"}}], "fks": [{"columns": ["ALUMNO_DNI_Alu"], "table": "ALUMNO", "references": ["DNI_Alu"]}, {"columns": ["CONCEPTO_PAGO_Cod_Concepto"], "table": "CONCEPTO_PAGO", "references": ["Cod_Concepto"]}, {"columns": ["ESTADO_PAGO_Cod_Estado"], "table": "ESTADO_PAGO", "references": ["Cod_Estado"]}, {"columns": ["MATRICULA_Cod_Matricula", "ALUMNO_DNI_Alu"], "table": "MATRICULA", "references": ["Cod_Matricula", "ALUMNO_DNI_Alu"]}, {"columns": ["Usuario_Cod_Usuario"], "table": "Usuario", "references": ["Cod_Usuario"]}], "display": ["Cod_Pago", "Monto"]}, "Programa": {"name": "Programa", "label": "Programas académicos", "category": "Académico", "pk": ["Cod_Programa"], "columns": [{"name": "Cod_Programa", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Programa", "type": "varchar", "length": 100, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Descripcion", "type": "varchar", "length": 250, "scale": null, "required": false, "default": false, "pk": false, "references": null}, {"name": "Activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Programa", "Cod_Programa"]}, "ROL": {"name": "ROL", "label": "Roles de acceso", "category": "Administración", "pk": ["Cod_Rol"], "columns": [{"name": "Cod_Rol", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Rol", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Rol", "Cod_Rol"]}, "TIPO_BLOQUE": {"name": "TIPO_BLOQUE", "label": "Tipos de bloque", "category": "Administración", "pk": ["Cod_Tipo"], "columns": [{"name": "Cod_Tipo", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Tipo", "type": "varchar", "length": 60, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Tipo", "Cod_Tipo"]}, "Turno": {"name": "Turno", "label": "Turnos", "category": "Académico", "pk": ["Cod_Turno"], "columns": [{"name": "Cod_Turno", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Turno", "type": "varchar", "length": 15, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Hr_Inicio", "type": "time", "length": 0, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Hr_Fin", "type": "time", "length": 0, "scale": null, "required": true, "default": false, "pk": false, "references": null}], "fks": [], "display": ["Nomb_Turno", "Cod_Turno"]}, "Usuario": {"name": "Usuario", "label": "Usuarios", "category": "Administración", "pk": ["Cod_Usuario"], "columns": [{"name": "Cod_Usuario", "type": "varchar", "length": 20, "scale": null, "required": true, "default": false, "pk": true, "references": null}, {"name": "Nomb_Usuario", "type": "varchar", "length": 80, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "Clave_Hash", "type": "varchar", "length": 255, "scale": null, "required": true, "default": false, "pk": false, "references": null}, {"name": "ROL_Cod_Rol", "type": "varchar", "length": 10, "scale": null, "required": true, "default": false, "pk": false, "references": {"table": "ROL", "column": "Cod_Rol"}}, {"name": "Activo", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "Debe_Cambiar_Clave", "type": "bit", "length": null, "scale": null, "required": true, "default": true, "pk": false, "references": null}, {"name": "ALUMNO_DNI_Alu", "type": "varchar", "length": 8, "scale": null, "required": false, "default": false, "pk": false, "references": {"table": "ALUMNO", "column": "DNI_Alu"}}], "fks": [{"columns": ["ALUMNO_DNI_Alu"], "table": "ALUMNO", "references": ["DNI_Alu"]}, {"columns": ["ROL_Cod_Rol"], "table": "ROL", "references": ["Cod_Rol"]}], "display": ["Nomb_Usuario", "Cod_Usuario"]}};
+const allModules=Object.values(model);
+const sample={"ALUMNO": [{"DNI_Alu": "72841365", "Nomb_Alu": "María Fernanda Gonzales", "Correo_Alu": "maria.ejemplo@correo.com", "Cel_Alu": "999123123", "Fech_Nac": "2006-05-12", "_id": "72841365"}, {"DNI_Alu": "70487231", "Nomb_Alu": "Luis Alejandro Rojas", "Correo_Alu": "luis.ejemplo@correo.com", "Cel_Alu": "999456456", "Fech_Nac": "2007-01-18", "_id": "70487231"}, {"DNI_Alu": "74632910", "Nomb_Alu": "Ana Lucía Vargas", "Correo_Alu": "ana.ejemplo@correo.com", "Cel_Alu": "999789789", "Fech_Nac": "2006-09-05", "_id": "74632910"}]};
+let next=10;
+let user={rol:'ALUMNO',nombre:'Ana Lucía Vargas',alumno:'74632910',cambiar:false};
+window.__demoRole=async function(role){
+  user=role==='ADMIN'?{rol:'ADMIN',nombre:'Administrador Fractales',cambiar:false}:{rol:'ALUMNO',nombre:'Ana Lucía Vargas',alumno:'74632910',cambiar:false};
+  if(role==='ADMIN')await loadMeta();
+  showApp(user);
+};
+function asResponse(data,status=200){return Promise.resolve(new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}}));}
+const realFetch=window.fetch.bind(window);
+window.fetch=async function(path,opts={}){
+ const url=String(path);
+ if(!url.startsWith('/api/'))return realFetch(path,opts);
+ const route=url.slice(4).split('?')[0];
+ if(route==='/auth/me'||route==='/auth/login'||route==='/auth/change-password')return asResponse({user});
+ if(route==='/auth/logout')return asResponse({ok:true});
+ if(route==='/meta')return asResponse({modules:allModules});
+ if(route==='/student/overview')return asResponse({
+  profile:{Nomb_Alu:'Ana Lucía Vargas',DNI_Alu:'74632910'},
+  groups:[{Nomb_Grupo:'Regular A — Mañana',Nomb_Ciclo:'Ciclo Regular 2026-II',Nomb_Programa:'Preparación preuniversitaria',ESTADO_MATRICULA_Cod_Estado_Matricula:'ACTIVA'}],
+  notes:[{Nomb_Examen:'Simulacro de admisión N.° 1',Nomb_Grupo:'Regular A',Fech_programada:'2026-10-17',Puntaje_total:725,puntaje_maximo:1000},{Nomb_Examen:'Evaluación de matemática',Nomb_Grupo:'Regular A',Fech_programada:'2026-10-10',Puntaje_total:175,puntaje_maximo:200}],
+  schedule:[{Dia_Semana:1,Hr_Inicio:'07:00',Hr_Fin:'09:00',Nomb_Curso:'Razonamiento matemático',Nom_Doc:'Docente de matemática',Nomb_Grupo:'Regular A'},{Dia_Semana:1,Hr_Inicio:'09:15',Hr_Fin:'11:15',Nomb_Curso:'Comunicación',Nom_Doc:'Docente de comunicación',Nomb_Grupo:'Regular A'},{Dia_Semana:3,Hr_Inicio:'07:00',Hr_Fin:'09:00',Nomb_Curso:'Álgebra',Nom_Doc:'Docente de álgebra',Nomb_Grupo:'Regular A'},{Dia_Semana:5,Hr_Inicio:'07:00',Hr_Fin:'09:00',Nomb_Curso:'Física',Nom_Doc:'Docente de física',Nomb_Grupo:'Regular A'}],
+  exams:[{Nomb_Examen:'Simulacro general 2026-II',Nomb_Grupo:'Regular A',Fech_programada:'2026-11-07',Hr_inicio:'08:00'},{Nomb_Examen:'Evaluación semanal',Nomb_Grupo:'Regular A',Fech_programada:'2026-11-14',Hr_inicio:'08:00'}],
+  payments:[{CONCEPTO_PAGO_Cod_Concepto:'PENSION',Nro_Mensualidad:1,Monto:250,ESTADO_PAGO_Cod_Estado:'PAGADO',Fech_Vencimiento:'2026-10-08'},{CONCEPTO_PAGO_Cod_Concepto:'PENSION',Nro_Mensualidad:2,Monto:250,ESTADO_PAGO_Cod_Estado:'PENDIENTE',Fech_Vencimiento:'2026-11-08'}]
+ });
+ if(route==='/dashboard')return asResponse({alumnos:248,matriculas:173,pendientes:16,ingresos:12450,recent:[{Nomb_Alu:'María Fernanda Gonzales',Nomb_Grupo:'Regular A - Mañana',Cod_Matricula:'M001',Fech_Matricula:'2026-10-22'},{Nomb_Alu:'Luis Alejandro Rojas',Nomb_Grupo:'Acelerado B - Tarde',Cod_Matricula:'M002',Fech_Matricula:'2026-10-21'},{Nomb_Alu:'Ana Lucía Vargas',Nomb_Grupo:'Regular A - Mañana',Cod_Matricula:'M003',Fech_Matricula:'2026-10-20'}],exams:[{Nomb_Examen:'Simulacro de admisión I',Nomb_Grupo:'Regular A',Fech_programada:'2026-11-01'},{Nomb_Examen:'Evaluación semanal',Nomb_Grupo:'Acelerado B',Fech_programada:'2026-11-07'}]});
+ if(route.startsWith('/options/')){const name=decodeURIComponent(route.split('/')[2]);let rows=(sample[name]||[]).map(row=>({value:row.DNI_Alu||row._id,label:row.Nomb_Alu||row._id,row}));return asResponse({rows});}
+ if(route.startsWith('/records/')){
+  const parts=route.split('/');const name=decodeURIComponent(parts[2]);const id=parts.length>3?decodeURIComponent(parts[3]):null;
+  const list=sample[name]||(sample[name]=[]);
+  const method=(opts.method||'GET').toUpperCase();
+  if(method==='POST'){const obj=JSON.parse(opts.body||'{}');obj._id=obj.DNI_Alu||obj.Cod_Alumno||'PREVIEW'+(next++);list.unshift(obj);return asResponse({ok:true,row:obj});}
+  if(method==='PUT'){const idx=list.findIndex(row=>row._id===id);if(idx>=0)Object.assign(list[idx],JSON.parse(opts.body||'{}'));return asResponse({ok:true});}
+  if(method==='DELETE'){const idx=list.findIndex(row=>row._id===id);if(idx>=0)list.splice(idx,1);return asResponse({ok:true});}
+  const query=new URLSearchParams(url.split('?')[1]||'');const term=(query.get('q')||'').toLowerCase();const rows=list.filter(row=>Object.values(row).some(v=>String(v).toLowerCase().includes(term)));return asResponse({rows:rows.slice(0,15),count:rows.length,page:1,pageSize:15});
+ }
+ return asResponse({error:'Función no disponible en esta vista previa.'},404);
+};
+})();
+</script><script>'use strict';
+const $=id=>document.getElementById(id);
+const fmt=new Intl.NumberFormat('es-PE',{style:'currency',currency:'PEN'});
+const state={user:null,modules:{},page:'home',q:'',pageNo:1,studentTab:'resumen',selection:null};
+const days=['','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+// Iconos SVG propios: sin librerías externas, disponibles sin conexión.
+const drawings={
+'layout-dashboard':'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+'user-round':'<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/>',
+'user-plus':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6m-3-3h6"/>',
+'clipboard':'<rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 12h6m-6 4h6"/>',
+'credit-card':'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+'calendar':'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+'book':'<path d="M12 7v14M3 18.5A2.5 2.5 0 0 1 5.5 16H12V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v13.5ZM21 18.5a2.5 2.5 0 0 0-2.5-2.5H12V5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v13.5Z"/>',
+'graduation':'<path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v7"/>',
+'clock':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+'building':'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M8 8h1m6 0h1M8 12h1m6 0h1"/>',
+'file-text':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8m-8 4h8"/>',
+'check-circle':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+'file-check':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6m-12 8 2 2 4-4"/>',
+'chart':'<path d="M3 3v18h18M7 16v-4m5 4V7m5 9v-6"/>',
+'wallet':'<rect x="2" y="6" width="20" height="15" rx="2"/><path d="M2 9h17m-2 6h2"/>',
+'award':'<circle cx="12" cy="8" r="6"/><path d="m8.3 13.4-1 8L12 19l4.7 2.4-1-8"/>',
+'file-plus':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M12 12v7m-3-3.5h6"/>',
+'settings':'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l-1.7 1.7a1.8 1.8 0 0 0-2-.4 8 8 0 0 1-2.1.9 1.8 1.8 0 0 0-1.2 1.7h-2.4a1.8 1.8 0 0 0-1.2-1.7 8 8 0 0 1-2.1-.9 1.8 1.8 0 0 0-2 .4L3.4 17a1.8 1.8 0 0 0 .4-2 8 8 0 0 1-.9-2.1A1.8 1.8 0 0 0 1.2 11h0V9a1.8 1.8 0 0 0 1.7-1.2 8 8 0 0 1 .9-2.1 1.8 1.8 0 0 0-.4-2L5.1 2a1.8 1.8 0 0 0 2 .4A8 8 0 0 1 9.2 1.5 1.8 1.8 0 0 0 10.4 0h2.4a1.8 1.8 0 0 0 1.2 1.5 8 8 0 0 1 2.1.9 1.8 1.8 0 0 0 2-.4l1.7 1.7a1.8 1.8 0 0 0-.4 2 8 8 0 0 1 .9 2.1A1.8 1.8 0 0 0 22 9v2a1.8 1.8 0 0 0-1.7 1.2A8 8 0 0 1 19.4 15Z"/>',
+'shield':'<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/>',
+'plus':'<path d="M12 5v14M5 12h14"/>',
+'pencil':'<path d="m15 5 4 4M4 20l5-1 11-11a2.8 2.8 0 0 0-4-4L5 15l-1 5Z"/>',
+'trash':'<path d="M3 6h18m-2 0-1 15H6L5 6m3 0V3h8v3m-6 4v7m4-7v7"/>',
+'search':'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+'alert':'<path d="m12 3 10 18H2L12 3Zm0 6v5m0 4h.01"/>',
+'arrow-up-right':'<path d="M7 17 17 7M8 7h9v9"/>',
+'arrow-right':'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+'sliders':'<path d="M4 7h16M4 17h16M9 4v6m6 4v6"/>',
+'sparkles':'<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Zm7 13 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z"/>',
+'folder':'<path d="M3 6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z"/>',
+'heart':'<path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.8l-1-1.2a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>'
+};
+function ico(name,size=18){const shapes=drawings[name]||drawings.folder;return `<svg class="inline-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${shapes}</svg>`;}
+const navIcons={home:'layout-dashboard',ALUMNO:'users',MATRICULA:'clipboard',Pago:'wallet',Docente:'graduation',Grupo:'users',Horario:'calendar',Examen:'file-check',Examen_Grupo:'file-text',Nota_Examen:'award',Ciclo:'clock',Programa:'book',CURSOS:'book',Docente_Asignatura:'graduation',CARRERA:'graduation',Turno:'clock',Aula:'building',Usuario:'user-round',ROL:'shield'};
+const pretty={DNI_Alu:'DNI del estudiante',Nomb_Alu:'Nombres y apellidos',Correo_Alu:'Correo electrónico',Fech_Nac:'Fecha de nacimiento',Cel_Alu:'Celular',Dir_Alu:'Dirección',Nomb_Apoderado:'Nombre del apoderado',DNI_Apoderado:'DNI del apoderado',Cel_Apoderado:'Celular del apoderado',Correo_Apoderado:'Correo del apoderado',PARENTESCO_Cod_Paren:'Parentesco',CARRERA_Cod_Carrera:'Carrera de interés',DNI_Doc:'DNI del docente',Nom_Doc:'Nombres del docente',Cel_Doc:'Celular',Nomb_Usuario:'Usuario de acceso',ALUMNO_DNI_Alu:'Estudiante',ROL_Cod_Rol:'Rol de usuario',Fech_Matricula:'Fecha de matrícula',Grupo_Cod_Grupo:'Grupo académico',Ciclo_Cod_Ciclo:'Ciclo académico',Aula_Cod_Aula:'Aula',Turno_Cod_Turno:'Turno',Programa_Cod_Programa:'Programa académico',ESTADO_CICLO_Cod_Estado:'Estado del ciclo',ESTADO_MATRICULA_Cod_Estado_Matricula:'Estado de matrícula',ESTADO_PAGO_Cod_Estado:'Estado de pago',CONCEPTO_PAGO_Cod_Concepto:'Concepto de pago',Nro_Mensualidad:'Número de mensualidad',Monto:'Monto (S/)',Medio_Pago:'Medio de pago',Fech_Pago:'Fecha y hora del pago',Fech_Vencimiento:'Fecha de vencimiento',MATRICULA_Cod_Matricula:'Matrícula relacionada',Usuario_Cod_Usuario:'Usuario que registró el cobro',Dia_Semana:'Día de la semana',Hr_Inicio:'Hora de inicio',Hr_Fin:'Hora de término',TIPO_BLOQUE_Cod_Tipo:'Tipo de bloque',Docente_Asignatura_CURSOS_Cod_Curso:'Curso',Docente_Asignatura_Docente_DNI_Doc:'Docente asignado',CURSOS_Cod_Curso:'Curso',Docente_DNI_Doc:'Docente',Examen_Cod_Examen:'Simulacro',Examen_Grupo_Cod_examen_grupo:'Simulacro asignado',ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen:'Estado del simulacro',Publicado:'Publicar resultados a estudiantes',Nro_Mensualidades:'Número de pensiones',Precio_Mensual:'Precio mensual (S/)',puntaje_maximo:'Puntaje máximo',Puntaje_total:'Puntaje obtenido',Cupo_Max:'Cupo máximo',Capacidad:'Capacidad del aula',Fech_Inicio:'Fecha de inicio',Fech_Fin:'Fecha de finalización',Fech_programada:'Fecha programada',Hr_inicio:'Hora del examen',Duracion_minutos:'Duración (minutos)',Fech_registro:'Fecha de registro',Cod_Nota:'Código de nota'};
+function label(k){if(pretty[k])return pretty[k];return k.replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^Cod /i,'Código de ').replace(/\b\w/g,c=>c.toUpperCase());}
+function esc(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function fmtDate(value){if(!value)return '—';const s=String(value).slice(0,10);const parts=s.split('-');return parts.length===3?`${parts[2]}/${parts[1]}/${parts[0]}`:s;}
+function fmtTime(value){if(value==null)return '—';const s=String(value);return s.includes('T')?s.slice(11,16):s.slice(0,5);}
+function display(v,k){if(v===null||v===undefined||v==='')return '<span class="muted">—</span>';if(typeof v==='boolean')return `<span class="tag ${v?'good':'bad'}">${v?'Sí':'No'}</span>`;if(k==='Dia_Semana')return esc(days[Number(v)]||v);if(k.startsWith('Fech')||k==='Fech_registro')return fmtDate(v);if(k.toLowerCase().startsWith('hr_'))return fmtTime(v);if(k==='Monto'||k==='Precio_Mensual')return fmt.format(v);if(/^(ESTADO_|Estado$|Modalidad$)/.test(k)){const c=['PAGADO','ACTIVA','ACTIVO','RENDIDO','REGULAR'].includes(v)?'good':['PENDIENTE','PROGRAMADO'].includes(v)?'warn':'info';return `<span class="tag ${c}">${esc(v)}</span>`;}const t=String(v);return esc(t.length>56?t.slice(0,55)+'…':t);}
+async function api(route,options={}){
+  const response=await fetch('/api'+route,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...options});
+  let data;try{data=await response.json();}catch{throw Error('El servidor no devolvió una respuesta válida.');}
+  if(!response.ok){if(response.status===401&&state.user){state.user=null;showLogin();}throw Error(data.error||`Error ${response.status}`);}
+  return data;
+}
+let toastTimer;function toast(text,bad=false){const el=$('toast');el.innerHTML=`<span class="toast-symbol">${bad?'!':'✓'}</span><span>${esc(text)}</span>`;el.className='toast open'+(bad?' error':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='toast',4300);}
+function showLogin(){state.user=null;$('appView').hidden=true;$('loginView').hidden=false;closeModal();document.title='Iniciar sesión · Fractales Academy';}
+function showApp(user){state.user=user;$('appView').hidden=false;$('loginView').hidden=true;$('roleBadge').textContent=user.rol==='ADMIN'?'Administrador':'Estudiante';$('avatarInitials').textContent=user.nombre.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();$('profileName').textContent=user.nombre;renderNav();navigate('home');if(user.cambiar)passwordModal(true);}
+async function boot(){
+  $('today').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'}); $('loginYear').textContent=$('footerYear').textContent=new Date().getFullYear();
+  $('loginForm').addEventListener('submit',async(e)=>{e.preventDefault();const btn=$('loginSubmit');btn.disabled=true;$('loginError').hidden=true;try{const data=await api('/auth/login',{method:'POST',body:JSON.stringify({usuario:$('loginUser').value,clave:$('loginPass').value})});$('loginPass').value='';if(data.user.rol==='ADMIN')await loadMeta();showApp(data.user);}catch(err){$('loginError').textContent=err.message;$('loginError').hidden=false;}finally{btn.disabled=false;}});
+  $('togglePass').onclick=()=>{const inp=$('loginPass');inp.type=inp.type==='password'?'text':'password';$('togglePass').textContent=inp.type==='password'?'Mostrar':'Ocultar';};
+  $('logoutButton').onclick=logout;$('profileButton').onclick=()=>passwordModal(false);
+  $('menuButton').onclick=()=>openMenu(true);$('mobileOverlay').onclick=()=>openMenu(false);$('closeSidebar').onclick=()=>openMenu(false);$('quickFindButton').onclick=openQuickFind;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!state.user?.cambiar)closeModal();openMenu(false);}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'&&state.user){e.preventDefault();openQuickFind();}});
+  try {const d=await api('/auth/me');if(d.user.rol==='ADMIN')await loadMeta();showApp(d.user);}catch{showLogin();}
+}
+async function loadMeta(){const m=await api('/meta');state.modules=Object.fromEntries(m.modules.map(x=>[x.name,x]));}
+async function logout(){try{await api('/auth/logout',{method:'POST',body:'{}'});}catch{}showLogin();}
+function openMenu(value){$('sidebar').classList.toggle('open',value);$('mobileOverlay').hidden=!value;$('menuButton').setAttribute('aria-expanded',String(value));if(value)$('closeSidebar').focus();}
+function navItem(id,title){return `<button type="button" class="nav-item ${state.page===id?'active':''}" ${state.page===id?'aria-current="page"':''} data-nav="${esc(id)}"><span class="nav-ico">${ico(navIcons[id]||'folder')}</span><span>${esc(title)}</span></button>`;}
+function renderNav(){let html='<div class="nav-label">PRINCIPAL</div>'+navItem('home',state.user.rol==='ADMIN'?'Panel general':'Mi espacio');if(state.user.rol==='ADMIN'){let last='';for(const m of Object.values(state.modules)){if(m.category!==last){last=m.category;html+=`<div class="nav-label">${esc(last)}</div>`;}html+=navItem(m.name,m.label);}}else{html+=`<div class="nav-label">ACCESOS</div>${navItem('student-notes','Mis resultados')}${navItem('student-schedule','Mi horario')}${navItem('student-payments','Mis pagos')}`;}
+  $('navContent').innerHTML=html;$('navContent').querySelectorAll('[data-nav]').forEach(el=>el.onclick=()=>navigate(el.dataset.nav));}
+function header(crumb,title){$('crumb').textContent=crumb.toUpperCase();$('pageTitle').textContent=title;document.title=`${title} · Fractales Academy`;}
+async function navigate(id,page=1){openMenu(false);state.page=id;state.pageNo=page;state.q='';renderNav();$('content').innerHTML='<div class="loading">Preparando tu espacio…</div>';
+  try{if(state.user.cambiar){$('content').innerHTML='<div class="helper">Para empezar debes cambiar tu contraseña temporal.</div>';return;}
+    if(state.user.rol==='ALUMNO')await studentView(id);
+    else if(id==='home')await dashboard();else await tableView(id);
+  }catch(e){$('content').innerHTML=`<div class="panel empty-state"><span class="big">⚠</span><strong>No se pudo cargar esta sección</strong>${esc(e.message)}<br><button class="btn btn-secondary" id="retryBtn">Reintentar</button></div>`;$('retryBtn').onclick=()=>navigate(id);}
+}
+async function dashboard(){
+  header('Inicio','Panel general');
+  const d=await api('/dashboard');
+  const userName=state.user.nombre.trim().split(/\s+/)[0];
+  const when=new Date().getHours(),greeting=when<12?'Buenos días':when<19?'Buenas tardes':'Buenas noches';
+  const kpis=[
+    {label:'Estudiantes registrados',value:d.alumnos,icon:'users',hint:'Alumnos en la base de datos'},
+    {label:'Matrículas activas',value:d.matriculas,icon:'clipboard',hint:'Inscripciones vigentes'},
+    {label:'Pagos pendientes',value:d.pendientes,icon:'credit-card',hint:'Cobros por gestionar'},
+    {label:'Ingresos del mes',value:fmt.format(d.ingresos),icon:'chart',hint:'Pagos confirmados del mes'}
+  ];
+  $('content').innerHTML=`
+    <div class="welcome-line"><div><span class="eyebrow">VISTA GENERAL</span><h2>${greeting}, ${esc(userName)} <span aria-hidden="true">✦</span></h2><p>Todo lo que sucede en tu academia, en un solo lugar.</p></div><span class="today-chip">${ico('calendar',14)} ${esc(new Date().toLocaleDateString('es-PE',{day:'numeric',month:'long',year:'numeric'}))}</span></div>
+    <section class="banner-card"><div class="banner-copy"><span class="eyebrow">FRACTALES ACADEMY / GESTIÓN ACADÉMICA</span><h2>Un gran futuro<br><span>se construye hoy.</span></h2><p>Organiza estudiantes, matrículas y clases desde tu espacio de trabajo.</p><button class="banner-mini-btn" data-jump="MATRICULA">Gestionar matrículas ${ico('arrow-up-right',14)}</button></div><div class="banner-photo"><img src="public/assets/banner-fractales.png" alt="Campaña institucional Fractales Academy"></div></section>
+    <div class="stats-grid">${kpis.map(k=>`<div class="stat-card"><div class="stat-top"><span>${esc(k.label)}</span><div class="stat-icon">${ico(k.icon)}</div></div><div class="stat-value">${esc(k.value)}</div><div class="stat-hint">${esc(k.hint)}</div></div>`).join('')}</div>
+    <div class="section-grid">
+      <section class="panel"><div class="panel-head"><div><h3>Últimas matrículas</h3><p>Movimientos recientes de inscripción</p></div><button data-jump="MATRICULA" class="link-action">Ver todas ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.recent.length?d.recent.map(x=>`<div class="item-row"><div class="item-icon">${ico('user-round')}</div><div class="item-row-content"><strong>${esc(x.Nomb_Alu)}</strong><small>${esc(x.Nomb_Grupo)} · ${esc(x.Cod_Matricula)}</small></div><span class="tag">${fmtDate(x.Fech_Matricula)}</span></div>`).join(''):emptyInline('Todavía no hay matrículas recientes.')}</div></section>
+      <section class="panel"><div class="panel-head"><div><h3>Agenda de simulacros</h3><p>Próximas evaluaciones programadas</p></div><button data-jump="Examen_Grupo" class="link-action">Ver agenda ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.exams.length?d.exams.map(x=>`<div class="item-row"><div class="item-icon">${ico('file-check')}</div><div class="item-row-content"><strong>${esc(x.Nomb_Examen)}</strong><small>${esc(x.Nomb_Grupo)}</small></div><span class="tag warn">${fmtDate(x.Fech_programada)}</span></div>`).join(''):emptyInline('No hay simulacros próximos en el calendario.')}</div></section>
+    </div>
+    <h3 class="dashboard-section-title">${ico('sparkles',18)} Accesos rápidos</h3><div class="quick-actions">${[
+      ['ALUMNO','Nuevo estudiante','user-plus'],['MATRICULA','Nueva matrícula','clipboard'],['Pago','Registrar pago','wallet'],['Horario','Gestionar horarios','calendar']
+    ].map(([key,value,iconName])=>`<button class="quick-action" data-jump="${key}"><span class="quick-action-symbol">${ico(iconName,18)}</span><span>${value}</span><span class="quick-action-arrow">↗</span></button>`).join('')}</div>`;
+  $('content').querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>navigate(b.dataset.jump));
+}
+function emptyInline(msg){return `<div class="empty-state" style="padding:24px 8px">${esc(msg)}</div>`;}
+function columnsFor(m){const ordered=[...m.display,...m.columns.map(c=>c.name)];return [...new Set(ordered)].filter(k=>!['Clave_Hash','Observaciones','Descripcion','Dir_Alu'].includes(k)).slice(0,6);}
+let searchDebounce;
+async function tableView(id){
+  const m=state.modules[id];if(!m)throw Error('Módulo no encontrado.');header(m.category,m.label);
+  const url=`/records/${encodeURIComponent(id)}?page=${state.pageNo}&q=${encodeURIComponent(state.q)}`;
+  const data=await api(url);const cols=columnsFor(m);
+  $('content').innerHTML=`
+    <div class="module-header"><div><span class="eyebrow">${esc(m.category)} / ADMINISTRACIÓN</span><h2>${esc(m.label)}</h2><p>Organiza, consulta y actualiza la información de este módulo.</p></div><button class="btn btn-primary" id="addRecord">${ico('plus',16)} Crear registro</button></div>
+    ${id==='Horario'?'<div class="helper"><strong>Control de horarios:</strong> se validan los cruces por grupo, aula y docente, considerando el ciclo y el turno.</div>':''}
+    ${id==='Pago'?'<div class="helper"><strong>Política de cobros:</strong> verifica conceptos, matrícula inicial y mensualidades según las restricciones de SQL Server.</div>':''}
+    <section class="panel"><div class="module-toolbar"><div class="search-wrap"><span aria-hidden="true">⌕</span><input class="search-input" type="search" id="searchRecords" value="${esc(state.q)}" placeholder="Buscar por nombre o código…" aria-label="Buscar registros"></div><span class="search-meta">${Number(data.count).toLocaleString('es-PE')} registros</span></div>
+    ${data.rows.length?`<div class="table-scroll"><table><thead><tr>${cols.map(c=>`<th scope="col">${esc(label(c))}</th>`).join('')}<th scope="col">Acciones</th></tr></thead><tbody>${data.rows.map(row=>`<tr>${cols.map((col,i)=>`<td class="${i===0?'td-title':''}">${display(row[col],col)}</td>`).join('')}<td><div class="actions-cell"><button class="btn btn-secondary btn-sm" data-edit="${esc(row._id)}" aria-label="Editar registro">${ico('pencil',13)} Editar</button><button class="btn btn-danger btn-sm" data-delete="${esc(row._id)}" aria-label="Eliminar registro">${ico('trash',13)} Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><span class="big">${ico('folder',26)}</span><strong>Sin registros ${state.q?'para esta búsqueda':''}</strong><p>${state.q?'Prueba con otro nombre o código.':'Todavía no hay datos aquí. Crea tu primer registro para empezar.'}</p></div>`}
+    <div class="table-bottom"><span>Página ${state.pageNo} de ${Math.max(1,Math.ceil(data.count/data.pageSize))}</span><div class="pager"><button id="prevPage" ${state.pageNo===1?'disabled':''}>← Anterior</button><button id="nextPage" ${state.pageNo*data.pageSize>=data.count?'disabled':''}>Siguiente →</button></div></div></section>`;
+  $('addRecord').onclick=()=>recordModal(m,null);
+  $('searchRecords').addEventListener('input',e=>{const q=e.target.value;const pos=e.target.selectionStart;clearTimeout(searchDebounce);searchDebounce=setTimeout(async()=>{
+    state.q=q;state.pageNo=1;try{await tableView(id);const input=$('searchRecords');if(input&&document.activeElement!==input){input.focus();try{input.setSelectionRange(pos,pos);}catch{}}}catch(err){toast(err.message,true);}
+  },400);});
+  $('prevPage').onclick=()=>{state.pageNo--;tableView(id).catch(e=>toast(e.message,true));};
+  $('nextPage').onclick=()=>{state.pageNo++;tableView(id).catch(e=>toast(e.message,true));};
+  $('content').querySelectorAll('[data-edit]').forEach(btn=>btn.onclick=()=>{const row=data.rows.find(x=>x._id===btn.dataset.edit);if(row)recordModal(m,row);});
+  $('content').querySelectorAll('[data-delete]').forEach(btn=>btn.onclick=()=>{const row=data.rows.find(x=>x._id===btn.dataset.delete);if(row)deleteModal(m,row);});
+}
+let modalFocusOrigin=null;function modal(title,sub,body,footer){modalFocusOrigin=document.activeElement;$('modalRoot').hidden=false;document.body.classList.add('modal-open');$('modalRoot').innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modal-head"><div><h2>${esc(title)}</h2><p>${esc(sub||'')}</p></div><button class="close-modal" aria-label="Cerrar">×</button></div>${body}${footer||''}</div>`;
+  $('modalRoot').querySelector('.close-modal').onclick=closeModal;setTimeout(()=>$('modalRoot').querySelector('input,button')?.focus(),0);}
+function closeModal(){const root=$('modalRoot');root.hidden=true;root.innerHTML='';document.body.classList.remove('modal-open');if(modalFocusOrigin?.isConnected)modalFocusOrigin.focus();modalFocusOrigin=null;}
+function initialValue(col,m,existing){if(existing)return existing[col.name];const key=col.name;
+  if(key==='ESTADO_MATRICULA_Cod_Estado_Matricula')return 'ACTIVA';
+  if(key==='ESTADO_PAGO_Cod_Estado')return 'PENDIENTE';
+  if(key==='ESTADO_CICLO_Cod_Estado'||key==='ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen')return 'PROGRAMADO';
+  if(key==='Modalidad')return 'REGULAR';if(key==='Nro_Mensualidades')return 4;
+  if(key==='Precio_Mensual')return 250;
+  if(key==='ROL_Cod_Rol')return 'ALUMNO';
+  if(key==='Activo'||key==='Activa'||key==='activo')return true;
+  if(key==='Fech_Matricula')return new Date().toISOString().slice(0,10);
+  if(key==='Publicado'||key==='Debe_Cambiar_Clave')return false;
+  return '';
+}
+function htmlValue(v,col){if(v==null)return '';if(col.type==='time')return fmtTime(v);if(col.type==='date')return String(v).slice(0,10);if(col.type==='datetime2')return String(v).slice(0,16);return String(v);}
+function selectOptions(field,value){let opts=[];
+  if(field.name==='Modalidad')opts=['REGULAR','ACELERADO'];
+  if(field.name==='Medio_Pago')opts=['YAPE','EFECTIVO','TARJETA'];
+  if(field.name==='Estado'&&state.page==='Examen_Grupo')opts=['PROGRAMADO','RENDIDO','CANCELADO'];
+  if(field.name==='Dia_Semana')opts=[1,2,3,4,5,6,7];
+  return opts.map(v=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${field.name==='Dia_Semana'?days[v]:esc(v)}</option>`).join('');
+}
+function formControl(col,m,existing){const name=col.name;
+  if(name==='Usuario_Cod_Usuario'&&m.name==='Pago')return '';
+  if(name==='Fech_Pago'&&m.name==='Pago')return '';
+  if(name==='Estado'&&m.name==='Examen_Grupo')return '';
+  if(name==='Clave_Hash')return '';
+  const v=initialValue(col,m,existing);
+  const pkAuto=!existing&&col.pk&&m.pk.length===1&&/^Cod_/i.test(name)&&!['ROL','TIPO_BLOQUE','CONCEPTO_PAGO','ESTADO_CICLO','ESTADO_EXAMEN_GRUPO','ESTADO_MATRICULA','ESTADO_PAGO','PARENTESCO','Programa'].includes(m.name);
+  const required=col.required&&!col.default&&!pkAuto&&!existing;
+  const mark=required?'<span class="required-mark"> *</span>':'';
+  const inpBase=`name="${esc(name)}" id="field-${esc(name)}" data-field="${esc(name)}" ${required?'required':''} ${existing&&col.pk?'disabled':''}`;
+  let el='';
+  if(col.references){el=`<select ${inpBase}><option value="">${col.required?'Selecciona una opción':'Sin asignar'}</option>${v!==''&&v!=null?`<option value="${esc(v)}" selected>${esc(v)}</option>`:''}</select>`;}
+  else if(col.type==='bit')el=`<select ${inpBase}><option value="true" ${v===true||v===1?'selected':''}>Sí</option><option value="false" ${v===false||v===0||v===''?'selected':''}>No</option></select>`;
+  else if(['Dia_Semana','Modalidad','Medio_Pago'].includes(name))el=`<select ${inpBase}>${name==='Medio_Pago'?'<option value="">Sin especificar</option>':''}${selectOptions(col,v)}</select>`;
+  else if(['Descripcion','Observaciones','Dir_Alu'].includes(name))el=`<textarea ${inpBase} maxlength="${col.length||250}" placeholder="Escribe aquí…">${esc(htmlValue(v,col))}</textarea>`;
+  else {const type=col.type==='date'?'date':col.type==='time'?'time':col.type==='datetime2'?'datetime-local':['tinyint','smallint','decimal'].includes(col.type)?'number':'text';
+    const num=type==='number'?` min="0" step="${col.type==='decimal'?'0.01':'1'}"`:'';
+    el=`<input ${inpBase} type="${type}" ${num} ${col.length&&type==='text'?`maxlength="${col.length}"`:''} value="${esc(htmlValue(v,col))}" placeholder="${pkAuto?'Automático si lo dejas vacío':`Ingresa ${label(name).toLowerCase()}`}">`;
+  }
+  const note=pkAuto?'<div class="field-note">Opcional: se genera un código único automáticamente.</div>':null;
+  return `<div class="field ${['Descripcion','Observaciones','Dir_Alu'].includes(name)?'full':''}"><label for="field-${esc(name)}">${esc(label(name))}${mark}</label>${el}${note||''}</div>`;
+}
+async function recordModal(m,record){const creating=!record;const body=`<form id="recordForm"><div class="form-grid">${m.columns.map(c=>formControl(c,m,record)).join('')}${m.name==='Usuario'?`<div class="field full"><label for="newSecret">${creating?'Contraseña inicial *':'Nueva contraseña (opcional)'}</label><input type="password" id="newSecret" minlength="12" maxlength="72" ${creating?'required':''} autocomplete="new-password" placeholder="Mínimo 12 caracteres"><div class="field-note">Las contraseñas se almacenan cifradas, nunca como texto legible.</div></div>`:''}</div><div class="form-actions"><button class="btn btn-secondary" type="button" id="cancelRecord">Cancelar</button><button class="btn btn-primary" id="saveRecord" type="submit">${creating?'Crear registro':'Guardar cambios'} →</button></div></form>`;
+  modal(creating?'Nuevo registro':'Editar registro',m.label,body);
+  $('cancelRecord').onclick=closeModal;
+  const refs=m.columns.filter(c=>c.references).map(c=>({field:c.name,ref:c.references.table,refCol:c.references.column}));
+  await Promise.all(refs.map(async({field,ref,refCol})=>{
+    const select=$('field-'+field);if(!select)return;
+    try{const result=await api(`/options/${encodeURIComponent(ref)}?valueCol=${encodeURIComponent(refCol)}`);if($('field-'+field)!==select)return;
+      const old=select.value;
+      const opts=[...select.options].filter(o=>!o.value).map(o=>o.outerHTML).join('');
+      select.innerHTML=opts+result.rows.map(opt=>`<option value="${esc(opt.value)}">${esc(opt.label)}</option>`).join('');
+      if(old&&!result.rows.some(r=>String(r.value)===old))select.innerHTML+=`<option value="${esc(old)}">${esc(old)}</option>`;
+      select.value=old;
+    }catch(err){toast(`No se cargaron opciones de ${ref}: ${err.message}`,true);}
+  }));
+  const cycle=$('field-Modalidad');if(cycle)cycle.addEventListener('change',()=>{if(!record&&$('field-Nro_Mensualidades'))$('field-Nro_Mensualidades').value=cycle.value==='ACELERADO'?2:4;});
+  const eg=$('field-Examen_Grupo_Cod_examen_grupo');if(eg&&m.name==='Nota_Examen')eg.addEventListener('change',async()=>{if(!eg.value)return;try{const d=await api(`/options/Examen_Grupo?q=${encodeURIComponent(eg.value)}`);const match=d.rows.find(x=>x.value===eg.value);if(match&&$('field-Grupo_Cod_Grupo'))$('field-Grupo_Cod_Grupo').value=match.row.Grupo_Cod_Grupo;}catch{}});
+  // El usuario puede cerrar la ventana mientras se cargan los catálogos.
+  if(!$('recordForm'))return;
+  $('recordForm').addEventListener('submit',async(e)=>{e.preventDefault();const data={};
+    for(const c of m.columns){const el=$('field-'+c.name);if(!el||el.disabled)continue;let v=el.value;
+      if(v==='') {if(c.required&&!c.pk&&!c.default) {toast(`Completa ${label(c.name)}.`,true);return;}if(c.pk&&!record)continue; v=null;}
+      else if(c.type==='bit')v=v==='true';
+      else if(['tinyint','smallint','decimal'].includes(c.type))v=Number(v);
+      data[c.name]=v;
+    }
+    if(m.name==='Usuario'){const secret=$('newSecret').value;if(secret)data.Nueva_Clave=secret;}
+    const btn=$('saveRecord');btn.disabled=true;btn.textContent='Guardando…';
+    try{const url=`/records/${encodeURIComponent(m.name)}${record?'/'+encodeURIComponent(record._id):''}`;
+      await api(url,{method:record?'PUT':'POST',body:JSON.stringify(data)});closeModal();toast(record?'Registro actualizado correctamente.':'Registro creado correctamente.');await tableView(m.name);
+    }catch(err){toast(err.message,true);}finally{if(btn.isConnected){btn.disabled=false;btn.textContent=record?'Guardar cambios':'Crear registro';}}
+  });
+}
+function deleteModal(m,record){const desc=m.display.map(k=>record[k]).filter(Boolean).join(' · ');
+  modal('Confirmar eliminación',m.label,`<div class="panel-inner"><p>¿Quieres eliminar <strong>${esc(desc)}</strong>?</p><p class="muted">Si el registro tiene información relacionada, SQL Server impedirá eliminarlo. Para usuarios se recomienda desactivar la cuenta.</p></div>`, `<div class="form-actions"><button id="deleteCancel" class="btn btn-secondary">Cancelar</button><button id="deleteConfirm" class="btn btn-danger">Sí, eliminar</button></div>`);
+  $('deleteCancel').onclick=closeModal;
+  $('deleteConfirm').onclick=async()=>{try{await api(`/records/${encodeURIComponent(m.name)}/${encodeURIComponent(record._id)}`,{method:'DELETE',body:'{}'});closeModal();toast('Registro eliminado.');await tableView(m.name);}catch(e){toast(e.message,true);}};
+}
+function passwordModal(force){modal('Seguridad de tu cuenta',force?'Es obligatorio cambiar la contraseña inicial.':'Actualiza tu contraseña de acceso.',`<form id="passwordForm"><div class="form-grid"><div class="field full"><label>Contraseña actual *</label><input type="password" name="actual" required autocomplete="current-password"></div><div class="field full"><label>Nueva contraseña *</label><input type="password" name="nueva" minlength="12" maxlength="72" required autocomplete="new-password"></div></div><p class="password-info">Utiliza al menos 12 caracteres. No compartas tu contraseña con otras personas.</p><div class="form-actions"><button type="submit" class="btn btn-primary">Actualizar contraseña</button></div></form>`);
+  if(force){$('modalRoot').querySelector('.close-modal').hidden=true;} $('passwordForm').onsubmit=async(e)=>{e.preventDefault();const fd=new FormData(e.currentTarget);try{const d=await api('/auth/change-password',{method:'POST',body:JSON.stringify(Object.fromEntries(fd.entries()))});state.user=d.user;closeModal();toast('Contraseña actualizada.');navigate('home');}catch(err){toast(err.message,true);}};
+}
+function panel(title,subtitle,columns,rows){return `<section class="panel wide-panel"><div class="panel-head"><div><h3>${esc(title)}</h3><p>${esc(subtitle)}</p></div><span class="tag">${rows.length} registros</span></div>${rows.length?`<div class="table-scroll"><table><thead><tr>${columns.map(x=>`<th>${esc(x[1])}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${columns.map(([key])=>`<td>${display(row[key],key)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:emptyInline('Aún no hay información disponible.')}</section>`;}
+function studentWelcome(){
+  const hour=new Date().getHours();
+  return hour<12?'¡Buenos días':hour<19?'¡Buenas tardes':'¡Buenas noches';
+}
+function schoolTag(value){return `<span class="pill-soft">${esc(value||'Sin asignar')}</span>`;}
+function statStudent(title,value,subtitle,icon,style='orange'){
+  return `<article class="student-metric ${style}"><div class="student-metric-symbol">${ico(icon,20)}</div><p>${esc(title)}</p><strong>${esc(value)}</strong><small>${esc(subtitle)}</small></article>`;
+}
+function studentEmpty(icon,title,text){return `<div class="student-empty">${ico(icon,28)}<strong>${esc(title)}</strong><p>${esc(text)}</p></div>`;}
+function studentGroupCard(g){return `<article class="student-group-card"><div class="group-tile-art">${ico('graduation',26)}</div><div><span class="tiny-label">MI GRUPO</span><h4>${esc(g.Nomb_Grupo||'Grupo asignado')}</h4><p>${esc(g.Nomb_Ciclo||'Ciclo')} · ${esc(g.Nomb_Programa||'Programa')}</p></div>${schoolTag(g.ESTADO_MATRICULA_Cod_Estado_Matricula)}</article>`;}
+function studentResults(d){
+  if(!d.notes.length)return studentEmpty('award','Tus notas aparecerán aquí','Verás los puntajes de simulacros cuando la academia los publique.');
+  return `<div class="student-result-list">${d.notes.map(n=>{
+    const score=Number(n.Puntaje_total),maximum=Number(n.puntaje_maximo);
+    const ok=Number.isFinite(score)&&Number.isFinite(maximum)&&maximum>0;
+    const width=ok?Math.max(0,Math.min(100,score/maximum*100)):0;
+    return `<article class="student-result"><div class="student-result-head"><div><span class="tiny-label">SIMULACRO PUBLICADO</span><h4>${esc(n.Nomb_Examen||'Evaluación')}</h4><p>${esc(n.Nomb_Grupo||'')} · ${fmtDate(n.Fech_programada)}</p></div><div class="result-score"><strong>${esc(n.Puntaje_total)}</strong><small>${ok?'de '+esc(n.puntaje_maximo)+' puntos':'puntos'}</small></div></div>${ok?`<div class="student-progress-track" role="progressbar" aria-label="Porcentaje de puntaje en ${esc(n.Nomb_Examen)}" aria-valuenow="${Math.round(width)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${width}%"></span></div>`:''}</article>`;
+  }).join('')}</div>`;
+}
+function studentCalendar(d){
+  if(!d.schedule.length)return studentEmpty('calendar','Sin horarios publicados','Tus clases se mostrarán cuando la academia registre un horario para tu grupo.');
+  const grouped=new Map();
+  for(const item of d.schedule){const day=Number(item.Dia_Semana);const name=days[day]||String(item.Dia_Semana||'Día');if(!grouped.has(name))grouped.set(name,[]);grouped.get(name).push(item);}
+  return `<div class="student-timetable">${[...grouped].map(([day,rows])=>`<section class="student-day"><div class="student-day-title"><span class="day-dot"></span><h4>${esc(day)}</h4><span>${rows.length} ${rows.length===1?'bloque':'bloques'}</span></div><div class="student-classes">${rows.map(r=>`<article class="student-class"><span class="class-clock">${ico('clock',15)} ${fmtTime(r.Hr_Inicio)}–${fmtTime(r.Hr_Fin)}</span><div><strong>${esc(r.Nomb_Curso||'Bloque académico')}</strong><small>${esc(r.Nom_Doc||'Docente por confirmar')} · ${esc(r.Nomb_Grupo||'')}</small></div></article>`).join('')}</div></section>`).join('')}</div>`;
+}
+function studentPaymentCard(p){
+ const status=String(p.ESTADO_PAGO_Cod_Estado||'').toUpperCase();
+ const statusClass=status==='PAGADO'?'paid':status==='PENDIENTE'?'pending':'neutral';
+ return `<article class="student-payment"><div class="payment-icon">${ico('credit-card',20)}</div><div class="payment-details"><strong>${esc(p.CONCEPTO_PAGO_Cod_Concepto||'Concepto académico')}${p.Nro_Mensualidad?' · Mes '+esc(p.Nro_Mensualidad):''}</strong><small>Vencimiento: ${fmtDate(p.Fech_Vencimiento)}</small></div><div class="payment-amount"><b>${fmt.format(Number(p.Monto)||0)}</b><span class="payment-status ${statusClass}">${esc(status||'SIN ESTADO')}</span></div></article>`;
+}
+async function studentView(page){
+  header('Portal del estudiante','Mi espacio académico');
+  const d=await api('/student/overview');
+  const first=String(d.profile?.Nomb_Alu||state.user.nombre||'Estudiante').trim().split(/\s+/)[0];
+  const now=new Date();
+  const tabs=[['resumen','Inicio','layout-dashboard'],['horario','Mi horario','calendar'],['notas','Mis notas','award'],['pagos','Mis pagos','credit-card']];
+  let tab=page==='student-notes'?'notas':page==='student-schedule'?'horario':page==='student-payments'?'pagos':'resumen';
+  const pending=d.payments.filter(x=>String(x.ESTADO_PAGO_Cod_Estado).toUpperCase()==='PENDIENTE');
+  const headline=`${studentWelcome()}, ${esc(first)}!`;
+  $('content').innerHTML=`<div class="student-page"><section class="student-welcome">
+     <div class="student-welcome-overlay"></div><div class="student-floating-spark spark-one" aria-hidden="true">✦</div><div class="student-floating-spark spark-two" aria-hidden="true">✳</div>
+     <div class="student-welcome-copy"><span class="student-eyebrow"><i></i> TU ESPACIO DE APRENDIZAJE</span><h2>${headline} <span class="student-hello-hand" aria-hidden="true">👋</span></h2><p>Un paso a la vez, estás construyendo tu futuro. Aquí tienes todo para organizar tu camino académico.</p><div class="student-hero-actions"><button type="button" class="student-hero-button" data-student-go="horario">Ver mis clases ${ico('arrow-right',15)}</button><span class="student-date">${ico('calendar',15)} ${esc(now.toLocaleDateString('es-PE',{day:'numeric',month:'long'}))}</span></div></div>
+     <div class="student-floating-note" aria-hidden="true"><span>✦</span><strong>Hoy cuenta</strong><small>Sigue avanzando</small></div>
+  </section>
+  <nav class="student-tabs student-modern-tabs" aria-label="Secciones del estudiante">${tabs.map(([key,label,iconName])=>`<button type="button" class="student-tab ${tab===key?'active':''}" data-tab="${key}" ${tab===key?'aria-current="page"':''}>${ico(iconName,17)}<span>${label}</span></button>`).join('')}</nav>
+  <div id="studentContent" class="student-content" aria-live="polite"></div></div>`;
+  const root=$('content');
+  function switchTab(key){tab=key;root.querySelectorAll('[data-tab]').forEach(btn=>{const selected=btn.dataset.tab===tab;btn.classList.toggle('active',selected);if(selected)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current');});renderTab();}
+  root.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
+  root.querySelectorAll('[data-student-go]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.studentGo)));
+  function studentSection(title,caption,body,action){return `<section class="student-block"><div class="student-block-heading"><div><span class="tiny-label">FRACTALES ACADEMY</span><h3>${esc(title)}</h3><p>${esc(caption)}</p></div>${action||''}</div>${body}</section>`;}
+  function renderTab(){let content='';
+    if(tab==='resumen'){
+      content=`<div class="student-kpis">${statStudent('Mis grupos',d.groups.length,'Matrículas registradas','graduation','tangerine')}${statStudent('Mis clases',d.schedule.length,'Bloques semanales','calendar','teal')}${statStudent('Mis notas',d.notes.length,'Resultados publicados','award','violet')}${statStudent('Próximos exámenes',d.exams.length,'Simulacros programados','file-check','rose')}</div>`;
+      content+=`<div class="student-dashboard-grid"><div class="student-dashboard-main">`;
+      content+=studentSection('Tu próximo paso','Accede rápidamente a tu información académica',`<div class="student-access-grid"><button data-student-go="horario" class="student-access-card"><span class="access-illustration blue">${ico('calendar',26)}</span><strong>Organiza tu semana</strong><small>Revisa tus días y horarios de clase</small><span class="access-arrow">↗</span></button><button data-student-go="notas" class="student-access-card"><span class="access-illustration violet">${ico('award',26)}</span><strong>Sigue tus logros</strong><small>Consulta las notas ya publicadas</small><span class="access-arrow">↗</span></button><button data-student-go="pagos" class="student-access-card"><span class="access-illustration peach">${ico('credit-card',26)}</span><strong>Consulta tus pagos</strong><small>${pending.length?`${pending.length} registro(s) pendiente(s)`:'Revisa tu historial y vencimientos'}</small><span class="access-arrow">↗</span></button></div>`);
+      content+=studentSection('Mis grupos','Tu lugar en Fractales Academy',d.groups.length?`<div class="student-groups">${d.groups.map(studentGroupCard).join('')}</div>`:studentEmpty('users','No tienes grupos registrados','Cuando te matricules, tus grupos se mostrarán aquí.'));
+      content+=`</div><aside class="student-dashboard-side"><section class="student-story-card"><img src="public/assets/estudio-ilustracion.svg" alt="Ilustración de cuadernos y materiales para estudiar" loading="lazy"><span class="tiny-label">TU MOTIVACIÓN DEL DÍA</span><h3>Tu esfuerzo abre posibilidades.</h3><p>Aprende, crece y trasciende. Cada clase es una oportunidad.</p></section>`;
+      content+=`<section class="student-aside-panel"><div class="student-aside-title">${ico('file-check',20)}<h3>Próximos simulacros</h3></div>${d.exams.length?`<div class="student-exam-list">${d.exams.slice(0,4).map(x=>`<div class="student-exam"><span class="exam-date">${fmtDate(x.Fech_programada)}</span><strong>${esc(x.Nomb_Examen)}</strong><small>${esc(x.Nomb_Grupo||'')} · ${fmtTime(x.Hr_inicio)}</small></div>`).join('')}</div>`:studentEmpty('calendar','Sin simulacros programados','La academia publicará los próximos exámenes aquí.')}</section></aside></div>`;
+    }else if(tab==='horario'){
+      content=studentSection('Tu horario semanal','Revisa tus clases de los grupos con matrícula activa',studentCalendar(d));
+    }else if(tab==='notas'){
+      content=studentSection('Tus resultados','Solo puedes ver las evaluaciones publicadas por la academia',studentResults(d));
+    }else{
+      content=studentSection('Pagos y pensiones','Información registrada por administración; para consultas, comunícate con la academia',d.payments.length?`<div class="student-payment-list">${d.payments.map(studentPaymentCard).join('')}</div>`:studentEmpty('credit-card','Sin pagos registrados','Tu historial de pagos aparecerá aquí cuando esté disponible.'));
+    }
+    $('studentContent').innerHTML=content;
+    $('studentContent').querySelectorAll('[data-student-go]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.studentGo)));
+  }
+  renderTab();
+}
+
+function openQuickFind(){
+  if(!state.user)return;
+  const aliases={ALUMNO:'alumno alumnos estudiante estudiantes',MATRICULA:'matricula matrícula inscripción inscripciones',Pago:'pago pagos cobro cobros',Docente:'profesor profesores docentes',Horario:'horario horarios clase clases',Examen:'examen simulacro evaluación',Examen_Grupo:'simulacro programación',Nota_Examen:'nota notas resultados',Usuario:'usuario usuarios cuentas'};
+  const entries=state.user.rol==='ADMIN'?[{id:'home',name:'Panel general',cat:'Principal'},...Object.values(state.modules).map(m=>({id:m.name,name:m.label,cat:m.category}))]:[
+    {id:'home',name:'Mi espacio',cat:'Estudiante'}, {id:'student-notes',name:'Mis resultados',cat:'Estudiante'},
+    {id:'student-schedule',name:'Mi horario',cat:'Estudiante'},{id:'student-payments',name:'Mis pagos',cat:'Estudiante'}];
+  modal('Buscar un módulo','Accede rápidamente a cualquier sección',`<div class="command-search">${ico('search',21)}<input id="commandInput" type="search" aria-label="Buscar módulo" placeholder="Escribe el nombre de una sección…" autocomplete="off"></div><div class="command-results" id="commandResults"></div><div class="command-footer"><span>Selecciona una sección para navegar</span><span>ESC para cerrar</span></div>`);
+  $('modalRoot').querySelector('.modal').classList.add('command-modal');
+  const input=$('commandInput'),results=$('commandResults');
+  function paint(){const term=input.value.trim().toLocaleLowerCase('es');const matches=entries.filter(x=>(x.name+' '+x.cat+' '+(aliases[x.id]||'')).toLocaleLowerCase('es').includes(term)).slice(0,17);
+    results.innerHTML=matches.length?matches.map(x=>`<button class="command-result" data-find-nav="${esc(x.id)}"><span class="command-result-icon">${ico(navIcons[x.id]||'folder')}</span><span><strong>${esc(x.name)}</strong><small>${esc(x.cat)}</small></span><span class="command-result-arrow">↗</span></button>`).join(''):'<div class="command-empty">No encontramos una sección con ese nombre.</div>';
+    results.querySelectorAll('[data-find-nav]').forEach(b=>b.onclick=()=>{const id=b.dataset.findNav;closeModal();navigate(id);});
+  }
+  input.addEventListener('input',paint);input.addEventListener('keydown',e=>{if(e.key==='Enter'){const first=results.querySelector('[data-find-nav]');if(first){e.preventDefault();first.click();}}});
+  paint();input.focus();
+}
+document.addEventListener('DOMContentLoaded',boot);
+</script><script>document.addEventListener('DOMContentLoaded',()=>{const student=document.getElementById('viewStudent'),admin=document.getElementById('viewAdmin');function select(role){window.__demoRole(role).then(()=>{student.classList.toggle('on',role==='ALUMNO');admin.classList.toggle('on',role==='ADMIN');});}student.addEventListener('click',()=>select('ALUMNO'));admin.addEventListener('click',()=>select('ADMIN'));});</script></body>
+</html>

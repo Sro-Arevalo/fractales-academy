@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'..');const load=p=>fs.readFileSync(path.join(root,p),'utf8');
+test('portal de alumno tiene vistas, imágenes locales y componentes amigables',()=>{let js=load('public/app.js'),css=load('public/styles.css');for(const key of ['studentWelcome','studentCalendar','studentResults','studentPaymentCard','student-welcome','student-story-card','student-modern-tabs'])assert.ok(js.includes(key)||css.includes(key),key);for(const asset of ['aula-fractales.webp','estudio-ilustracion.svg'])assert.ok(fs.existsSync(path.join(root,'public/assets',asset)));});
+test('no se expone SQL en frontend',()=>{const js=load('public/app.js');assert.ok(js.includes('student/overview'));assert.ok(!/DB_PASSWORD|DB_USER|sql\.connect/.test(js));});
+test('el paquete incluye mapa, guía y configuración ejemplo',()=>{for(const file of ['.env.example','MAPA_DE_ARCHIVOS.md','GUIA_AZURE_PASO_A_PASO.md'])assert.ok(fs.existsSync(path.join(root,file)));});
