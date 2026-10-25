@@ -1,5 +1,7 @@
 # SUBIR FRACTALES ACADEMY A AZURE — GUÍA PASO A PASO
 
+**Actualización V4.2:** consulta [CAMBIOS_VERSION_4_2.md](CAMBIOS_VERSION_4_2.md) para la vista local, archivos publicables, SQL opcional y pasos coordinados. No requiere cambios estructurales adicionales a V4.1.
+
 **Actualización V4.1:** usa primero [GUIA_MIGRACION_AZURE_V4_1.md](GUIA_MIGRACION_AZURE_V4_1.md). Las instrucciones siguientes se conservan como referencia histórica; V4.1 requiere revisión incremental y configuración de seguridad/correo sin reconstruir la base.
 
 **Referencia anterior V3.** Para actualizar la base existente a V4 utiliza [GUIA_MIGRACION_AZURE_V4.md](GUIA_MIGRACION_AZURE_V4.md). V4 sí requiere migraciones incrementales y coordinación con el backend; las cantidades y procedimientos de instalación siguientes corresponden a la versión anterior. No ejecutes el modelo completo sobre la base existente.

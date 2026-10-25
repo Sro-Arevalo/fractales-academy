@@ -1,7 +1,7 @@
 'use strict';
 const model=require('./model.json');const ops=require('./operations');const {validate,rule}=require('./rules');
 const {securityReady}=require('./security-schema');const accounts=require('./account-service');
-const physical=new Set(['CURSOS','CARRERA','Aula','Grupo','Ciclo','Docente','Docente_Asignatura','Examen','Horario']);
+const physical=new Set(['ALUMNO','Usuario','CURSOS','CARRERA','Aula','Grupo','Ciclo','Docente','Docente_Asignatura','Examen','Horario']);
 const activeField=m=>m.columns.find(c=>c.type==='bit'&&/^(Activo|Activa)$/i.test(c.name))?.name;
 const quote=name=>'['+name.replace(/]/g,']]')+']';
 function schema(table){const m=model[table];if(!m)throw rule('Módulo no encontrado.');return m;}
@@ -24,7 +24,22 @@ async function dependencies(tx,m,row){
     const first=fields[0],inputs=Object.fromEntries(fields.map((f,i)=>['v'+i,row[f.Referencia]]));
     const n=Number((await ops.query(tx,`SELECT COUNT_BIG(*) n FROM ${quote(first.Esquema)}.${quote(first.Tabla)} WITH (UPDLOCK,HOLDLOCK) WHERE ${fields.map((f,i)=>`${quote(f.Columna)}=@v${i}`).join(' AND ')}`,inputs)).recordset[0].n);
     if(n)result.push({tabla:first.Tabla,nombre:model[first.Tabla]?.label||'Historial o información de seguridad',cantidad:n});
-  }return result;
+  }
+  // La auditoría usa claves lógicas: no basta con comprobar las FK.
+  // El alta sola puede conservarse en auditoría aun cuando se retire un registro nunca utilizado.
+  const history=Number((await ops.query(tx,`SELECT COUNT_BIG(*) n FROM dbo.Auditoria_V4 WITH (UPDLOCK,HOLDLOCK)
+    WHERE Entidad=@entity AND Codigo=@code AND Accion<>'CREAR'`,{entity:m.name,code:auditCode(m,row)})).recordset[0].n);
+  if(history)result.push({tabla:'Auditoria_V4',nombre:'Historial de operaciones sobre este registro',cantidad:history,tipo:'historial'});
+  return result;
+}
+async function deletionGuard(tx,m,row,actor){
+  if(m.name!=='Usuario')return '';
+  if(row.Cod_Usuario===actor.Cod_Usuario)return 'No puedes eliminar tu propia cuenta. Utiliza otra cuenta administradora autorizada.';
+  if(row.ROL_Cod_Rol==='ADMIN'&&row.Activo){
+    const n=Number((await ops.query(tx,"SELECT COUNT_BIG(*) n FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE ROL_Cod_Rol='ADMIN' AND Activo=1")).recordset[0].n);
+    if(n<=1)return 'Debe conservarse al menos una cuenta administradora activa.';
+  }
+  return '';
 }
 async function state(tx,m,row){
   if(m.name==='ALUMNO'&&await securityReady(tx))return (await ops.query(tx,'SELECT Activo FROM dbo.Alumno_Estado_V41 WHERE ALUMNO_DNI_Alu=@dni',{dni:row.DNI_Alu})).recordset[0]?.Activo??true;
@@ -39,7 +54,8 @@ async function review(table,id,actor){
   const m=schema(table);return ops.transaction(async tx=>{
     const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row),p=policy(m),enabled=await state(tx,m,row),ready=await securityReady(tx);
     const actions=[];
-    if(p.physical)actions.push({id:'eliminar',label:'Eliminar registro',enabled:!deps.length,explanation:deps.length?'Hay información vinculada. Se conserva el registro y su historial.':'No hay registros dependientes. La eliminación será definitiva.'});
+    const guard=p.physical?await deletionGuard(tx,m,row,actor):'';
+    if(p.physical)actions.push({id:'eliminar',label:'Eliminar definitivamente',enabled:!guard&&!deps.length,explanation:guard||(deps.length?'Hay dependencias o historial de operaciones. Revisa la información vinculada y utiliza desactivar, dar de baja o anular cuando corresponda.':'No hay dependencias ni historial operativo. La eliminación es irreversible; la auditoría del alta y de esta eliminación se conserva.')});
     if(m.name==='Pago')return {dependencias:deps,acciones:[],explicacion:'Confirma o anula la confirmación desde Gestión de pagos. Las obligaciones no se eliminan.'};
     if(p.activeField||p.controlled){
       const needsSchema=['ALUMNO','Nota_Examen','Usuario'].includes(m.name);
@@ -54,9 +70,17 @@ async function remove(table,id,body,actor){
   const m=schema(table);if(!physical.has(table))throw rule('Este registro conserva historial. Utiliza desactivar, anular o corregir.');
   if(body?.confirmacion!=='ELIMINAR')throw rule('Confirma la eliminación después de revisar las dependencias.');const motive=accountsReason(body.motivo);
   return ops.transaction(async tx=>{
-    const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row);
+    const row=await rowFor(tx,m,id),guard=await deletionGuard(tx,m,row,actor);
+    if(guard)throw Object.assign(rule(guard),{status:409});
+    const deps=await dependencies(tx,m,row);
     if(deps.length)throw Object.assign(rule('No se puede eliminar: hay información académica, financiera o administrativa vinculada. Puedes desactivar el registro cuando corresponda.'),{status:409,dependencias:deps});
-    const s=selector(m,keys(m,id));await ops.query(tx,`DELETE FROM dbo.${quote(m.name)} WHERE ${s.where}`,s.inputs);
+    const s=selector(m,keys(m,id));
+    try{await ops.query(tx,`DELETE FROM dbo.${quote(m.name)} WHERE ${s.where}`,s.inputs);}
+    catch(e){const number=e.number||e.originalError?.info?.number;
+      if(number===229)throw Object.assign(rule('La cuenta SQL de la aplicación no tiene permiso para eliminar este tipo de registro. Solicita revisar el script de permisos V4.2; no cambies las relaciones SQL.'),{status:503});
+      if(number===547)throw Object.assign(rule('SQL impidió la eliminación porque existe información vinculada. Actualiza la revisión de dependencias.'),{status:409});
+      throw e;
+    }
     await ops.audit(tx,actor,m.name,auditCode(m,row),'ELIMINAR',row,null,motive);return {ok:true};
   });
 }
