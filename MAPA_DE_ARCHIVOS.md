@@ -1,5 +1,7 @@
 # MAPA DE ARCHIVOS — FRACTALES ACADEMY
 
+**V4.1:** [informe de cambios](CAMBIOS_VERSION_4_1.md), [migración incremental](GUIA_MIGRACION_AZURE_V4_1.md) y [configuración de recuperación](CONFIGURACION_RECUPERACION_CUENTAS.md). La presentación nueva está en `public/v41.js`/`v41.css` y la seguridad/administración en los módulos nuevos de `server/`. Se conserva la estructura V4 descrita abajo.
+
 **Actualización V4:** consulta [CAMBIOS_VERSION_4.md](CAMBIOS_VERSION_4.md), [RESUMEN_CAMBIOS_BASE_DATOS.md](RESUMEN_CAMBIOS_BASE_DATOS.md) y [GUIA_MIGRACION_AZURE_V4.md](GUIA_MIGRACION_AZURE_V4.md). Los flujos nuevos están en `public/v4.js`, `server/operations.js` y `server/v4-api.js`; las migraciones incrementales están en `sql/migrations/v4/`. El mapa siguiente describe la estructura original V3 conservada como base.
 
 ## FRONTEND: todo lo que ve el usuario

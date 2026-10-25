@@ -25,15 +25,18 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
     return prefix+String(row.n).padStart(18,'0');
   }
   async function audit(tx,actor,entity,code,action,before,after,reason){
+    const clean=value=>Array.isArray(value)?value.map(clean):value&&typeof value==='object'&&!(value instanceof Date)?Object.fromEntries(Object.entries(value).filter(([key])=>!['Clave_Hash','Nueva_Clave','claveTemporal','codigoActivacion','Codigo_Hash','Nonce','Desafio_Hash'].includes(key)).map(([key,item])=>[key,clean(item)])):value;
     await query(tx,`INSERT dbo.Auditoria_V4 (Entidad,Codigo,Accion,Anterior,Nuevo,Usuario_Cod_Usuario,Motivo)
       VALUES (@entity,@code,@action,@before,@after,@actor,@reason)`,{
-      entity,code,action,before:before?JSON.stringify(before):null,after:after?JSON.stringify(after):null,actor:actor.Cod_Usuario,reason:reason||null
+      entity,code,action,before:before?JSON.stringify(clean(before)):null,after:after?JSON.stringify(clean(after)):null,actor:actor.Cod_Usuario,reason:reason||null
     });
   }
   async function enroll(body,actor){
     if(!body||typeof body!=='object'||Array.isArray(body))throw rule('Envía los datos de inscripción.');
     const {alumno,Grupo_Cod_Grupo:group}=body;
-    if(Object.keys(body).some(k=>!['alumno','Grupo_Cod_Grupo'].includes(k)))throw rule('Campo de inscripción desconocido.');
+    if(Object.keys(body).some(k=>!['alumno','Grupo_Cod_Grupo','accesoInicial'].includes(k)))throw rule('Campo de inscripción desconocido.');
+    const mode=body.accesoInicial?.modo||'TEMPORAL';
+    if(!['TEMPORAL','DNI_ACTIVACION'].includes(mode)||mode==='DNI_ACTIVACION'&&body.accesoInicial.identidadConfirmada!==true)throw rule('El acceso con DNI requiere entrega directa del código al estudiante identificado.');
     if(!alumno||typeof alumno!=='object'||Array.isArray(alumno)||!/^\d{8}$/.test(alumno.DNI_Alu||''))throw rule('Ingresa el DNI de ocho dígitos.');
     if(typeof group!=='string'||!group||group.length>20)throw rule('Selecciona el grupo académico.');
     const allowed=new Set(model.ALUMNO.columns.map(c=>c.name));
@@ -41,6 +44,9 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
     validateFields(model.ALUMNO,alumno);
     return transaction(async tx=>{
       const existing=(await query(tx,'SELECT * FROM dbo.ALUMNO WITH (UPDLOCK,HOLDLOCK) WHERE DNI_Alu=@dni',{dni:alumno.DNI_Alu})).recordset[0];
+      const ready=await require('./security-schema').securityReady(tx);
+      if(mode==='DNI_ACTIVACION'&&!ready)throw rule('El modo de activación con DNI requiere las migraciones V4.1.');
+      if(existing&&ready){const baja=(await query(tx,'SELECT Activo FROM dbo.Alumno_Estado_V41 WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni',{dni:alumno.DNI_Alu})).recordset[0];if(baja&&!baja.Activo)throw rule('El estudiante está dado de baja. Revisa su restauración antes de inscribirlo.');}
       const g=(await query(tx,`SELECT g.*,c.Modalidad,c.Nro_Mensualidades,c.Precio_Mensual,c.Fech_Inicio,c.Fech_Fin,c.ESTADO_CICLO_Cod_Estado
         FROM dbo.Grupo g WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Ciclo c WITH (HOLDLOCK) ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo WHERE g.Cod_Grupo=@group`,{group})).recordset[0];
       if(!g||!g.Activo||!['PROGRAMADO','ACTIVO'].includes(g.ESTADO_CICLO_Cod_Estado))throw rule('El grupo o ciclo no está disponible.');
@@ -56,13 +62,16 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
         await query(tx,`INSERT dbo.ALUMNO (${cols.map(c=>`[${c.name}]`).join(',')}) VALUES (${cols.map(c=>'@'+c.name).join(',')})`,Object.fromEntries(cols.map(c=>[c.name,alumno[c.name]])));
       }
       const user=(await query(tx,'SELECT Cod_Usuario,Nomb_Usuario,Activo FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni',{dni:alumno.DNI_Alu})).recordset[0];
-      let temporary=null;
+      let temporary=null,activation=null;
+      if(user&&mode==='DNI_ACTIVACION')throw rule('Las cuentas existentes conservan su acceso. Usa recuperación administrativa cuando corresponda.');
       if(!user){
         const reserved=(await query(tx,'SELECT Cod_Usuario FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE Nomb_Usuario=@dni',{dni:alumno.DNI_Alu})).recordset[0];
         if(reserved)throw rule('El DNI ya está utilizado por otra cuenta; revisa Usuarios antes de inscribir.');
-        temporary=crypto.randomBytes(18).toString('base64url');
+        temporary=mode==='DNI_ACTIVACION'?alumno.DNI_Alu:crypto.randomBytes(18).toString('base64url');
+        const userCode=await nextCode(tx,'U4');
         await query(tx,`INSERT dbo.Usuario (Cod_Usuario,Nomb_Usuario,Clave_Hash,ROL_Cod_Rol,ALUMNO_DNI_Alu,Debe_Cambiar_Clave)
-          VALUES (@code,@dni,@hash,'ALUMNO',@dni,1)`,{code:await nextCode(tx,'U4'),dni:alumno.DNI_Alu,hash:await hashPassword(temporary)});
+          VALUES (@code,@dni,@hash,'ALUMNO',@dni,1)`,{code:userCode,dni:alumno.DNI_Alu,hash:await hashPassword(temporary)});
+        if(mode==='DNI_ACTIVACION')activation=await require('./account-service').prepareActivation(tx,{Cod_Usuario:userCode});
       }
       const matricula=await nextCode(tx,'M4');
       await query(tx,`INSERT dbo.MATRICULA (Cod_Matricula,ALUMNO_DNI_Alu,Grupo_Cod_Grupo,ESTADO_MATRICULA_Cod_Estado_Matricula,Fech_Matricula)
@@ -78,7 +87,7 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
         (Cod_Pago,CONCEPTO_PAGO_Cod_Concepto,Monto,Fech_Vencimiento,ESTADO_PAGO_Cod_Estado,ALUMNO_DNI_Alu)
         VALUES (@code,'MATRICULA_INICIAL',50,CONVERT(date,SYSDATETIMEOFFSET() AT TIME ZONE 'SA Pacific Standard Time'),'PENDIENTE',@dni)`,{code:await nextCode(tx,'P4'),dni:alumno.DNI_Alu});
       await audit(tx,actor,'MATRICULA',matricula,'INSCRIPCION',null,{DNI_Alu:alumno.DNI_Alu,Grupo_Cod_Grupo:group,cuotas:g.Nro_Mensualidades,inicial:!existing},null);
-      return {matricula,nuevo:!existing,cuotas:g.Nro_Mensualidades,total:Number(g.Precio_Mensual)*g.Nro_Mensualidades+(!existing?50:0),usuario:user?.Nomb_Usuario||alumno.DNI_Alu,cuentaActiva:user?!!user.Activo:true,claveTemporal:temporary};
+      return {matricula,nuevo:!existing,cuotas:g.Nro_Mensualidades,total:Number(g.Precio_Mensual)*g.Nro_Mensualidades+(!existing?50:0),usuario:user?.Nomb_Usuario||alumno.DNI_Alu,cuentaActiva:user?!!user.Activo:true,claveTemporal:temporary,codigoActivacion:activation,modoAcceso:mode};
     });
   }
   async function payment(code,body,actor,reverse=false){

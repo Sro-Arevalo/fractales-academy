@@ -7,8 +7,12 @@ const {validate,rule}=require('./rules');
 const model=require('./model.json');
 const {autoCode,validateFields}=require('./validation');
 const operations=require('./operations');
+const accounts=require('./account-service');
+const administration=require('./administration');
+const {securityFor,securityReady}=require('./security-schema');
 const router=express.Router();
-const publicUser=u=>({id:u.Cod_Usuario,nombre:u.Nomb_Usuario,rol:u.ROL_Cod_Rol,alumno:u.ALUMNO_DNI_Alu,cambiar:!!u.Debe_Cambiar_Clave});
+const invalidAccess={error:'No pudimos verificar el acceso. Revisa tu usuario, contraseña y, si corresponde, el código de activación.'};
+const publicUser=u=>({id:u.Cod_Usuario,nombre:u.Nomb_Usuario,rol:u.ROL_Cod_Rol,alumno:u.ALUMNO_DNI_Alu,cambiar:!!u.Debe_Cambiar_Clave,activar:!!u.Activacion_Requerida});
 function safe(fn){return (req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);}
 function filterSchema(t){ const m=model[t]; if(!m) throw rule('El módulo solicitado no existe.');return m;}
 function idFor(m,row){return Buffer.from(JSON.stringify(m.pk.map(k=>row[k]))).toString('base64url');}
@@ -97,22 +101,19 @@ router.post('/auth/login',limit({windowMs:15*60*1000,limit:10,standardHeaders:'d
   if(!name||!pass||pass.length>200) return res.status(400).json({error:'Ingresa usuario y contraseña.'});
   const q=await request();q.input('name',sql.VarChar(80),name);
   const u=(await q.query('SELECT Cod_Usuario,Nomb_Usuario,Clave_Hash,ROL_Cod_Rol,ALUMNO_DNI_Alu,Debe_Cambiar_Clave FROM dbo.Usuario WHERE Nomb_Usuario=@name AND Activo=1')).recordset[0];
-  if(!u||!['ADMIN','ALUMNO'].includes(u.ROL_Cod_Rol)||!(await bcrypt.compare(pass,u.Clave_Hash)))return res.status(401).json({error:'Usuario o contraseña incorrectos.'});
-  createSession(res,u);res.json({user:publicUser(u)});
+  if(!u||!['ADMIN','ALUMNO'].includes(u.ROL_Cod_Rol)||!(await bcrypt.compare(pass,u.Clave_Hash)))return res.status(401).json(invalidAccess);
+  const secured=await securityFor(u);
+  if(!secured.Alumno_Activo)return res.status(401).json(invalidAccess);
+  let proof=null;
+  if(secured.Activacion_Requerida){proof=await accounts.activationProof(secured,req.body?.codigoActivacion);if(!proof)return res.status(401).json(invalidAccess);}
+  createSession(res,secured,proof?{scope:'onboarding',activation:proof}:{});res.json({user:publicUser(secured)});
 }));
 router.post('/auth/logout',(req,res)=>{clearSession(res);res.json({ok:true});});
 router.get('/auth/me',authenticate,(req,res)=>res.json({user:publicUser(req.user)}));
 router.post('/auth/change-password',authenticate,safe(async(req,res)=>{
-  const old=String(req.body?.actual||''),fresh=String(req.body?.nueva||'');
-  if(fresh.length<12||Buffer.byteLength(fresh,'utf8')>72||fresh===old) throw rule('Utiliza una contraseña diferente, de al menos 12 caracteres y hasta 72 bytes.');
-  const q=await request();q.input('id',sql.VarChar(20),req.user.Cod_Usuario);
-  const u=(await q.query('SELECT Clave_Hash FROM dbo.Usuario WHERE Cod_Usuario=@id')).recordset[0];
-  if(!u||!(await bcrypt.compare(old,u.Clave_Hash))) throw rule('La contraseña actual no es correcta.');
-  const hash=await bcrypt.hash(fresh,12);
-  const w=await request();w.input('hash',sql.VarChar(255),hash);w.input('id',sql.VarChar(20),req.user.Cod_Usuario);
-  await w.query('UPDATE dbo.Usuario SET Clave_Hash=@hash,Debe_Cambiar_Clave=0 WHERE Cod_Usuario=@id');
-  const updated={...req.user,Debe_Cambiar_Clave:false};createSession(res,updated);res.json({ok:true,user:publicUser(updated)});
+  const updated=await accounts.changePassword(req.user,req.auth,req.body);createSession(res,updated);res.json({ok:true,user:publicUser(updated)});
 }));
+router.use(require('./accounts-api'));
 router.use(require('./v4-api'));
 router.get('/meta',authenticate,admin,(req,res)=>res.json({modules:Object.values(model).map(m=>({...m,columns:m.columns.filter(c=>c.name!=='Clave_Hash')}))}));
 router.get('/options/:table',authenticate,admin,safe(async(req,res)=>{
@@ -126,15 +127,18 @@ router.get('/options/:table',authenticate,admin,safe(async(req,res)=>{
   res.json({rows:rows.map(row=>({value:row[valueCol],label:m.display.map(k=>row[k]).filter(v=>v!==null&&v!==undefined).join(' · '),row}))});
 }));
 router.get('/dashboard',authenticate,admin,safe(async(req,res)=>{
-  const p=await pool();const [a,b,c,d,e,f]=await Promise.all([
+  const p=await pool();const [a,b,c,d,e,f,g,h,i]=await Promise.all([
     p.request().query('SELECT COUNT_BIG(*) n FROM dbo.ALUMNO'),
     p.request().query("SELECT COUNT_BIG(*) n FROM dbo.MATRICULA WHERE ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA'"),
     p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PENDIENTE'"),
     p.request().query("SELECT ISNULL(SUM(Monto),0) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PAGADO' AND Fech_Pago>=DATEFROMPARTS(YEAR(GETDATE()),MONTH(GETDATE()),1)"),
     p.request().query(`SELECT TOP 6 m.Cod_Matricula,a.Nomb_Alu,g.Nomb_Grupo,m.Fech_Matricula FROM dbo.MATRICULA m JOIN dbo.ALUMNO a ON a.DNI_Alu=m.ALUMNO_DNI_Alu JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo ORDER BY m.Fech_Matricula DESC,m.Cod_Matricula DESC`),
-    p.request().query(`SELECT TOP 5 eg.Fech_programada,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo WHERE eg.Fech_programada>=CONVERT(date,GETDATE()) AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`)
+    p.request().query(`SELECT TOP 5 eg.Fech_programada,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo WHERE eg.Fech_programada>=CONVERT(date,GETDATE()) AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`),
+    p.request().query('SELECT COUNT_BIG(*) n FROM dbo.Grupo WHERE Activo=1'),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Ciclo WHERE ESTADO_CICLO_Cod_Estado='ACTIVO'"),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PAGADO'")
   ]);
-  res.json({alumnos:Number(a.recordset[0].n),matriculas:Number(b.recordset[0].n),pendientes:Number(c.recordset[0].n),ingresos:Number(d.recordset[0].n),recent:e.recordset,exams:f.recordset});
+  res.json({alumnos:Number(a.recordset[0].n),matriculas:Number(b.recordset[0].n),pendientes:Number(c.recordset[0].n),ingresos:Number(d.recordset[0].n),recent:e.recordset,exams:f.recordset,grupos:Number(g.recordset[0].n),ciclosActivos:Number(h.recordset[0].n),pagosRegistrados:Number(i.recordset[0].n)});
 }));
 router.get('/records/:table',authenticate,admin,safe(async(req,res)=>{
   const m=filterSchema(req.params.table);
@@ -142,12 +146,20 @@ router.get('/records/:table',authenticate,admin,safe(async(req,res)=>{
   const search=String(req.query.q||'').trim().slice(0,80);
   const p=await pool();const q=p.request();q.input('q',sql.NVarChar(180),`%${search}%`);q.input('offset',sql.Int,(page-1)*limitPage);q.input('lim',sql.Int,limitPage);
   const look=m.display.map(k=>`CONVERT(nvarchar(200),[${k}]) LIKE @q`).join(' OR ');
-  const where=search?`WHERE ${look}`:'';
-  const sort=m.pk.map(k=>`[${k}]`).join(',');
-  const rows=(await q.query(`SELECT ${projection(m)} FROM dbo.[${m.name}] ${where} ORDER BY ${sort} OFFSET @offset ROWS FETCH NEXT @lim ROWS ONLY`)).recordset;
+  const active=administration.policy(m).activeField,sidecar=['ALUMNO','Nota_Examen'].includes(m.name)&&await securityReady();
+  const join=sidecar?(m.name==='ALUMNO'?'LEFT JOIN dbo.Alumno_Estado_V41 es ON es.ALUMNO_DNI_Alu=ALUMNO.DNI_Alu':'LEFT JOIN dbo.Nota_Estado_V41 es ON es.Nota_Examen_Cod_Nota=Nota_Examen.Cod_Nota'):'';
+  const statusExpression=sidecar?(m.name==='ALUMNO'?'ISNULL(es.Activo,1)':'CASE WHEN ISNULL(es.Anulada,0)=0 THEN 1 ELSE 0 END'):active?`[${active}]`:null;
+  const extra=sidecar?`,CASE WHEN (${statusExpression})=1 THEN '${m.name==='ALUMNO'?'ACTIVO':'VIGENTE'}' ELSE '${m.name==='ALUMNO'?'BAJA':'ANULADA'}' END AS _estadoGestion`:'';
+  const state=String(req.query.estado||'');if(state&&!['activo','inactivo'].includes(state))throw rule('Filtro de estado inválido.');
+  const where=[...(search?[`(${look})`]:[]),...(statusExpression&&state?[`(${statusExpression})=${state==='activo'?1:0}`]:[])];
+  const condition=where.length?'WHERE '+where.join(' AND '):'';
+  const column=String(req.query.orden||m.pk[0]);if(!m.columns.some(c=>c.name===column&&c.name!=='Clave_Hash'))throw rule('Ordenamiento inválido.');
+  const direction=req.query.direccion==='desc'?'DESC':'ASC';
+  const sort=`[${column}] ${direction}`+(m.pk.includes(column)?'':','+m.pk.map(k=>`[${k}]`).join(','));
+  const rows=(await q.query(`SELECT ${projection(m)}${extra} FROM dbo.[${m.name}] ${join} ${condition} ORDER BY ${sort} OFFSET @offset ROWS FETCH NEXT @lim ROWS ONLY`)).recordset;
   const r=p.request();r.input('q',sql.NVarChar(180),`%${search}%`);
-  const count=(await r.query(`SELECT COUNT_BIG(*) n FROM dbo.[${m.name}] ${where}`)).recordset[0].n;
-  res.json({rows:rows.map(x=>({...x,_id:idFor(m,x)})),count:Number(count),page,pageSize:limitPage});
+  const count=(await r.query(`SELECT COUNT_BIG(*) n FROM dbo.[${m.name}] ${join} ${condition}`)).recordset[0].n;
+  res.json({rows:rows.map(x=>({...x,_id:idFor(m,x)})),count:Number(count),page,pageSize:limitPage,policy:{...administration.policy(m),statusField:sidecar?'_estadoGestion':active}});
 }));
 router.get('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
   const m=filterSchema(req.params.table);const q=await request();const where=existingWhere(m,parseId(m,req.params.id),q);
@@ -169,11 +181,11 @@ async function save(req,res,isInsert) {
     }
     if(m.name==='Usuario') {
       if(isInsert){
-        if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||req.body.Nueva_Clave.length>72)throw rule('La contraseña inicial debe tener de 12 a 72 caracteres.');
+        if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||Buffer.byteLength(req.body.Nueva_Clave,'utf8')>72)throw rule('La contraseña inicial debe tener al menos 12 caracteres y hasta 72 bytes.');
         payload.Clave_Hash=await bcrypt.hash(req.body.Nueva_Clave,12);
         payload.Debe_Cambiar_Clave=true;
       } else if(Object.prototype.hasOwnProperty.call(req.body,'Nueva_Clave') && req.body.Nueva_Clave) {
-        if(req.body.Nueva_Clave.length<12||req.body.Nueva_Clave.length>72)throw rule('La contraseña debe tener de 12 a 72 caracteres.');
+        if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||Buffer.byteLength(req.body.Nueva_Clave,'utf8')>72)throw rule('La contraseña debe tener al menos 12 caracteres y hasta 72 bytes.');
         payload.Clave_Hash=await bcrypt.hash(req.body.Nueva_Clave,12);payload.Debe_Cambiar_Clave=true;
       }
     }
@@ -193,27 +205,29 @@ async function save(req,res,isInsert) {
       query=`UPDATE dbo.[${m.name}] SET ${values.map(([k],i)=>`[${k}]=@v${i}`).join(',')} WHERE ${where}`;
     }
     await r.query(query);
+    if(m.name==='Usuario'&&(payload.Clave_Hash||current&&Object.hasOwn(payload,'Activo')&&Boolean(payload.Activo)!==Boolean(current.Activo))&&await securityReady(tx))await accounts.revoke(tx,current?.Cod_Usuario||payload.Cod_Usuario,payload.Clave_Hash?false:undefined);
     if(['Nota_Examen','Examen_Grupo'].includes(m.name)){
       const reason=req.body.Motivo_Cambio;
       if(!isInsert&&(typeof reason!=='string'||reason.trim().length<5||reason.length>250))throw rule('Describe el motivo del cambio (5 a 250 caracteres).');
       await operations.audit(tx,req.user,m.name,current?.[m.pk[0]]||payload[m.pk[0]],isInsert?'CREAR':'CORREGIR',current,{...current,...payload},reason);
-    }
+    }else await operations.audit(tx,req.user,m.name,m.pk.map(k=>String(current?.[k]||payload[k])).join('|'),isInsert?'CREAR':'EDITAR',current,{...current,...payload},req.body.Motivo_Cambio);
     await tx.commit();res.status(isInsert?201:200).json({ok:true,message:isInsert?'Registro guardado.':'Cambios guardados.'});
   } catch(e) {try{await tx.rollback();}catch{}throw sqlError(e);}
 }
 router.post('/records/:table',authenticate,admin,safe((req,res)=>save(req,res,true)));
 router.put('/records/:table/:id',authenticate,admin,safe((req,res)=>save(req,res,false)));
 router.delete('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
-  filterSchema(req.params.table);
-  throw rule('Se conserva el historial: desactiva el registro o utiliza el procedimiento de corrección correspondiente.');
+  res.json(await administration.remove(req.params.table,req.params.id,req.body,req.user));
 }));
+router.get('/records/:table/:id/actions',authenticate,admin,safe(async(req,res)=>res.json(await administration.review(req.params.table,req.params.id,req.user))));
+router.post('/records/:table/:id/state',authenticate,admin,safe(async(req,res)=>res.json(await administration.changeState(req.params.table,req.params.id,req.body,req.user))));
 router.get('/student/overview',authenticate,student,safe(async(req,res)=>{
-  const dni=req.user.ALUMNO_DNI_Alu,p=await pool();
+  const dni=req.user.ALUMNO_DNI_Alu,p=await pool(),v41=await securityReady();
   async function query(text){const r=p.request();r.input('dni',sql.VarChar(8),dni);return (await r.query(text)).recordset;}
   const [profile,groups,notes,schedule,exams,payments]=await Promise.all([
     query('SELECT DNI_Alu,Nomb_Alu,Correo_Alu,CARRERA_Cod_Carrera FROM dbo.ALUMNO WHERE DNI_Alu=@dni'),
     query(`SELECT m.Cod_Matricula,m.Fech_Matricula,m.ESTADO_MATRICULA_Cod_Estado_Matricula,g.Cod_Grupo,g.Nomb_Grupo,c.Nomb_Ciclo,c.Cod_Ciclo,c.Fech_Inicio,c.Fech_Fin,c.Modalidad,p.Nomb_Programa,t.Nomb_Turno FROM dbo.MATRICULA m JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY m.Fech_Matricula DESC,m.Cod_Matricula DESC`),
-    query(`SELECT ne.Puntaje_total,ne.Fech_registro,ex.Nomb_Examen,ex.puntaje_maximo,g.Nomb_Grupo,eg.Fech_programada FROM dbo.Nota_Examen ne JOIN dbo.MATRICULA ma ON ma.Cod_Matricula=ne.MATRICULA_Cod_Matricula JOIN dbo.Examen_Grupo eg ON eg.Cod_examen_grupo=ne.Examen_Grupo_Cod_examen_grupo JOIN dbo.Examen ex ON ex.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=ma.Grupo_Cod_Grupo WHERE ma.ALUMNO_DNI_Alu=@dni AND eg.Publicado=1 ORDER BY eg.Fech_programada DESC`),
+    query(`SELECT ne.Puntaje_total,ne.Fech_registro,ex.Nomb_Examen,ex.puntaje_maximo,g.Nomb_Grupo,eg.Fech_programada FROM dbo.Nota_Examen ne JOIN dbo.MATRICULA ma ON ma.Cod_Matricula=ne.MATRICULA_Cod_Matricula JOIN dbo.Examen_Grupo eg ON eg.Cod_examen_grupo=ne.Examen_Grupo_Cod_examen_grupo JOIN dbo.Examen ex ON ex.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=ma.Grupo_Cod_Grupo ${v41?'LEFT JOIN dbo.Nota_Estado_V41 ns ON ns.Nota_Examen_Cod_Nota=ne.Cod_Nota':''} WHERE ma.ALUMNO_DNI_Alu=@dni AND eg.Publicado=1 ${v41?'AND ISNULL(ns.Anulada,0)=0':''} ORDER BY eg.Fech_programada DESC`),
     query(`SELECT h.Dia_Semana,h.Hr_Inicio,h.Hr_Fin,h.TIPO_BLOQUE_Cod_Tipo,co.Nomb_Curso,d.Nom_Doc,g.Nomb_Grupo,t.Nomb_Turno,a.Nomb_Aula FROM dbo.Horario h JOIN dbo.Grupo g ON g.Cod_Grupo=h.Grupo_Cod_Grupo JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo LEFT JOIN dbo.CURSOS co ON co.Cod_Curso=h.Docente_Asignatura_CURSOS_Cod_Curso LEFT JOIN dbo.Docente d ON d.DNI_Doc=h.Docente_Asignatura_Docente_DNI_Doc WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND h.Activo=1 ORDER BY h.Dia_Semana,h.Hr_Inicio`),
     query(`SELECT eg.Fech_programada,eg.Hr_inicio,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`),
     query(`SELECT Cod_Pago,MATRICULA_Cod_Matricula,CONCEPTO_PAGO_Cod_Concepto,Nro_Mensualidad,Monto,ESTADO_PAGO_Cod_Estado,Fech_Vencimiento,Fech_Pago,Medio_Pago FROM dbo.Pago WHERE ALUMNO_DNI_Alu=@dni ORDER BY Fech_Vencimiento DESC,Cod_Pago`)

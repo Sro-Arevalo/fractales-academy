@@ -7,12 +7,11 @@
   <meta name="description" content="Plataforma de gestión académica de Fractales Academy. Aprende, crece y trasciende.">
   <title>Fractales Academy · Plataforma académica</title>
   <link rel="icon" href="/assets/logo-original.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=4.0.0">
-  <script defer src="/app.js?v=4.0.0"></script>
-  <script defer src="/v4.js?v=4.0.0"></script>
+  <link rel="stylesheet" href="/styles.css?v=4.1.0">
+  <link rel="stylesheet" href="/v41.css?v=4.1.0">
+  <script defer src="/app.js?v=4.1.0"></script>
+  <script defer src="/v4.js?v=4.1.0"></script>
+  <script defer src="/v41.js?v=4.1.0"></script>
 </head>
 <body>
   <a class="skip-link" href="#content">Saltar al contenido</a>
@@ -41,13 +40,15 @@
           <p class="muted login-sub">Accede al espacio donde tus metas toman forma.</p>
         </div>
         <form id="loginForm">
-          <label for="loginUser">Usuario</label>
-          <div class="login-field-wrap"><span class="field-leading-icon" aria-hidden="true">@</span><input id="loginUser" name="usuario" type="text" placeholder="Tu usuario de acceso" maxlength="80" autocomplete="username" required></div>
+          <label for="loginUser">DNI o usuario</label>
+          <div class="login-field-wrap"><span class="field-leading-icon" aria-hidden="true">@</span><input id="loginUser" name="usuario" type="text" placeholder="DNI del estudiante o usuario administrador" maxlength="80" autocomplete="username" required></div>
           <div class="password-heading"><label for="loginPass">Contraseña</label><span class="hint-short">Acceso seguro</span></div>
           <div class="password-wrap"><span class="field-leading-icon" aria-hidden="true">✳</span><input id="loginPass" name="clave" type="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required><button type="button" class="show-password" id="togglePass" aria-label="Mostrar u ocultar contraseña">Mostrar</button></div>
+          <details class="activation-help" id="activationHelp" hidden><summary>Primer ingreso con código de activación</summary><p>Úsalo si administración te indicó que tu clave inicial es tu DNI. Necesitas también el código individual que te entregaron.</p><label for="loginActivation">Código de activación</label><input id="loginActivation" maxlength="100" autocomplete="one-time-code" spellcheck="false"></details>
           <div id="loginError" class="form-error" role="alert" hidden></div>
           <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">Ingresar a mi cuenta <span aria-hidden="true">↗</span></button>
         </form>
+        <button type="button" class="v41-text-button forgot-button" id="forgotPassword">¿Olvidaste tu contraseña?</button>
         <div class="login-support"><span class="lock-icon" aria-hidden="true">♢</span><span>¿No tienes una cuenta? Solicita tus credenciales a la administración.</span></div>
         <div class="login-bottom"><span>© <span id="loginYear">2026</span> Fractales Academy</span><a href="https://www.instagram.com/fractales_academy/" target="_blank" rel="noopener noreferrer">Nuestra comunidad ↗</a></div>
       </div>
