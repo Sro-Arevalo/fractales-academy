@@ -1,20 +1,24 @@
 {
   "name": "fractales-academy-azure",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
-  "description": "Fractales Academy v3: Portal estudiantil renovado, API Node.js y Azure SQL (25 tablas)",
+  "description": "Fractales Academy v4: inscripción, pagos, simulacros y horarios sobre Azure SQL",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "seed:admin": "node scripts/create-admin.js",
     "test": "node --test tests/*.test.js",
-    "check": "node --check server/index.js && node --check server/rules.js && node --check server/api.js && node --check public/app.js"
+    "check": "node --check server/index.js && node --check server/rules.js && node --check server/api.js && node --check server/operations.js && node --check server/validation.js && node --check server/v4-api.js && node --check public/app.js && node --check public/v4.js",
+    "sql:build": "node scripts/build-v4-rules-sql.js",
+    "test:sql": "node --test tests/v4-sql.integration.js",
+    "preview:v4": "node scripts/preview-v4-local.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@azure/identity": "^4.10.0",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.6.1",
@@ -22,7 +26,9 @@
     "express-rate-limit": "^7.5.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mssql": "^11.0.1",
-    "@azure/identity": "^4.10.0"
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
   }
 }

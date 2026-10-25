@@ -44,7 +44,8 @@ function label(k){if(pretty[k])return pretty[k];return k.replace(/_/g,' ').repla
 function esc(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function fmtDate(value){if(!value)return '—';const s=String(value).slice(0,10);const parts=s.split('-');return parts.length===3?`${parts[2]}/${parts[1]}/${parts[0]}`:s;}
 function fmtTime(value){if(value==null)return '—';const s=String(value);return s.includes('T')?s.slice(11,16):s.slice(0,5);}
-function display(v,k){if(v===null||v===undefined||v==='')return '<span class="muted">—</span>';if(typeof v==='boolean')return `<span class="tag ${v?'good':'bad'}">${v?'Sí':'No'}</span>`;if(k==='Dia_Semana')return esc(days[Number(v)]||v);if(k.startsWith('Fech')||k==='Fech_registro')return fmtDate(v);if(k.toLowerCase().startsWith('hr_'))return fmtTime(v);if(k==='Monto'||k==='Precio_Mensual')return fmt.format(v);if(/^(ESTADO_|Estado$|Modalidad$)/.test(k)){const c=['PAGADO','ACTIVA','ACTIVO','RENDIDO','REGULAR'].includes(v)?'good':['PENDIENTE','PROGRAMADO'].includes(v)?'warn':'info';return `<span class="tag ${c}">${esc(v)}</span>`;}const t=String(v);return esc(t.length>56?t.slice(0,55)+'…':t);}
+function fmtDateTime(value){if(!value)return '—';const text=String(value);const date=new Date(/Z$|[+-]\d{2}:\d{2}$/.test(text)?text:text.replace(' ','T')+'Z');return Number.isNaN(date.getTime())?'—':new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'short',timeStyle:'short'}).format(date);}
+function display(v,k){if(k==='Fech_Pago'||k==='Fech_registro')return esc(fmtDateTime(v));if(v===null||v===undefined||v==='')return '<span class="muted">—</span>';if(typeof v==='boolean')return `<span class="tag ${v?'good':'bad'}">${v?'Sí':'No'}</span>`;if(k==='Dia_Semana')return esc(days[Number(v)]||v);if(k.startsWith('Fech')||k==='Fech_registro')return fmtDate(v);if(k.toLowerCase().startsWith('hr_'))return fmtTime(v);if(k==='Monto'||k==='Precio_Mensual')return fmt.format(v);if(/^(ESTADO_|Estado$|Modalidad$)/.test(k)){const c=['PAGADO','ACTIVA','ACTIVO','RENDIDO','REGULAR'].includes(v)?'good':['PENDIENTE','PROGRAMADO'].includes(v)?'warn':'info';return `<span class="tag ${c}">${esc(v)}</span>`;}const t=String(v);return esc(t.length>56?t.slice(0,55)+'…':t);}
 async function api(route,options={}){
   const response=await fetch('/api'+route,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...options});
   let data;try{data=await response.json();}catch{throw Error('El servidor no devolvió una respuesta válida.');}
@@ -56,24 +57,24 @@ function showLogin(){state.user=null;$('appView').hidden=true;$('loginView').hid
 function showApp(user){state.user=user;$('appView').hidden=false;$('loginView').hidden=true;$('roleBadge').textContent=user.rol==='ADMIN'?'Administrador':'Estudiante';$('avatarInitials').textContent=user.nombre.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();$('profileName').textContent=user.nombre;renderNav();navigate('home');if(user.cambiar)passwordModal(true);}
 async function boot(){
   $('today').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'}); $('loginYear').textContent=$('footerYear').textContent=new Date().getFullYear();
-  $('loginForm').addEventListener('submit',async(e)=>{e.preventDefault();const btn=$('loginSubmit');btn.disabled=true;$('loginError').hidden=true;try{const data=await api('/auth/login',{method:'POST',body:JSON.stringify({usuario:$('loginUser').value,clave:$('loginPass').value})});$('loginPass').value='';if(data.user.rol==='ADMIN')await loadMeta();showApp(data.user);}catch(err){$('loginError').textContent=err.message;$('loginError').hidden=false;}finally{btn.disabled=false;}});
+  $('loginForm').addEventListener('submit',async(e)=>{e.preventDefault();const btn=$('loginSubmit');btn.disabled=true;$('loginError').hidden=true;try{const data=await api('/auth/login',{method:'POST',body:JSON.stringify({usuario:$('loginUser').value,clave:$('loginPass').value})});$('loginPass').value='';if(data.user.rol==='ADMIN'&&!data.user.cambiar)await loadMeta();showApp(data.user);}catch(err){$('loginError').textContent=err.message;$('loginError').hidden=false;}finally{btn.disabled=false;}});
   $('togglePass').onclick=()=>{const inp=$('loginPass');inp.type=inp.type==='password'?'text':'password';$('togglePass').textContent=inp.type==='password'?'Mostrar':'Ocultar';};
   $('logoutButton').onclick=logout;$('profileButton').onclick=()=>passwordModal(false);
   $('menuButton').onclick=()=>openMenu(true);$('mobileOverlay').onclick=()=>openMenu(false);$('closeSidebar').onclick=()=>openMenu(false);$('quickFindButton').onclick=openQuickFind;
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!state.user?.cambiar)closeModal();openMenu(false);}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'&&state.user){e.preventDefault();openQuickFind();}});
-  try {const d=await api('/auth/me');if(d.user.rol==='ADMIN')await loadMeta();showApp(d.user);}catch{showLogin();}
+  try {const d=await api('/auth/me');if(d.user.rol==='ADMIN'&&!d.user.cambiar)await loadMeta();showApp(d.user);}catch{showLogin();}
 }
 async function loadMeta(){const m=await api('/meta');state.modules=Object.fromEntries(m.modules.map(x=>[x.name,x]));}
 async function logout(){try{await api('/auth/logout',{method:'POST',body:'{}'});}catch{}showLogin();}
 function openMenu(value){$('sidebar').classList.toggle('open',value);$('mobileOverlay').hidden=!value;$('menuButton').setAttribute('aria-expanded',String(value));if(value)$('closeSidebar').focus();}
 function navItem(id,title){return `<button type="button" class="nav-item ${state.page===id?'active':''}" ${state.page===id?'aria-current="page"':''} data-nav="${esc(id)}"><span class="nav-ico">${ico(navIcons[id]||'folder')}</span><span>${esc(title)}</span></button>`;}
-function renderNav(){let html='<div class="nav-label">PRINCIPAL</div>'+navItem('home',state.user.rol==='ADMIN'?'Panel general':'Mi espacio');if(state.user.rol==='ADMIN'){let last='';for(const m of Object.values(state.modules)){if(m.category!==last){last=m.category;html+=`<div class="nav-label">${esc(last)}</div>`;}html+=navItem(m.name,m.label);}}else{html+=`<div class="nav-label">ACCESOS</div>${navItem('student-notes','Mis resultados')}${navItem('student-schedule','Mi horario')}${navItem('student-payments','Mis pagos')}`;}
+function renderNav(){let html='<div class="nav-label">PRINCIPAL</div>'+navItem('home',state.user.rol==='ADMIN'?'Panel general':'Mi espacio');if(state.user.rol==='ADMIN'){html+=navItem('inscripcion','Inscribir estudiante');let last='';for(const m of Object.values(state.modules)){if(m.category!==last){last=m.category;html+=`<div class="nav-label">${esc(last)}</div>`;}html+=navItem(m.name,m.label);}}else{html+=`<div class="nav-label">ACCESOS</div>${navItem('student-notes','Mis resultados')}${navItem('student-schedule','Mi horario')}${navItem('student-payments','Mis pagos')}`;}
   $('navContent').innerHTML=html;$('navContent').querySelectorAll('[data-nav]').forEach(el=>el.onclick=()=>navigate(el.dataset.nav));}
 function header(crumb,title){$('crumb').textContent=crumb.toUpperCase();$('pageTitle').textContent=title;document.title=`${title} · Fractales Academy`;}
 async function navigate(id,page=1){openMenu(false);state.page=id;state.pageNo=page;state.q='';renderNav();$('content').innerHTML='<div class="loading">Preparando tu espacio…</div>';
   try{if(state.user.cambiar){$('content').innerHTML='<div class="helper">Para empezar debes cambiar tu contraseña temporal.</div>';return;}
     if(state.user.rol==='ALUMNO')await studentView(id);
-    else if(id==='home')await dashboard();else await tableView(id);
+    else if(id==='home')await dashboard();else if(id==='inscripcion')await V4.enrollmentView();else if(id==='Pago')await V4.paymentsView();else if(id==='Examen')await V4.examsView();else await tableView(id);
   }catch(e){$('content').innerHTML=`<div class="panel empty-state"><span class="big">⚠</span><strong>No se pudo cargar esta sección</strong>${esc(e.message)}<br><button class="btn btn-secondary" id="retryBtn">Reintentar</button></div>`;$('retryBtn').onclick=()=>navigate(id);}
 }
 async function dashboard(){
@@ -112,7 +113,7 @@ async function tableView(id){
     ${id==='Horario'?'<div class="helper"><strong>Control de horarios:</strong> se validan los cruces por grupo, aula y docente, considerando el ciclo y el turno.</div>':''}
     ${id==='Pago'?'<div class="helper"><strong>Política de cobros:</strong> verifica conceptos, matrícula inicial y mensualidades según las restricciones de SQL Server.</div>':''}
     <section class="panel"><div class="module-toolbar"><div class="search-wrap"><span aria-hidden="true">⌕</span><input class="search-input" type="search" id="searchRecords" value="${esc(state.q)}" placeholder="Buscar por nombre o código…" aria-label="Buscar registros"></div><span class="search-meta">${Number(data.count).toLocaleString('es-PE')} registros</span></div>
-    ${data.rows.length?`<div class="table-scroll"><table><thead><tr>${cols.map(c=>`<th scope="col">${esc(label(c))}</th>`).join('')}<th scope="col">Acciones</th></tr></thead><tbody>${data.rows.map(row=>`<tr>${cols.map((col,i)=>`<td class="${i===0?'td-title':''}">${display(row[col],col)}</td>`).join('')}<td><div class="actions-cell"><button class="btn btn-secondary btn-sm" data-edit="${esc(row._id)}" aria-label="Editar registro">${ico('pencil',13)} Editar</button><button class="btn btn-danger btn-sm" data-delete="${esc(row._id)}" aria-label="Eliminar registro">${ico('trash',13)} Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><span class="big">${ico('folder',26)}</span><strong>Sin registros ${state.q?'para esta búsqueda':''}</strong><p>${state.q?'Prueba con otro nombre o código.':'Todavía no hay datos aquí. Crea tu primer registro para empezar.'}</p></div>`}
+    ${data.rows.length?`<div class="table-scroll"><table><thead><tr>${cols.map(c=>`<th scope="col">${esc(label(c))}</th>`).join('')}<th scope="col">Acciones</th></tr></thead><tbody>${data.rows.map(row=>`<tr>${cols.map((col,i)=>`<td class="${i===0?'td-title':''}">${display(row[col],col)}</td>`).join('')}<td><div class="actions-cell"><button class="btn btn-secondary btn-sm" data-edit="${esc(row._id)}" aria-label="Editar registro">${ico('pencil',13)} Editar</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><span class="big">${ico('folder',26)}</span><strong>Sin registros ${state.q?'para esta búsqueda':''}</strong><p>${state.q?'Prueba con otro nombre o código.':'Todavía no hay datos aquí. Crea tu primer registro para empezar.'}</p></div>`}
     <div class="table-bottom"><span>Página ${state.pageNo} de ${Math.max(1,Math.ceil(data.count/data.pageSize))}</span><div class="pager"><button id="prevPage" ${state.pageNo===1?'disabled':''}>← Anterior</button><button id="nextPage" ${state.pageNo*data.pageSize>=data.count?'disabled':''}>Siguiente →</button></div></div></section>`;
   $('addRecord').onclick=()=>recordModal(m,null);
   $('searchRecords').addEventListener('input',e=>{const q=e.target.value;const pos=e.target.selectionStart;clearTimeout(searchDebounce);searchDebounce=setTimeout(async()=>{
@@ -132,7 +133,7 @@ function initialValue(col,m,existing){if(existing)return existing[col.name];cons
   if(key==='ESTADO_CICLO_Cod_Estado'||key==='ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen')return 'PROGRAMADO';
   if(key==='Modalidad')return 'REGULAR';if(key==='Nro_Mensualidades')return 4;
   if(key==='Precio_Mensual')return 250;
-  if(key==='ROL_Cod_Rol')return 'ALUMNO';
+  if(key==='ROL_Cod_Rol')return 'ADMIN';
   if(key==='Activo'||key==='Activa'||key==='activo')return true;
   if(key==='Fech_Matricula')return new Date().toISOString().slice(0,10);
   if(key==='Publicado'||key==='Debe_Cambiar_Clave')return false;
@@ -151,11 +152,14 @@ function formControl(col,m,existing){const name=col.name;
   if(name==='Fech_Pago'&&m.name==='Pago')return '';
   if(name==='Estado'&&m.name==='Examen_Grupo')return '';
   if(name==='Clave_Hash')return '';
+  if(name==='Debe_Cambiar_Clave'&&m.name==='Usuario')return '';
+  const immutable=existing&&(({MATRICULA:['ALUMNO_DNI_Alu','Grupo_Cod_Grupo','Fech_Matricula'],Nota_Examen:['MATRICULA_Cod_Matricula','Examen_Grupo_Cod_examen_grupo','Grupo_Cod_Grupo','Fech_registro'],Examen_Grupo:['Examen_Cod_Examen','Grupo_Cod_Grupo'],Usuario:['Nomb_Usuario','ROL_Cod_Rol','ALUMNO_DNI_Alu']})[m.name]||[]).includes(name);
   const v=initialValue(col,m,existing);
-  const pkAuto=!existing&&col.pk&&m.pk.length===1&&/^Cod_/i.test(name)&&!['ROL','TIPO_BLOQUE','CONCEPTO_PAGO','ESTADO_CICLO','ESTADO_EXAMEN_GRUPO','ESTADO_MATRICULA','ESTADO_PAGO','PARENTESCO','Programa'].includes(m.name);
+  const pkAuto=!existing&&col.pk&&m.pk.length===1&&/^Cod_/i.test(name)&&['MATRICULA','Pago','Usuario','Nota_Examen','Examen_Grupo'].includes(m.name);
+  if(pkAuto)return '';
   const required=col.required&&!col.default&&!pkAuto&&!existing;
   const mark=required?'<span class="required-mark"> *</span>':'';
-  const inpBase=`name="${esc(name)}" id="field-${esc(name)}" data-field="${esc(name)}" ${required?'required':''} ${existing&&col.pk?'disabled':''}`;
+  const inpBase=`name="${esc(name)}" id="field-${esc(name)}" data-field="${esc(name)}" ${required?'required':''} ${existing&&col.pk||immutable?'disabled':''} ${/^Cel_/.test(name)?'inputmode="numeric" pattern="[0-9]{9}" minlength="9" title="Exactamente nueve dígitos sin espacios ni símbolos"':/^DNI_/.test(name)?'inputmode="numeric" pattern="[0-9]{8}" minlength="8"':col.pk&&!col.references?'pattern="[A-Za-z0-9_-]+" title="Código obligatorio: letras, números, guion o guion bajo"':''}`;
   let el='';
   if(col.references){el=`<select ${inpBase}><option value="">${col.required?'Selecciona una opción':'Sin asignar'}</option>${v!==''&&v!=null?`<option value="${esc(v)}" selected>${esc(v)}</option>`:''}</select>`;}
   else if(col.type==='bit')el=`<select ${inpBase}><option value="true" ${v===true||v===1?'selected':''}>Sí</option><option value="false" ${v===false||v===0||v===''?'selected':''}>No</option></select>`;
@@ -168,7 +172,10 @@ function formControl(col,m,existing){const name=col.name;
   const note=pkAuto?'<div class="field-note">Opcional: se genera un código único automáticamente.</div>':null;
   return `<div class="field ${['Descripcion','Observaciones','Dir_Alu'].includes(name)?'full':''}"><label for="field-${esc(name)}">${esc(label(name))}${mark}</label>${el}${note||''}</div>`;
 }
-async function recordModal(m,record){const creating=!record;const body=`<form id="recordForm"><div class="form-grid">${m.columns.map(c=>formControl(c,m,record)).join('')}${m.name==='Usuario'?`<div class="field full"><label for="newSecret">${creating?'Contraseña inicial *':'Nueva contraseña (opcional)'}</label><input type="password" id="newSecret" minlength="12" maxlength="72" ${creating?'required':''} autocomplete="new-password" placeholder="Mínimo 12 caracteres"><div class="field-note">Las contraseñas se almacenan cifradas, nunca como texto legible.</div></div>`:''}</div><div class="form-actions"><button class="btn btn-secondary" type="button" id="cancelRecord">Cancelar</button><button class="btn btn-primary" id="saveRecord" type="submit">${creating?'Crear registro':'Guardar cambios'} →</button></div></form>`;
+async function recordModal(m,record){
+  if(!record&&['ALUMNO','MATRICULA'].includes(m.name)){await navigate('inscripcion');return;}
+  if(m.name==='Horario'){await V4.scheduleModal(record);return;}
+  const creating=!record;const body=`<form id="recordForm"><div class="form-grid">${m.columns.map(c=>formControl(c,m,record)).join('')}${!creating&&['Nota_Examen','Examen_Grupo'].includes(m.name)?'<div class="field full"><label for="changeReason">Motivo del cambio *</label><input id="changeReason" required minlength="5" maxlength="250"></div>':''}${m.name==='Usuario'?`<div class="field full"><label for="newSecret">${creating?'Contraseña inicial *':'Nueva contraseña (opcional)'}</label><input type="password" id="newSecret" minlength="12" maxlength="72" ${creating?'required':''} autocomplete="new-password" placeholder="Mínimo 12 caracteres"><div class="field-note">Las contraseñas se almacenan mediante hash seguro.</div></div>`:''}</div><div class="form-actions"><button class="btn btn-secondary" type="button" id="cancelRecord">Cancelar</button><button class="btn btn-primary" id="saveRecord" type="submit">${creating?'Crear registro':'Guardar cambios'} →</button></div></form>`;
   modal(creating?'Nuevo registro':'Editar registro',m.label,body);
   $('cancelRecord').onclick=closeModal;
   const refs=m.columns.filter(c=>c.references).map(c=>({field:c.name,ref:c.references.table,refCol:c.references.column}));
@@ -194,6 +201,7 @@ async function recordModal(m,record){const creating=!record;const body=`<form id
       data[c.name]=v;
     }
     if(m.name==='Usuario'){const secret=$('newSecret').value;if(secret)data.Nueva_Clave=secret;}
+    if($('changeReason'))data.Motivo_Cambio=$('changeReason').value;
     const btn=$('saveRecord');btn.disabled=true;btn.textContent='Guardando…';
     try{const url=`/records/${encodeURIComponent(m.name)}${record?'/'+encodeURIComponent(record._id):''}`;
       await api(url,{method:record?'PUT':'POST',body:JSON.stringify(data)});closeModal();toast(record?'Registro actualizado correctamente.':'Registro creado correctamente.');await tableView(m.name);
@@ -206,7 +214,7 @@ function deleteModal(m,record){const desc=m.display.map(k=>record[k]).filter(Boo
   $('deleteConfirm').onclick=async()=>{try{await api(`/records/${encodeURIComponent(m.name)}/${encodeURIComponent(record._id)}`,{method:'DELETE',body:'{}'});closeModal();toast('Registro eliminado.');await tableView(m.name);}catch(e){toast(e.message,true);}};
 }
 function passwordModal(force){modal('Seguridad de tu cuenta',force?'Es obligatorio cambiar la contraseña inicial.':'Actualiza tu contraseña de acceso.',`<form id="passwordForm"><div class="form-grid"><div class="field full"><label>Contraseña actual *</label><input type="password" name="actual" required autocomplete="current-password"></div><div class="field full"><label>Nueva contraseña *</label><input type="password" name="nueva" minlength="12" maxlength="72" required autocomplete="new-password"></div></div><p class="password-info">Utiliza al menos 12 caracteres. No compartas tu contraseña con otras personas.</p><div class="form-actions"><button type="submit" class="btn btn-primary">Actualizar contraseña</button></div></form>`);
-  if(force){$('modalRoot').querySelector('.close-modal').hidden=true;} $('passwordForm').onsubmit=async(e)=>{e.preventDefault();const fd=new FormData(e.currentTarget);try{const d=await api('/auth/change-password',{method:'POST',body:JSON.stringify(Object.fromEntries(fd.entries()))});state.user=d.user;closeModal();toast('Contraseña actualizada.');navigate('home');}catch(err){toast(err.message,true);}};
+  if(force){$('modalRoot').querySelector('.close-modal').hidden=true;} $('passwordForm').onsubmit=async(e)=>{e.preventDefault();const fd=new FormData(e.currentTarget);try{const d=await api('/auth/change-password',{method:'POST',body:JSON.stringify(Object.fromEntries(fd.entries()))});state.user=d.user;if(d.user.rol==='ADMIN')await loadMeta();renderNav();closeModal();toast('Contraseña actualizada.');navigate('home');}catch(err){toast(err.message,true);}};
 }
 function panel(title,subtitle,columns,rows){return `<section class="panel wide-panel"><div class="panel-head"><div><h3>${esc(title)}</h3><p>${esc(subtitle)}</p></div><span class="tag">${rows.length} registros</span></div>${rows.length?`<div class="table-scroll"><table><thead><tr>${columns.map(x=>`<th>${esc(x[1])}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${columns.map(([key])=>`<td>${display(row[key],key)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:emptyInline('Aún no hay información disponible.')}</section>`;}
 function studentWelcome(){
@@ -218,7 +226,7 @@ function statStudent(title,value,subtitle,icon,style='orange'){
   return `<article class="student-metric ${style}"><div class="student-metric-symbol">${ico(icon,20)}</div><p>${esc(title)}</p><strong>${esc(value)}</strong><small>${esc(subtitle)}</small></article>`;
 }
 function studentEmpty(icon,title,text){return `<div class="student-empty">${ico(icon,28)}<strong>${esc(title)}</strong><p>${esc(text)}</p></div>`;}
-function studentGroupCard(g){return `<article class="student-group-card"><div class="group-tile-art">${ico('graduation',26)}</div><div><span class="tiny-label">MI GRUPO</span><h4>${esc(g.Nomb_Grupo||'Grupo asignado')}</h4><p>${esc(g.Nomb_Ciclo||'Ciclo')} · ${esc(g.Nomb_Programa||'Programa')}</p></div>${schoolTag(g.ESTADO_MATRICULA_Cod_Estado_Matricula)}</article>`;}
+function studentGroupCard(g){return `<article class="student-group-card"><div class="group-tile-art">${ico('graduation',26)}</div><div><span class="tiny-label">MI GRUPO</span><h4>${esc(g.Nomb_Grupo||'Grupo asignado')}</h4><p>${esc(g.Nomb_Ciclo||'Ciclo')} · ${esc(g.Nomb_Programa||'Programa')}<br>${esc(g.Cod_Matricula||'')} · ${esc(g.Nomb_Turno||'')}<br>${fmtDate(g.Fech_Inicio)} al ${fmtDate(g.Fech_Fin)}</p></div>${schoolTag(g.ESTADO_MATRICULA_Cod_Estado_Matricula)}</article>`;}
 function studentResults(d){
   if(!d.notes.length)return studentEmpty('award','Tus notas aparecerán aquí','Verás los puntajes de simulacros cuando la academia los publique.');
   return `<div class="student-result-list">${d.notes.map(n=>{
@@ -229,6 +237,7 @@ function studentResults(d){
   }).join('')}</div>`;
 }
 function studentCalendar(d){
+  if(typeof V4!=='undefined')return V4.weekly(d.schedule);
   if(!d.schedule.length)return studentEmpty('calendar','Sin horarios publicados','Tus clases se mostrarán cuando la academia registre un horario para tu grupo.');
   const grouped=new Map();
   for(const item of d.schedule){const day=Number(item.Dia_Semana);const name=days[day]||String(item.Dia_Semana||'Día');if(!grouped.has(name))grouped.set(name,[]);grouped.get(name).push(item);}
@@ -237,7 +246,7 @@ function studentCalendar(d){
 function studentPaymentCard(p){
  const status=String(p.ESTADO_PAGO_Cod_Estado||'').toUpperCase();
  const statusClass=status==='PAGADO'?'paid':status==='PENDIENTE'?'pending':'neutral';
- return `<article class="student-payment"><div class="payment-icon">${ico('credit-card',20)}</div><div class="payment-details"><strong>${esc(p.CONCEPTO_PAGO_Cod_Concepto||'Concepto académico')}${p.Nro_Mensualidad?' · Mes '+esc(p.Nro_Mensualidad):''}</strong><small>Vencimiento: ${fmtDate(p.Fech_Vencimiento)}</small></div><div class="payment-amount"><b>${fmt.format(Number(p.Monto)||0)}</b><span class="payment-status ${statusClass}">${esc(status||'SIN ESTADO')}</span></div></article>`;
+ return `<article class="student-payment"><div class="payment-icon">${ico('credit-card',20)}</div><div class="payment-details"><strong>${esc(p.CONCEPTO_PAGO_Cod_Concepto||'Concepto académico')}${p.Nro_Mensualidad?' · Cuota '+esc(p.Nro_Mensualidad):''}</strong><small>Matrícula: ${esc(p.MATRICULA_Cod_Matricula||'Inscripción inicial')} · Vence: ${fmtDate(p.Fech_Vencimiento)}${p.Fech_Pago?' · Pagado: '+esc(fmtDateTime(p.Fech_Pago))+' (Perú) · '+esc(p.Medio_Pago):''}</small></div><div class="payment-amount"><b>${fmt.format(Number(p.Monto)||0)}</b><span class="payment-status ${statusClass}">${esc(status||'SIN ESTADO')}</span></div></article>`;
 }
 async function studentView(page){
   header('Portal del estudiante','Mi espacio académico');
@@ -273,7 +282,7 @@ async function studentView(page){
     }else if(tab==='notas'){
       content=studentSection('Tus resultados','Solo puedes ver las evaluaciones publicadas por la academia',studentResults(d));
     }else{
-      content=studentSection('Pagos y pensiones','Información registrada por administración; para consultas, comunícate con la academia',d.payments.length?`<div class="student-payment-list">${d.payments.map(studentPaymentCard).join('')}</div>`:studentEmpty('credit-card','Sin pagos registrados','Tu historial de pagos aparecerá aquí cuando esté disponible.'));
+      content=V4.financeSummary(d.payments)+studentSection('Pagos y pensiones','Historial de cuotas, vencimientos y cobros confirmados',d.payments.length?`<div class="student-payment-list">${d.payments.map(studentPaymentCard).join('')}</div>`:studentEmpty('credit-card','Sin pagos registrados','Tu historial de pagos aparecerá aquí cuando esté disponible.'));
     }
     $('studentContent').innerHTML=content;
     $('studentContent').querySelectorAll('[data-student-go]').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.studentGo)));

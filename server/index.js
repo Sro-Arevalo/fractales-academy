@@ -23,12 +23,15 @@ app.use('/api',api);
 app.use(express.static(path.join(__dirname,'..','public'),{index:'index.html',maxAge:'1h'}));
 app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'..','public','index.html')));
 app.use((err,req,res,next)=>{
-  console.error('[Fractales API]',err);
+  console.error('[Fractales API]',{name:err.name,number:err.number,status:err.status||500});
   if(res.headersSent)return next(err);
   const code=err.number||err.originalError?.info?.number;
   let status=err.status||500,message=err.message;
   if(code===2627||code===2601){status=400;message='Ya existe un registro con esa clave o valor único.';}
   if(code===547){status=400;message='Los datos no cumplen una relación o restricción de SQL Server.';}
+  if(code>=54010&&code<=54063){status=400;message=err.message;}
+  if(code===1205){status=409;message='Conflicto de acceso simultáneo. Intenta nuevamente.';}
+  if(code>=51001&&code<=51005){status=400;message=err.message;}
   if(status>=500) message='Error del servidor o la conexión a SQL. Revisa la configuración y los registros de Azure.';
   res.status(status).json({error:message});
 });

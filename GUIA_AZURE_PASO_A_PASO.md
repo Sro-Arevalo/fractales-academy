@@ -1,5 +1,7 @@
 # SUBIR FRACTALES ACADEMY A AZURE — GUÍA PASO A PASO
 
+**Referencia anterior V3.** Para actualizar la base existente a V4 utiliza [GUIA_MIGRACION_AZURE_V4.md](GUIA_MIGRACION_AZURE_V4.md). V4 sí requiere migraciones incrementales y coordinación con el backend; las cantidades y procedimientos de instalación siguientes corresponden a la versión anterior. No ejecutes el modelo completo sobre la base existente.
+
 **Arquitectura:** un solo Azure App Service (frontend `public/` + backend `server/`) y una Azure SQL Database. Tu laptop puede estar apagada después del despliegue; depende de cuotas, estado de suscripción y disponibilidad de Azure.
 
 ## 1. Si ya creaste las 25 tablas en Azure SQL
