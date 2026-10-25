@@ -50,7 +50,7 @@
       {
         "name": "Cel_Alu",
         "type": "varchar",
-        "length": 15,
+        "length": 9,
         "scale": null,
         "required": false,
         "default": false,
@@ -90,7 +90,7 @@
       {
         "name": "Cel_Apoderado",
         "type": "varchar",
-        "length": 15,
+        "length": 9,
         "scale": null,
         "required": false,
         "default": false,
@@ -490,7 +490,7 @@
       {
         "name": "Cel_Doc",
         "type": "varchar",
-        "length": 15,
+        "length": 9,
         "scale": null,
         "required": true,
         "default": false,
