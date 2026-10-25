@@ -11,3 +11,13 @@ node_modules/
 npm-debug.log*
 .DS_Store
 Thumbs.db
+
+# Respaldos/exportaciones con datos: conservar fuera del repositorio
+*.bak
+*.bacpac
+*.mdf
+*.ldf
+*.trn
+# Paquetes de despliegue y capturas de pruebas locales
+fractales-deploy*.zip
+artifacts/local-preview/

@@ -205,7 +205,8 @@ async function save(req,res,isInsert) {
       query=`UPDATE dbo.[${m.name}] SET ${values.map(([k],i)=>`[${k}]=@v${i}`).join(',')} WHERE ${where}`;
     }
     await r.query(query);
-    if(m.name==='Usuario'&&(payload.Clave_Hash||current&&Object.hasOwn(payload,'Activo')&&Boolean(payload.Activo)!==Boolean(current.Activo))&&await securityReady(tx))await accounts.revoke(tx,current?.Cod_Usuario||payload.Cod_Usuario,payload.Clave_Hash?false:undefined);
+    // Un alta no tiene sesiones anteriores. La revocación corresponde a cambios de cuentas existentes.
+    if(m.name==='Usuario'&&!isInsert&&(payload.Clave_Hash||Object.hasOwn(payload,'Activo')&&Boolean(payload.Activo)!==Boolean(current.Activo))&&await securityReady(tx))await accounts.revoke(tx,current.Cod_Usuario,payload.Clave_Hash?false:undefined);
     if(['Nota_Examen','Examen_Grupo'].includes(m.name)){
       const reason=req.body.Motivo_Cambio;
       if(!isInsert&&(typeof reason!=='string'||reason.trim().length<5||reason.length>250))throw rule('Describe el motivo del cambio (5 a 250 caracteres).');

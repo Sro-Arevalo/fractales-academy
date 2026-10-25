@@ -1,20 +1,22 @@
 {
   "name": "fractales-academy-azure",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "private": true,
-  "description": "Fractales Academy v4.1: inscripción, pagos, simulacros y horarios sobre Azure SQL",
+  "description": "Fractales Academy v4.2: inscripción, pagos, simulacros y horarios sobre Azure SQL",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "seed:admin": "node scripts/create-admin.js",
     "test": "node --test tests/*.test.js",
-    "check": "node --check server/index.js && node --check server/rules.js && node --check server/api.js && node --check server/operations.js && node --check server/validation.js && node --check server/v4-api.js && node --check public/app.js && node --check public/v4.js && node --check server/account-security.js && node --check server/account-service.js && node --check server/security-schema.js && node --check server/notifications.js && node --check server/administration.js && node --check server/accounts-api.js && node --check public/v41.js && node --check scripts/build-v41-sql.js",
+    "check": "node --check server/index.js && node --check server/rules.js && node --check server/api.js && node --check server/operations.js && node --check server/validation.js && node --check server/v4-api.js && node --check public/app.js && node --check public/v4.js && node --check server/account-security.js && node --check server/account-service.js && node --check server/security-schema.js && node --check server/notifications.js && node --check server/administration.js && node --check server/accounts-api.js && node --check public/v41.js && node --check scripts/build-v41-sql.js && node --check scripts/preview-v4-local.js && node --check tests/v42-sql.integration.js",
     "sql:build": "node scripts/build-v4-rules-sql.js",
     "test:sql": "node --test tests/v4-sql.integration.js",
     "preview:v4": "node scripts/preview-v4-local.js",
     "sql:build:v41": "node scripts/build-v41-sql.js",
-    "test:sql:v41": "node --test tests/v41-sql.integration.js"
+    "test:sql:v41": "node --test tests/v41-sql.integration.js",
+    "test:sql:v42": "node --test tests/v42-sql.integration.js",
+    "preview:v42": "node scripts/preview-v4-local.js"
   },
   "engines": {
     "node": ">=20"
