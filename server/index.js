@@ -12,6 +12,7 @@ app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptS
 app.use(express.json({limit:'100kb'}));
 app.use(cookieParser());
 app.use('/api',(req,res,next)=>{
+  if(process.env.NODE_ENV==='production'&&!req.secure&&req.path!=='/health')return res.status(403).json({error:'Usa una conexión HTTPS para acceder a tu cuenta.'});
   if(['POST','PUT','PATCH','DELETE'].includes(req.method)) {
     const origin=req.get('origin');
     if(origin && new URL(origin).host!==req.get('host')) return res.status(403).json({error:'Solicitud rechazada por seguridad de origen.'});
@@ -33,7 +34,7 @@ app.use((err,req,res,next)=>{
   if(code===1205){status=409;message='Conflicto de acceso simultáneo. Intenta nuevamente.';}
   if(code>=51001&&code<=51005){status=400;message=err.message;}
   if(status>=500) message='Error del servidor o la conexión a SQL. Revisa la configuración y los registros de Azure.';
-  res.status(status).json({error:message});
+  res.status(status).json({error:message,...(err.dependencias?{dependencias:err.dependencias}:{})});
 });
 const port=Number(process.env.PORT||3000);
 if(require.main===module)app.listen(port,()=>console.log(`Fractales Academy → http://localhost:${port}`));

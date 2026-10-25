@@ -13,7 +13,7 @@ const V4={
     return `<div class="v4-totals"><article><small>Total pagado</small><strong>${fmt.format(total('PAGADO'))}</strong></article><article><small>Total pendiente</small><strong>${fmt.format(total('PENDIENTE'))}</strong></article></div>`;
   },
   async enrollmentView(){
-    header('Administración','Inscripción integral');const ctx=await api('/academic/context');
+    header('Administración','Inscripción integral');const ctx=await api('/academic/context');const access=await api('/auth/capabilities').catch(()=>({v41:false}));
     $('content').innerHTML=`<div class="module-header"><div><span class="eyebrow">REGISTRO Y REINSCRIPCIÓN</span><h2>Inscribir estudiante</h2><p>Consulta el DNI y selecciona el ciclo y grupo académico.</p></div></div>
       <section class="panel v4-form-panel"><form id="enrollmentForm">
       <div class="v4-search"><div class="field"><label for="enrollDni">DNI del estudiante *</label><input id="enrollDni" required inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" autocomplete="off"></div><button type="button" class="btn btn-secondary" id="lookupStudent">Consultar DNI</button></div>
@@ -22,8 +22,10 @@ const V4={
       <h3>Programa y matrícula</h3><div class="form-grid">
       ${[['enrollProgram','Programa académico'],['enrollMode','Modalidad'],['enrollCycle','Ciclo académico'],['enrollShift','Turno'],['enrollGroup','Grupo académico']].map(([id,name])=>`<div class="field"><label for="${id}">${name} *</label><select id="${id}" required></select></div>`).join('')}</div>
       <div class="helper" id="enrollSummary" aria-live="polite">Selecciona el grupo para revisar los cargos.</div>
+      ${access.v41?'<section class="v41-enroll-access"><h3>Primer acceso del estudiante</h3><div class="field"><label for="enrollAccess">Forma de entrega</label><select id="enrollAccess"><option value="TEMPORAL">Contraseña temporal individual (recomendado)</option><option value="DNI_ACTIVACION">DNI inicial + código de activación entregado personalmente</option></select></div><label class="v41-check" id="enrollIdentityRow" hidden><input type="checkbox" id="enrollIdentity"> Identifiqué al estudiante y le entregaré directamente su código individual de activación.</label><p class="field-note">Las cuentas existentes conservan su acceso. Nunca basta con conocer el DNI para consultar los datos.</p></section>':''}
       <div class="form-actions"><button class="btn btn-primary" type="submit">Registrar inscripción</button></div></fieldset></form></section>`;
     const form=$('enrollmentForm');let known=null,student=null,lookupVersion=0;
+    if($('enrollAccess'))$('enrollAccess').onchange=()=>{const required=$('enrollAccess').value==='DNI_ACTIVACION';$('enrollIdentityRow').hidden=!required;$('enrollIdentity').required=required;$('enrollIdentity').checked=false;};
     $('enrollProgram').innerHTML=V4.options(ctx.programas,'Cod_Programa','Nomb_Programa');
     $('enrollMode').innerHTML='<option value="">Selecciona modalidad</option><option value="REGULAR">Regular · 4 cuotas</option><option value="ACELERADO">Acelerado · 2 cuotas</option>';
     $('enrollShift').innerHTML='<option value="">Selecciona turno</option><option value="MANANA">Mañana · 07:00 a 13:00</option><option value="TARDE">Tarde · 15:00 a 21:00</option>';
@@ -45,6 +47,7 @@ const V4={
       const version=++lookupVersion,button=$('lookupStudent');button.disabled=true;
       try{const d=await api(`/alumnos/${input.value}/inscripcion`);if(version!==lookupVersion||!button.isConnected)return;
         known=input.value;student=d.alumno;
+        if($('enrollAccess')){$('enrollAccess').disabled=!!student;$('enrollAccess').value='TEMPORAL';$('enrollAccess').onchange();}
         for(const c of state.modules.ALUMNO.columns){const el=$('field-'+c.name);if(!el)continue;el.value=d.alumno?.[c.name]==null?'':htmlValue(d.alumno[c.name],c);el.disabled=!!student;}
         $('enrollLookup').innerHTML=student?`<div class="helper"><strong>${esc(student.Nomb_Alu)}</strong> · Estudiante registrado. Se conservan sus datos y cuenta.</div>${d.historial.length?panel('Historial de matrículas','Inscripciones anteriores',[['Cod_Matricula','Código'],['Nomb_Ciclo','Ciclo'],['Nomb_Grupo','Grupo'],['Fech_Matricula','Fecha']],d.historial):''}`:'<div class="helper">Estudiante nuevo. Completa sus datos para crear su cuenta y matrícula.</div>';
         $('enrollDetails').disabled=false;$('enrollDetails').hidden=false;summary();
@@ -54,9 +57,12 @@ const V4={
       if(!known||known!==$('enrollDni').value)throw Error('Consulta el DNI antes de registrar.');
       const alumno={DNI_Alu:known};
       if(!student)for(const c of state.modules.ALUMNO.columns){const el=$('field-'+c.name);if(el)alumno[c.name]=el.value||null;}
-      const result=await api('/inscripciones',{method:'POST',body:JSON.stringify({alumno,Grupo_Cod_Grupo:$('enrollGroup').value})});
+      const extra=$('enrollAccess')?.value==='DNI_ACTIVACION'?{accesoInicial:{modo:'DNI_ACTIVACION',identidadConfirmada:$('enrollIdentity').checked}}:{};
+      const result=await api('/inscripciones',{method:'POST',body:JSON.stringify({alumno,Grupo_Cod_Grupo:$('enrollGroup').value,...extra})});
       known=null;form.reset();$('enrollDetails').hidden=true;$('enrollDetails').disabled=true;$('enrollLookup').textContent='Consulta otro DNI para continuar.';
       modal('Inscripción registrada',`Matrícula ${result.matricula}`,`<div class="v4-result"><p>${result.cuotas} cuotas generadas. Total: <strong>${fmt.format(result.total)}</strong>.</p><p>Usuario: <strong>${esc(result.usuario)}</strong></p>${result.claveTemporal?`<p>Contraseña temporal:</p><code class="v4-secret">${esc(result.claveTemporal)}</code><p>Entrégala al estudiante por un canal privado. Se muestra una sola vez y deberá cambiarla al ingresar.</p>`:'<p>El estudiante conserva su cuenta y contraseña actuales.</p>'}</div>`);
+      if(result.codigoActivacion){const box=document.createElement('div');box.className='v41-activation-delivery';box.innerHTML=`<p><strong>Código individual de activación</strong></p><code class="v4-secret">${esc(result.codigoActivacion)}</code><p>Entrégalo solo al estudiante identificado. Vence en 24 horas y se utiliza una sola vez. Para ingresar necesitará su DNI, la clave inicial y este código; después creará su propia contraseña.</p>`;$('modalRoot').querySelector('.v4-result').append(box);}
+      if(result.cuentaActiva===false){const warning=document.createElement('p');warning.className='helper';warning.textContent='La cuenta está desactivada. Revisa su restauración desde Usuarios antes de permitir el ingreso.';$('modalRoot').querySelector('.v4-result').append(warning);}
     });};
   },
   async paymentsView(initialDni=''){

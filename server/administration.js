@@ -1,0 +1,107 @@
+'use strict';
+const model=require('./model.json');const ops=require('./operations');const {validate,rule}=require('./rules');
+const {securityReady}=require('./security-schema');const accounts=require('./account-service');
+const physical=new Set(['CURSOS','CARRERA','Aula','Grupo','Ciclo','Docente','Docente_Asignatura','Examen','Horario']);
+const activeField=m=>m.columns.find(c=>c.type==='bit'&&/^(Activo|Activa)$/i.test(c.name))?.name;
+const quote=name=>'['+name.replace(/]/g,']]')+']';
+function schema(table){const m=model[table];if(!m)throw rule('Módulo no encontrado.');return m;}
+function keys(m,id){try{const values=JSON.parse(Buffer.from(id,'base64url').toString('utf8'));if(!Array.isArray(values)||values.length!==m.pk.length||values.some(v=>typeof v!=='string'||!v||v.length>200))throw Error();return values;}catch{throw rule('Identificador inválido.');}}
+function selector(m,values){return {where:m.pk.map((k,i)=>`${quote(k)}=@key${i}`).join(' AND '),inputs:Object.fromEntries(values.map((v,i)=>['key'+i,v]))};}
+function auditCode(m,row){return m.pk.map(k=>String(row[k])).join('|');}
+function policy(m){return {physical:physical.has(m.name),activeField:activeField(m),controlled:['ALUMNO','MATRICULA','Pago','Usuario','Nota_Examen','Examen_Grupo','Ciclo'].includes(m.name)};}
+async function rowFor(tx,m,id){const s=selector(m,keys(m,id));const row=(await ops.query(tx,`SELECT * FROM dbo.${quote(m.name)} WITH (UPDLOCK,HOLDLOCK) WHERE ${s.where}`,s.inputs)).recordset[0];if(!row)throw Object.assign(rule('Registro no encontrado.'),{status:404});return row;}
+async function dependencies(tx,m,row){
+  const fields=(await ops.query(tx,`SELECT fk.object_id AS Id,fk.name AS Relacion,fk.is_disabled AS Deshabilitada,fk.is_not_trusted AS NoConfiable,s.name AS Esquema,t.name AS Tabla,c.name AS Columna,rc.name AS Referencia
+    FROM sys.foreign_keys fk JOIN sys.foreign_key_columns fc ON fc.constraint_object_id=fk.object_id
+    JOIN sys.tables t ON t.object_id=fc.parent_object_id JOIN sys.schemas s ON s.schema_id=t.schema_id
+    JOIN sys.columns c ON c.object_id=fc.parent_object_id AND c.column_id=fc.parent_column_id
+    JOIN sys.columns rc ON rc.object_id=fc.referenced_object_id AND rc.column_id=fc.referenced_column_id
+    WHERE fk.referenced_object_id=OBJECT_ID(@table) ORDER BY fk.object_id,fc.constraint_column_id`,{table:'dbo.'+m.name})).recordset;
+  if(fields.some(f=>f.Deshabilitada||f.NoConfiable))throw Object.assign(rule('No se puede comprobar con seguridad una relación deshabilitada o no confiable. Solicita su revisión antes de eliminar.'),{status:409});
+  const groups=new Map();for(const field of fields){if(!groups.has(field.Id))groups.set(field.Id,[]);groups.get(field.Id).push(field);}
+  const result=[];
+  for(const fields of groups.values()){
+    const first=fields[0],inputs=Object.fromEntries(fields.map((f,i)=>['v'+i,row[f.Referencia]]));
+    const n=Number((await ops.query(tx,`SELECT COUNT_BIG(*) n FROM ${quote(first.Esquema)}.${quote(first.Tabla)} WITH (UPDLOCK,HOLDLOCK) WHERE ${fields.map((f,i)=>`${quote(f.Columna)}=@v${i}`).join(' AND ')}`,inputs)).recordset[0].n);
+    if(n)result.push({tabla:first.Tabla,nombre:model[first.Tabla]?.label||'Historial o información de seguridad',cantidad:n});
+  }return result;
+}
+async function state(tx,m,row){
+  if(m.name==='ALUMNO'&&await securityReady(tx))return (await ops.query(tx,'SELECT Activo FROM dbo.Alumno_Estado_V41 WHERE ALUMNO_DNI_Alu=@dni',{dni:row.DNI_Alu})).recordset[0]?.Activo??true;
+  if(m.name==='Nota_Examen'&&await securityReady(tx))return !((await ops.query(tx,'SELECT Anulada FROM dbo.Nota_Estado_V41 WHERE Nota_Examen_Cod_Nota=@code',{code:row.Cod_Nota})).recordset[0]?.Anulada??false);
+  const field=activeField(m);if(field)return !!row[field];
+  if(m.name==='MATRICULA')return row.ESTADO_MATRICULA_Cod_Estado_Matricula!=='ANULADA';
+  if(m.name==='Examen_Grupo')return row.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen!=='CANCELADO';
+  if(m.name==='Ciclo')return row.ESTADO_CICLO_Cod_Estado!=='CANCELADO';
+  return true;
+}
+async function review(table,id,actor){
+  const m=schema(table);return ops.transaction(async tx=>{
+    const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row),p=policy(m),enabled=await state(tx,m,row),ready=await securityReady(tx);
+    const actions=[];
+    if(p.physical)actions.push({id:'eliminar',label:'Eliminar registro',enabled:!deps.length,explanation:deps.length?'Hay información vinculada. Se conserva el registro y su historial.':'No hay registros dependientes. La eliminación será definitiva.'});
+    if(m.name==='Pago')return {dependencias:deps,acciones:[],explicacion:'Confirma o anula la confirmación desde Gestión de pagos. Las obligaciones no se eliminan.'};
+    if(p.activeField||p.controlled){
+      const needsSchema=['ALUMNO','Nota_Examen','Usuario'].includes(m.name);
+      const self=m.name==='Usuario'&&row.Cod_Usuario===actor.Cod_Usuario;
+      const cancel=['MATRICULA','Nota_Examen','Examen_Grupo','Ciclo'].includes(m.name);
+      actions.push({id:enabled?(cancel?'anular':'desactivar'):'restaurar',label:enabled?(cancel?'Anular':'Desactivar'):'Restaurar',enabled:!self&&(!needsSchema||ready),explanation:self?'No puedes desactivar tu propia cuenta.':needsSchema&&!ready?'Esta operación requiere las migraciones V4.1.':m.name==='MATRICULA'?'Las cuotas y pagos asociados se conservan; anular una matrícula no elimina su deuda.':'Se conserva el historial y se registra el motivo.'});
+    }
+    return {dependencias:deps,acciones:actions,activo:enabled,explicacion:actions.length?'Revisa las relaciones antes de confirmar.':'Este catálogo del sistema se conserva. Puedes editar los datos permitidos.'};
+  });
+}
+async function remove(table,id,body,actor){
+  const m=schema(table);if(!physical.has(table))throw rule('Este registro conserva historial. Utiliza desactivar, anular o corregir.');
+  if(body?.confirmacion!=='ELIMINAR')throw rule('Confirma la eliminación después de revisar las dependencias.');const motive=accountsReason(body.motivo);
+  return ops.transaction(async tx=>{
+    const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row);
+    if(deps.length)throw Object.assign(rule('No se puede eliminar: hay información académica, financiera o administrativa vinculada. Puedes desactivar el registro cuando corresponda.'),{status:409,dependencias:deps});
+    const s=selector(m,keys(m,id));await ops.query(tx,`DELETE FROM dbo.${quote(m.name)} WHERE ${s.where}`,s.inputs);
+    await ops.audit(tx,actor,m.name,auditCode(m,row),'ELIMINAR',row,null,motive);return {ok:true};
+  });
+}
+function accountsReason(value){return require('./account-security').reason(value);}
+async function changeState(table,id,body,actor){
+  const m=schema(table),action=body?.accion;if(!['desactivar','anular','restaurar'].includes(action))throw rule('Acción administrativa inválida.');
+  if(body?.confirmacion!==true)throw rule('Confirma la operación después de revisar el historial.');const motive=accountsReason(body.motivo);
+  if(!policy(m).activeField&&!policy(m).controlled||m.name==='Pago')throw rule('Este registro no permite esa acción.');
+  return ops.transaction(async tx=>{
+    const row=await rowFor(tx,m,id),beforeActive=await state(tx,m,row),restoring=action==='restaurar';
+    const cancellation=['MATRICULA','Nota_Examen','Examen_Grupo','Ciclo'].includes(m.name);
+    if(!restoring&&action!==(cancellation?'anular':'desactivar'))throw rule('Esta acción no corresponde al tipo de registro.');
+    if(beforeActive===restoring)throw Object.assign(rule('El registro ya está en ese estado.'),{status:409});
+    let change={};
+    if(m.name==='ALUMNO'){
+      await accounts.ready(tx);
+      const old=(await ops.query(tx,'SELECT * FROM dbo.Alumno_Estado_V41 WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni',{dni:row.DNI_Alu})).recordset[0];
+      const user=(await ops.query(tx,'SELECT Cod_Usuario,Activo FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni',{dni:row.DNI_Alu})).recordset[0];
+      const previous=restoring?old?.Usuario_Activo_Anterior??false:!!user?.Activo;
+      await ops.query(tx,old?`UPDATE dbo.Alumno_Estado_V41 SET Activo=@active,Usuario_Activo_Anterior=@previous,Motivo=@motive,Usuario_Cod_Usuario=@actor,Fecha=SYSUTCDATETIME() WHERE ALUMNO_DNI_Alu=@dni`:
+        `INSERT dbo.Alumno_Estado_V41(ALUMNO_DNI_Alu,Activo,Usuario_Activo_Anterior,Motivo,Usuario_Cod_Usuario) VALUES (@dni,@active,@previous,@motive,@actor)`,{dni:row.DNI_Alu,active:restoring,previous,motive,actor:actor.Cod_Usuario});
+      if(user){await ops.query(tx,'UPDATE dbo.Usuario SET Activo=@active WHERE Cod_Usuario=@id',{id:user.Cod_Usuario,active:restoring?previous:false});await accounts.revoke(tx,user.Cod_Usuario);}
+      change={Activo:restoring};
+    }else if(m.name==='Nota_Examen'){
+      await accounts.ready(tx);const found=(await ops.query(tx,'SELECT Nota_Examen_Cod_Nota FROM dbo.Nota_Estado_V41 WITH (UPDLOCK,HOLDLOCK) WHERE Nota_Examen_Cod_Nota=@code',{code:row.Cod_Nota})).recordset[0];
+      await ops.query(tx,found?'UPDATE dbo.Nota_Estado_V41 SET Anulada=@cancel,Motivo=@motive,Usuario_Cod_Usuario=@actor,Fecha=SYSUTCDATETIME() WHERE Nota_Examen_Cod_Nota=@code':'INSERT dbo.Nota_Estado_V41(Nota_Examen_Cod_Nota,Anulada,Motivo,Usuario_Cod_Usuario) VALUES (@code,@cancel,@motive,@actor)',{code:row.Cod_Nota,cancel:!restoring,motive,actor:actor.Cod_Usuario});change={Anulada:!restoring};
+    }else{
+      const bit=activeField(m);
+      if(bit)change[bit]=restoring;
+      else{
+        const field=({MATRICULA:'ESTADO_MATRICULA_Cod_Estado_Matricula',Examen_Grupo:'ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen',Ciclo:'ESTADO_CICLO_Cod_Estado'})[m.name];
+        const history=(await ops.query(tx,"SELECT TOP(1) Anterior FROM dbo.Auditoria_V4 WHERE Entidad=@entity AND Codigo=@code AND Accion='ANULAR' ORDER BY Id DESC",{entity:m.name,code:auditCode(m,row)})).recordset[0];
+        const previous=history?.Anterior?JSON.parse(history.Anterior)[field]:null;
+        const allowed=m.name==='MATRICULA'?['ACTIVA','FINALIZADA','RETIRADA']:m.name==='Ciclo'?['PROGRAMADO','ACTIVO','FINALIZADO']:['PROGRAMADO','RENDIDO'];
+        change[field]=restoring?(allowed.includes(previous)?previous:allowed[0]):m.name==='MATRICULA'?'ANULADA':'CANCELADO';
+        if(m.name==='Examen_Grupo'){change.Estado=change[field];change.Publicado=false;}
+      }
+      if(m.name==='Usuario')await accounts.ready(tx);
+      if(m.name!=='MATRICULA'||change.ESTADO_MATRICULA_Cod_Estado_Matricula==='ACTIVA')await validate(m.name,change,row,tx,actor);
+      const s=selector(m,keys(m,id));await ops.query(tx,`UPDATE dbo.${quote(m.name)} SET ${Object.keys(change).map((k,i)=>`${quote(k)}=@v${i}`).join(',')} WHERE ${s.where}`,{...s.inputs,...Object.fromEntries(Object.values(change).map((v,i)=>['v'+i,v]))});
+      if(m.name==='Usuario')await accounts.revoke(tx,row.Cod_Usuario);
+    }
+    const before=m.name==='ALUMNO'?{...row,Activo:beforeActive}:m.name==='Nota_Examen'?{...row,Anulada:!beforeActive}:row;
+    await ops.audit(tx,actor,m.name,auditCode(m,row),restoring?'RESTAURAR':action==='anular'?'ANULAR':'DESACTIVAR',before,{...row,...change},motive);
+    return {ok:true};
+  });
+}
+module.exports={review,remove,changeState,policy,dependencies};

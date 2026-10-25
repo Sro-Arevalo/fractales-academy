@@ -56,7 +56,7 @@ post('/pagos/medios',async(req,res)=>{
 post('/pagos/:codigo/confirmar',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user)));
 post('/pagos/:codigo/anular',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user,true)));
 get('/auditoria/:entidad/:codigo',async(req,res)=>{
-  if(!['Pago','Nota_Examen','Examen_Grupo','Examen','MATRICULA','MEDIO_PAGO'].includes(req.params.entidad)||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
+  if((!Object.hasOwn(model,req.params.entidad)&&!['MEDIO_PAGO','Contacto'].includes(req.params.entidad))||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
   res.json({rows:(await ops.query(null,`SELECT Id,Accion,Anterior,Nuevo,Usuario_Cod_Usuario,Motivo,Fecha FROM dbo.Auditoria_V4
     WHERE Entidad=@entity AND Codigo=@code ORDER BY Id DESC`,{entity:req.params.entidad,code:req.params.codigo})).recordset});
 });
