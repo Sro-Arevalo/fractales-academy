@@ -170,6 +170,7 @@ router.get('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
 }));
 async function save(req,res,isInsert) {
   const m=filterSchema(req.params.table);const payload=dataFor(m,req.body,isInsert);
+  if(['Grupo','Horario'].includes(m.name))throw rule('Edita y guarda el horario semanal completo desde Horarios académicos.');
   if(isInsert&&fixedCatalogs.has(m.name))throw rule('Este catálogo del sistema tiene opciones definidas por las reglas académicas. Puedes editar sus descripciones permitidas.');
   if(m.name==='Pago')throw rule('Las obligaciones se generan al inscribir. Usa la gestión de pagos para confirmar o anular un cobro.');
   if(isInsert&&['ALUMNO','MATRICULA'].includes(m.name))throw rule('Utiliza el formulario de inscripción para crear alumno, cuenta, matrícula y cuotas en una transacción.');
@@ -201,9 +202,7 @@ async function save(req,res,isInsert) {
       await operations.query(tx,`IF NOT EXISTS(SELECT 1 FROM dbo.Docente_Asignatura WITH (UPDLOCK,HOLDLOCK) WHERE CURSOS_Cod_Curso=@course AND Docente_DNI_Doc=@teacher)
         INSERT dbo.Docente_Asignatura(CURSOS_Cod_Curso,Docente_DNI_Doc) VALUES(@course,@teacher)`,{course,teacher});
     }
-    if(m.name==='ALUMNO'&&await require('./schema-v43').ready(tx)&&Object.hasOwn(payload,'DNI_Apoderado')){
-      const linked={...current,...payload};await require('./guardians').attach(tx,linked);for(const k of ['DNI_Apoderado','Nomb_Apoderado','Cel_Apoderado','Correo_Apoderado'])payload[k]=linked[k];
-    }
+    if(m.name==='ALUMNO')await require('./schema-v44').required(tx);
     await validate(m.name,payload,current,tx,req.user);
     // Campos calculados únicamente por el backend; no son confiables si vienen del navegador.
     if(m.name==='Pago') {
@@ -244,7 +243,7 @@ router.get('/student/overview',authenticate,student,safe(async(req,res)=>{
     query('SELECT DNI_Alu,Nomb_Alu,Correo_Alu,CARRERA_Cod_Carrera FROM dbo.ALUMNO WHERE DNI_Alu=@dni'),
     query(`SELECT m.Cod_Matricula,m.Fech_Matricula,m.ESTADO_MATRICULA_Cod_Estado_Matricula,g.Cod_Grupo,g.Nomb_Grupo,c.Nomb_Ciclo,c.Cod_Ciclo,c.Fech_Inicio,c.Fech_Fin,c.Modalidad,p.Nomb_Programa,t.Nomb_Turno FROM dbo.MATRICULA m JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY m.Fech_Matricula DESC,m.Cod_Matricula DESC`),
     query(`SELECT ne.Puntaje_total,ne.Fech_registro,ex.Nomb_Examen,ex.puntaje_maximo,g.Nomb_Grupo,eg.Fech_programada FROM dbo.Nota_Examen ne JOIN dbo.MATRICULA ma ON ma.Cod_Matricula=ne.MATRICULA_Cod_Matricula JOIN dbo.Examen_Grupo eg ON eg.Cod_examen_grupo=ne.Examen_Grupo_Cod_examen_grupo JOIN dbo.Examen ex ON ex.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=ma.Grupo_Cod_Grupo ${v41?'LEFT JOIN dbo.Nota_Estado_V41 ns ON ns.Nota_Examen_Cod_Nota=ne.Cod_Nota':''} WHERE ma.ALUMNO_DNI_Alu=@dni AND eg.Publicado=1 ${v41?'AND ISNULL(ns.Anulada,0)=0':''} ORDER BY eg.Fech_programada DESC`),
-    query(`SELECT h.Dia_Semana,h.Hr_Inicio,h.Hr_Fin,h.TIPO_BLOQUE_Cod_Tipo,co.Nomb_Curso,d.Nom_Doc,g.Nomb_Grupo,t.Nomb_Turno,a.Nomb_Aula FROM dbo.Horario h JOIN dbo.Grupo g ON g.Cod_Grupo=h.Grupo_Cod_Grupo JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo LEFT JOIN dbo.CURSOS co ON co.Cod_Curso=h.Docente_Asignatura_CURSOS_Cod_Curso LEFT JOIN dbo.Docente d ON d.DNI_Doc=h.Docente_Asignatura_Docente_DNI_Doc WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND h.Activo=1 ORDER BY h.Dia_Semana,h.Hr_Inicio`),
+    query(`SELECT h.Dia_Semana,h.Hr_Inicio,h.Hr_Fin,h.TIPO_BLOQUE_Cod_Tipo,co.Cod_Curso curso,co.Nomb_Curso,d.Nom_Doc,g.Nomb_Grupo,t.Nomb_Turno,a.Nomb_Aula FROM dbo.Horario h JOIN dbo.Grupo g ON g.Cod_Grupo=h.Grupo_Cod_Grupo JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo LEFT JOIN dbo.CURSOS co ON co.Cod_Curso=h.Docente_Asignatura_CURSOS_Cod_Curso LEFT JOIN dbo.Docente d ON d.DNI_Doc=h.Docente_Asignatura_Docente_DNI_Doc WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND h.Activo=1 AND g.Activo=1 ORDER BY h.Dia_Semana,h.Hr_Inicio`),
     query(`SELECT eg.Fech_programada,eg.Hr_inicio,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`),
     query(`SELECT Cod_Pago,MATRICULA_Cod_Matricula,CONCEPTO_PAGO_Cod_Concepto,Nro_Mensualidad,Monto,ESTADO_PAGO_Cod_Estado,Fech_Vencimiento,Fech_Pago,Medio_Pago FROM dbo.Pago WHERE ALUMNO_DNI_Alu=@dni ORDER BY Fech_Vencimiento DESC,Cod_Pago`)
   ]);

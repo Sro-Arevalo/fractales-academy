@@ -128,28 +128,7 @@ const V4={
     };
     form.onsubmit=e=>{e.preventDefault();V4.submit(form,async()=>{if(!checkedDni||checkedDni!==$('scoreDni').value)throw Error('Consulta el DNI antes de registrar el puntaje.');const result=await api(`/simulacros/${encodeURIComponent(code)}/resultados`,{method:'POST',body:JSON.stringify({DNI_Alu:checkedDni,Puntaje_total:Number($('scoreValue').value),Motivo_Cambio:$('scoreReason').value})});await V4.auditModal('Nota_Examen',result.codigo);toast(result.corregido?'Puntaje corregido con historial.':'Puntaje registrado.');});};
   },
-  async scheduleModal(record){
-    try{const ctx=await api('/academic/context');let selected=ctx.grupos.find(g=>g.Cod_Grupo===record?.Grupo_Cod_Grupo);
-      if(record&&!selected){toast('Este bloque pertenece a un ciclo cerrado. Consulta su historial desde la tabla.',true);return;}
-      modal(record?'Editar bloque horario':'Crear bloque horario','El ciclo, turno y aula corresponden al grupo seleccionado.',`<form id="scheduleForm" class="v4-form-panel"><div class="form-grid">
-      <div class="field"><label for="scheduleCode">Código del bloque *</label><input id="scheduleCode" maxlength="20" pattern="[A-Za-z0-9_-]+" required value="${esc(record?.Cod_Horario||'')}" ${record?'disabled':''}></div>
-      <div class="field"><label for="scheduleCycle">Ciclo *</label><select id="scheduleCycle" required>${V4.options(ctx.ciclos,'Cod_Ciclo','Nomb_Ciclo')}</select></div>
-      <div class="field"><label for="scheduleGroup">Grupo y turno *</label><select id="scheduleGroup" required></select></div>
-      <div class="field"><label for="scheduleType">Tipo de bloque *</label><select id="scheduleType"><option value="CLASE">Clase</option><option value="RECREO">Recreo</option></select></div>
-      <div class="field"><label for="scheduleCourse">Curso *</label><select id="scheduleCourse"></select></div><div class="field"><label for="scheduleTeacher">Docente *</label><select id="scheduleTeacher"></select></div>
-      <div class="field"><label for="scheduleDay">Día *</label><select id="scheduleDay">${days.slice(1).map((d,i)=>`<option value="${i+1}">${d}</option>`).join('')}</select></div>
-      <div class="field"><label for="scheduleStart">Hora inicial *</label><input id="scheduleStart" type="time" required></div><div class="field"><label for="scheduleEnd">Hora final *</label><input id="scheduleEnd" type="time" required></div>
-      <div class="field"><label for="scheduleActive">Activo</label><select id="scheduleActive"><option value="true">Sí</option><option value="false">No</option></select></div></div><div class="helper" id="scheduleInfo"></div><div class="form-actions"><button class="btn btn-primary" type="submit">Guardar bloque</button></div></form>`);
-      const courses=ctx.cursos||[...new Map(ctx.asignaturas.map(a=>[a.CURSOS_Cod_Curso,{Cod_Curso:a.CURSOS_Cod_Curso,Nomb_Curso:a.Nomb_Curso}])).values()];$('scheduleCourse').innerHTML=V4.options(courses,'Cod_Curso','Nomb_Curso');
-      function teachers(){const docentes=ctx.docentes||ctx.asignaturas.filter(a=>a.CURSOS_Cod_Curso===$('scheduleCourse').value).map(a=>({DNI_Doc:a.Docente_DNI_Doc,Nom_Doc:a.Nom_Doc}));$('scheduleTeacher').innerHTML=V4.options(docentes,'DNI_Doc','Nom_Doc');}
-      function groupInfo(){selected=ctx.grupos.find(g=>g.Cod_Grupo===$('scheduleGroup').value);$('scheduleInfo').textContent=selected?`${selected.Nomb_Aula} · ${selected.Nomb_Turno}${selected.Turno_Inicio?' · '+fmtTime(selected.Turno_Inicio)+' a '+fmtTime(selected.Turno_Fin):''}. Se comprueban cruces de grupo, docente y aula.`:'Selecciona el grupo.';}
-      function groups(){$('scheduleGroup').innerHTML=V4.options(ctx.grupos.filter(g=>g.Ciclo_Cod_Ciclo===$('scheduleCycle').value),'Cod_Grupo',g=>`${g.Nomb_Grupo} · ${g.Nomb_Turno} · ${g.Nomb_Aula}`);groupInfo();}
-      function block(){const required=$('scheduleType').value==='CLASE';for(const id of ['scheduleCourse','scheduleTeacher']){$(id).required=required;$(id).disabled=!required;}}
-      $('scheduleCycle').onchange=groups;$('scheduleGroup').onchange=groupInfo;$('scheduleCourse').onchange=teachers;$('scheduleType').onchange=block;
-      if(record){$('scheduleCycle').value=selected.Ciclo_Cod_Ciclo;groups();$('scheduleGroup').value=record.Grupo_Cod_Grupo;$('scheduleType').value=record.TIPO_BLOQUE_Cod_Tipo;$('scheduleCourse').value=record.Docente_Asignatura_CURSOS_Cod_Curso||'';teachers();$('scheduleTeacher').value=record.Docente_Asignatura_Docente_DNI_Doc||'';$('scheduleDay').value=record.Dia_Semana;$('scheduleStart').value=fmtTime(record.Hr_Inicio);$('scheduleEnd').value=fmtTime(record.Hr_Fin);$('scheduleActive').value=String(!!record.Activo);groupInfo();}else{groups();teachers();}block();
-      const form=$('scheduleForm');form.onsubmit=e=>{e.preventDefault();V4.submit(form,async()=>{const isClass=$('scheduleType').value==='CLASE';const body={Dia_Semana:Number($('scheduleDay').value),Hr_Inicio:$('scheduleStart').value,Hr_Fin:$('scheduleEnd').value,Activo:$('scheduleActive').value==='true',Grupo_Cod_Grupo:$('scheduleGroup').value,TIPO_BLOQUE_Cod_Tipo:$('scheduleType').value,Docente_Asignatura_CURSOS_Cod_Curso:isClass?$('scheduleCourse').value:null,Docente_Asignatura_Docente_DNI_Doc:isClass?$('scheduleTeacher').value:null};if(!record)body.Cod_Horario=$('scheduleCode').value;await api('/records/Horario'+(record?'/'+encodeURIComponent(record._id):''),{method:record?'PUT':'POST',body:JSON.stringify(body)});closeModal();await tableView('Horario');toast('Bloque horario guardado.');});};
-    }catch(e){toast(e.message,true);}
-  },
+  async scheduleModal(record){return V44.editor(record?.Grupo_Cod_Grupo||null);},
   weekly(rows){
     if(!rows.length)return studentEmpty('calendar','Sin horarios publicados','Tus clases aparecerán cuando se registre el horario del grupo.');
     const ranges=[...new Set(rows.map(r=>fmtTime(r.Hr_Inicio)+'–'+fmtTime(r.Hr_Fin)))].sort();

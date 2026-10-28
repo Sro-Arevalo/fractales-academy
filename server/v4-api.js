@@ -12,13 +12,15 @@ const post=(url,fn)=>router.post(url,authenticate,admin,safe(fn));
 function dni(value){if(!/^\d{8}$/.test(value||''))throw rule('El DNI debe contener ocho dígitos.');return value;}
 
 get('/academic/context',async(req,res)=>{
+  await require('./schema-v44').required();
   const queries={
     programas:'SELECT Cod_Programa,Nomb_Programa FROM dbo.Programa WHERE Activo=1 ORDER BY Nomb_Programa',
     ciclos:"SELECT * FROM dbo.Ciclo WHERE ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY Fech_Inicio DESC",
     grupos:`SELECT g.*,t.Nomb_Turno,t.Hr_Inicio Turno_Inicio,t.Hr_Fin Turno_Fin,a.Nomb_Aula,c.Nomb_Ciclo,c.Programa_Cod_Programa,c.Modalidad,c.Fech_Inicio,c.Fech_Fin,c.Nro_Mensualidades,c.Precio_Mensual,
       g.Cupo_Max-(SELECT COUNT(*) FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=g.Cod_Grupo AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA') Cupos_Disponibles
       FROM dbo.Grupo g JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa
-      WHERE g.Activo=1 AND a.Activa=1 AND p.Activo=1 AND c.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY c.Fech_Inicio DESC,g.Nomb_Grupo`,
+      WHERE g.Activo=1 AND g.Estado_Horario='PUBLICADO' AND a.Activa=1 AND p.Activo=1 AND c.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY c.Fech_Inicio DESC,g.Nomb_Grupo`,
+    aulas:'SELECT * FROM dbo.Aula WHERE Activa=1 ORDER BY Nomb_Aula',
     cursos:'SELECT Cod_Curso,Nomb_Curso FROM dbo.CURSOS WHERE Activa=1 ORDER BY Nomb_Curso',
     docentes:'SELECT DNI_Doc,Nom_Doc FROM dbo.Docente WHERE Activo=1 ORDER BY Nom_Doc',
     turnos:'SELECT * FROM dbo.Turno ORDER BY Hr_Inicio',
@@ -30,6 +32,10 @@ get('/academic/context',async(req,res)=>{
   const entries=await Promise.all(Object.entries(queries).map(async([key,text])=>[key,(await ops.query(null,text)).recordset]));
   res.json(Object.fromEntries(entries));
 });
+get('/academic/schedules',async(req,res)=>res.json(await require('./schedules').list()));
+get('/academic/schedules/:id',async(req,res)=>res.json(await require('./schedules').detail(req.params.id)));
+post('/academic/schedules',async(req,res)=>res.status(201).json(await require('./schedules').save(null,req.body,req.user)));
+router.put('/academic/schedules/:id',authenticate,admin,safe(async(req,res)=>res.json(await require('./schedules').save(req.params.id,req.body,req.user))));
 get('/alumnos/:dni/inscripcion',async(req,res)=>{
   const inputs={dni:dni(req.params.dni)};
   const alumno=(await ops.query(null,'SELECT * FROM dbo.ALUMNO WHERE DNI_Alu=@dni',inputs)).recordset[0]||null;

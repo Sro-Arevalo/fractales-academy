@@ -35,7 +35,7 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
     if(!body||typeof body!=='object'||Array.isArray(body))throw rule('Envía los datos de inscripción.');
     if(!body.alumno||typeof body.alumno!=='object'||Array.isArray(body.alumno))throw rule('Envía los datos del estudiante.');
     const alumno={...body.alumno},group=body.Grupo_Cod_Grupo;
-    if(Object.keys(body).some(k=>!['alumno','Grupo_Cod_Grupo','accesoInicial','apoderado','esPrueba'].includes(k)))throw rule('Campo de inscripción desconocido.');
+    if(Object.keys(body).some(k=>!['alumno','Grupo_Cod_Grupo','accesoInicial','esPrueba'].includes(k)))throw rule('Campo de inscripción desconocido.');
     if(body.esPrueba!==undefined&&typeof body.esPrueba!=='boolean')throw rule('La identificación de prueba debe ser verdadera o falsa.');
     const mode=body.accesoInicial?.modo||'TEMPORAL';
     if(!['TEMPORAL','DNI_ACTIVACION'].includes(mode)||mode==='DNI_ACTIVACION'&&body.accesoInicial.identidadConfirmada!==true)throw rule('El acceso con DNI requiere entrega directa del código al estudiante identificado.');
@@ -45,9 +45,10 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
     if(Object.keys(alumno).some(k=>!allowed.has(k)))throw rule('Campo de estudiante desconocido.');
     validateFields(model.ALUMNO,alumno);
     return transaction(async tx=>{
+      await require('./schema-v44').required(tx);
       const existing=(await query(tx,'SELECT * FROM dbo.ALUMNO WITH (UPDLOCK,HOLDLOCK) WHERE DNI_Alu=@dni',{dni:alumno.DNI_Alu})).recordset[0];
       const v43=await require('./schema-v43').ready(tx);
-      if((body.apoderado||body.esPrueba)&&!v43)throw rule('Completa la migración V4.3 antes de registrar apoderados o datos de prueba.');
+      if(body.esPrueba&&!v43)throw rule('Completa la migración antes de registrar datos de prueba.');
       if(existing&&body.esPrueba!==undefined&&!!existing.Es_Prueba!==body.esPrueba)throw rule('Un estudiante existente conserva su identificación real o de prueba.');
       const ready=await require('./security-schema').securityReady(tx);
       if(mode==='DNI_ACTIVACION'&&!ready)throw rule('El modo de activación con DNI requiere las migraciones V4.1.');
@@ -57,6 +58,7 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
         JOIN dbo.Aula a WITH (HOLDLOCK) ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.Programa p WITH (HOLDLOCK) ON p.Cod_Programa=c.Programa_Cod_Programa
         WHERE g.Cod_Grupo=@group AND a.Activa=1 AND p.Activo=1`,{group})).recordset[0];
       if(!g||!g.Activo||!['PROGRAMADO','ACTIVO'].includes(g.ESTADO_CICLO_Cod_Estado))throw rule('El grupo o ciclo no está disponible.');
+      if(g.Estado_Horario!=='PUBLICADO')throw rule('El horario aún es un borrador. Publícalo antes de matricular.');
       if(!((g.Modalidad==='REGULAR'&&g.Nro_Mensualidades===4)||(g.Modalidad==='ACELERADO'&&g.Nro_Mensualidades===2))||Number(g.Precio_Mensual)<=0)throw rule('La configuración económica del ciclo no es válida.');
       if(v43&&Number(g.Precio_Mensual)!==250)throw rule('La mensualidad de nuevas inscripciones debe ser S/ 250. Revisa la tarifa del ciclo; las deudas anteriores se conservan.');
       const duplicate=(await query(tx,`SELECT TOP 1 m.Cod_Matricula FROM dbo.MATRICULA m WITH (UPDLOCK,HOLDLOCK)
@@ -65,7 +67,6 @@ function createOperations(database=db,hashPassword=value=>bcrypt.hash(value,12))
       const occupied=(await query(tx,"SELECT COUNT_BIG(*) n FROM dbo.MATRICULA WITH (UPDLOCK,HOLDLOCK) WHERE Grupo_Cod_Grupo=@group AND ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA'",{group})).recordset[0];
       if(Number(occupied.n)>=g.Cupo_Max)throw rule('El grupo alcanzó su cupo máximo.');
       if(!existing){
-        if(v43)await require('./guardians').attach(tx,alumno,body.apoderado);
         validateFields(model.ALUMNO,alumno);
         for(const c of model.ALUMNO.columns)if(c.required&&!alumno[c.name])throw rule(`Completa ${c.name}.`);
         const cols=model.ALUMNO.columns.filter(c=>Object.hasOwn(alumno,c.name));

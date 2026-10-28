@@ -9,7 +9,7 @@ const app=express();
 app.set('trust proxy',1);
 app.disable('x-powered-by');
 app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'"],imgSrc:["'self'",'data:'],fontSrc:["'self'"],connectSrc:["'self'"],objectSrc:["'none'"],frameAncestors:["'none'"]}}}));
-app.use(express.json({limit:'100kb'}));
+app.use(express.json({limit:'256kb'}));
 app.use(cookieParser());
 app.use('/api',(req,res,next)=>{
   if(process.env.NODE_ENV==='production'&&!req.secure&&req.path!=='/health')return res.status(403).json({error:'Usa una conexión HTTPS para acceder a tu cuenta.'});
@@ -33,6 +33,7 @@ app.use((err,req,res,next)=>{
   if(code===547){status=400;message='Los datos no cumplen una relación o restricción de SQL Server.';}
   if(code>=54010&&code<=54063){status=400;message=err.message;}
   if(code>=54300&&code<=54309){status=400;message=err.message;}
+  if(code>=54400&&code<=54499){status=400;message=err.message;}
   if(code===1205){status=409;message='Conflicto de acceso simultáneo. Intenta nuevamente.';}
   if(code===229){status=503;message='La cuenta SQL de la aplicación no tiene permisos para completar esta operación. Revisa los permisos indicados en la guía de instalación.';}
   if(err.type==='entity.parse.failed'){status=400;message='El formato de la solicitud no es válido. Revisa los datos e intenta nuevamente.';}

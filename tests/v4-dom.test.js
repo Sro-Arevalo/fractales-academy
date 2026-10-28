@@ -49,10 +49,8 @@ test('puntaje por DNI consulta nombre, grupo y nota previa antes de permitir una
   assert.match($('scoreStudent').textContent,/Alumno Ficticio.*Grupo A/);assert.equal($('scoreFields').disabled,false);assert.equal($('scoreValue').max,'100');assert.equal($('scoreValue').value,'80');assert.equal($('scoreReason').required,true);
   $('scoreValue').value='81';$('scoreReason').value='Corrección ficticia autorizada';await submit('scoreForm');assert.equal(requests.find(r=>r.url==='/api/simulacros/SIM1/resultados').body.Puntaje_total,81);
 });
-test('editor de horario conserva el grupo al editar y filtra docentes por curso',async t=>{
-  const {$,v4,change,submit,requests}=setup(t);await v4.scheduleModal({Cod_Horario:'H1',_id:'id-h1',Grupo_Cod_Grupo:'GR',TIPO_BLOQUE_Cod_Tipo:'CLASE',Docente_Asignatura_CURSOS_Cod_Curso:'MAT',Docente_Asignatura_Docente_DNI_Doc:'00000003',Dia_Semana:1,Hr_Inicio:'07:00',Hr_Fin:'08:00',Activo:true});
-  assert.equal($('scheduleGroup').value,'GR');assert.equal($('scheduleTeacher').value,'00000003');assert.match($('scheduleInfo').textContent,/Aula ficticia/);change('scheduleType','RECREO');assert.equal($('scheduleTeacher').disabled,true);await submit('scheduleForm');
-  const saved=requests.find(r=>r.url==='/api/records/Horario/id-h1');assert.equal(saved.method,'PUT');assert.equal(saved.body.Docente_Asignatura_Docente_DNI_Doc,null);assert.equal(saved.body.Grupo_Cod_Grupo,'GR');
+test('enlace anterior de bloques abre la cabecera del horario completo',async t=>{
+  const {v4,w}=setup(t);let selected;w.V44={editor:async id=>{selected=id;}};await v4.scheduleModal({Grupo_Cod_Grupo:'GR'});assert.equal(selected,'GR');await v4.scheduleModal(null);assert.equal(selected,null);
 });
 test('horario semanal muestra días, horas, docente, turno, aula y recreos',t=>{
   const {v4}=setup(t);const html=v4.weekly([{Dia_Semana:1,Hr_Inicio:'07:00',Hr_Fin:'08:00',TIPO_BLOQUE_Cod_Tipo:'CLASE',Nomb_Curso:'Matemática',Nom_Doc:'Docente Ficticio',Nomb_Grupo:'Grupo A',Nomb_Turno:'MANANA',Nomb_Aula:'Aula ficticia'},{Dia_Semana:1,Hr_Inicio:'08:00',Hr_Fin:'08:15',TIPO_BLOQUE_Cod_Tipo:'RECREO'}]);
