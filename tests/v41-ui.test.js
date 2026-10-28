@@ -53,7 +53,7 @@ test('sin correo configurado la recuperación muestra ayuda administrativa y no 
   const {v41,$,calls}=setup(t,{capabilities:{v41:true,email:false,sms:false}});await v41.recovery();assert.equal($('recoveryDni'),null);assert.match($('modalRoot').textContent,/No se enviará un código/);assert.equal(calls.filter(r=>r.method==='POST').length,0);
 });
 test('recuperación pide código y contraseñas coincidentes; no inicia sesión automáticamente',async t=>{
-  const {v41,$,submit,calls,w}=setup(t);await v41.recovery();$('recoveryDni').value='00000001';await submit('recoveryRequestForm');assert.ok($('recoveryCode'));assert.equal($('resendRecovery').disabled,true);
+  const {v41,$,submit,calls,w}=setup(t);await v41.recovery();$('recoveryDni').value='alumno@example.test';await submit('recoveryRequestForm');assert.ok($('recoveryCode'));assert.equal($('resendRecovery').disabled,true);
   $('recoveryCode').value='001234';$('passwordNew').value='Una frase segura de prueba';$('passwordConfirm').value='No coincide';$('passwordConfirm').dispatchEvent(new w.Event('input'));assert.equal($('recoveryCompleteForm').checkValidity(),false);
   $('passwordConfirm').value=$('passwordNew').value;$('passwordConfirm').dispatchEvent(new w.Event('input'));await submit('recoveryCompleteForm');assert.match($('modalRoot').textContent,/Ya puedes volver/);assert.equal(calls.filter(r=>r.url==='/api/auth/login').length,0);
 });

@@ -30,7 +30,13 @@ function configuration() {
 
 async function pool() {
   if (!active) {
-    active = new sql.ConnectionPool(configuration()).connect().catch(e => {
+    const connection=new sql.ConnectionPool(configuration());
+    connection.on('error',e=>{
+      console.error('[Fractales SQL]',{code:e.code||'POOL_ERROR'});
+      // El pool administra conexiones individuales; una nueva conexión se abre si el pool cerró.
+      if(!connection.connected&&!connection.connecting)active=null;
+    });
+    active = connection.connect().catch(e => {
       active = null;
       throw e;
     });

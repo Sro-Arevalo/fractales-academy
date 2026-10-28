@@ -1,7 +1,7 @@
 'use strict';
 const {sql,request}=require('./db');
 function timeHHMM(value){if(value instanceof Date)return value.toISOString().slice(11,16);return String(value).slice(0,5);}
-function rule(message){ const err=new Error(message);err.status=400;return err; }
+function rule(message){ const err=new Error(message);err.status=400;err.public=true;return err; }
 async function first(req,statement,inputs={}) {
   const q=await request(req);
   for(const [k,v] of Object.entries(inputs)) q.input(k,v);
@@ -18,6 +18,7 @@ async function validate(table,data,existing,tx,actor) {
     return String(data[k])!==String(existing[k]);
   }))throw rule('Este dato forma parte del historial y no se puede reasignar.');};
   if(table==='MATRICULA')unchanged(['ALUMNO_DNI_Alu','Grupo_Cod_Grupo','Fech_Matricula']);
+  if(table==='Ciclo'&&Object.hasOwn(data,'Precio_Mensual')&&Number(data.Precio_Mensual)!==250&&await require('./schema-v43').ready(tx))throw rule('La tarifa de las nuevas inscripciones es S/ 250 por mensualidad.');
   if(table==='Nota_Examen')unchanged(['MATRICULA_Cod_Matricula','Examen_Grupo_Cod_examen_grupo','Grupo_Cod_Grupo','Fech_registro']);
   if(table==='Examen_Grupo')unchanged(['Examen_Cod_Examen','Grupo_Cod_Grupo']);
   if(table==='Usuario'){
@@ -43,8 +44,9 @@ async function validate(table,data,existing,tx,actor) {
       const used=await first(tx,'SELECT TOP 1 Cod_Matricula FROM dbo.MATRICULA WHERE Grupo_Cod_Grupo=@group',{group:existing.Cod_Grupo});
       if(used)throw rule('No se puede cambiar el ciclo de un grupo con matrículas.');
     }
-    const g=await first(tx,'SELECT Capacidad FROM dbo.Aula WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Aula=@a',{a:v('Aula_Cod_Aula')});
+    const g=await first(tx,'SELECT Capacidad,Activa FROM dbo.Aula WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Aula=@a',{a:v('Aula_Cod_Aula')});
     if(!g) throw rule('El aula no existe.');
+    if(!g.Activa&&v('Activo')!==false&&v('Activo')!==0)throw rule('Selecciona un aula activa para habilitar el grupo.');
     if(Number(v('Cupo_Max'))>g.Capacidad) throw rule('El cupo del grupo supera la capacidad del aula.');
     if(update){const count=await first(tx,`SELECT COUNT_BIG(*) n FROM dbo.MATRICULA WITH (UPDLOCK,HOLDLOCK) WHERE Grupo_Cod_Grupo=@g AND ESTADO_MATRICULA_Cod_Estado_Matricula = 'ACTIVA'`,{g:existing.Cod_Grupo});if(Number(v('Cupo_Max'))<Number(count.n))throw rule('El nuevo cupo no puede ser menor que las matrículas existentes.');}
     if(update && ['Aula_Cod_Aula','Ciclo_Cod_Ciclo','Turno_Cod_Turno'].some(k=>v(k)!==existing[k])){
@@ -70,8 +72,8 @@ async function validate(table,data,existing,tx,actor) {
       const assigned=await first(tx,`SELECT da.CURSOS_Cod_Curso FROM dbo.Docente_Asignatura da JOIN dbo.CURSOS c ON c.Cod_Curso=da.CURSOS_Cod_Curso JOIN dbo.Docente d ON d.DNI_Doc=da.Docente_DNI_Doc WHERE da.CURSOS_Cod_Curso=@course AND da.Docente_DNI_Doc=@teacher AND c.Activa=1 AND d.Activo=1`,{course:v('Docente_Asignatura_CURSOS_Cod_Curso'),teacher:v('Docente_Asignatura_Docente_DNI_Doc')});
       if(!assigned)throw rule('Selecciona un docente activo asignado al curso activo.');
     }
-    const g=await first(tx,`SELECT gr.Cod_Grupo,gr.Aula_Cod_Aula,tu.Hr_Inicio,tu.Hr_Fin,ci.Fech_Inicio,ci.Fech_Fin FROM dbo.Grupo gr WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Turno tu ON tu.Cod_Turno=gr.Turno_Cod_Turno JOIN dbo.Ciclo ci ON ci.Cod_Ciclo=gr.Ciclo_Cod_Ciclo WHERE gr.Cod_Grupo=@g`,{g:v('Grupo_Cod_Grupo')});
-    if(!g) throw rule('El grupo no existe.');
+    const g=await first(tx,`SELECT gr.Cod_Grupo,gr.Aula_Cod_Aula,tu.Hr_Inicio,tu.Hr_Fin,ci.Fech_Inicio,ci.Fech_Fin FROM dbo.Grupo gr WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Aula a ON a.Cod_Aula=gr.Aula_Cod_Aula JOIN dbo.Turno tu ON tu.Cod_Turno=gr.Turno_Cod_Turno JOIN dbo.Ciclo ci ON ci.Cod_Ciclo=gr.Ciclo_Cod_Ciclo WHERE gr.Cod_Grupo=@g AND gr.Activo=1 AND a.Activa=1 AND ci.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO')`,{g:v('Grupo_Cod_Grupo')});
+    if(!g) throw rule('El grupo, aula o ciclo no está disponible.');
     const start=timeHHMM(v('Hr_Inicio')), end=timeHHMM(v('Hr_Fin'));
     const turnStart=timeHHMM(g.Hr_Inicio),turnEnd=timeHHMM(g.Hr_Fin);
     if(start>=end||start<turnStart||end>turnEnd) throw rule('El bloque debe tener duración positiva y estar dentro del turno del grupo.');

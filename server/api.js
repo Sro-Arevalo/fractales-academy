@@ -11,6 +11,7 @@ const accounts=require('./account-service');
 const administration=require('./administration');
 const {securityFor,securityReady}=require('./security-schema');
 const router=express.Router();
+const fixedCatalogs=new Set(['Programa','ROL','Turno','PARENTESCO','ESTADO_CICLO','ESTADO_MATRICULA','ESTADO_PAGO','ESTADO_EXAMEN_GRUPO','CONCEPTO_PAGO','TIPO_BLOQUE']);
 const invalidAccess={error:'No pudimos verificar el acceso. Revisa tu usuario, contraseña y, si corresponde, el código de activación.'};
 const publicUser=u=>({id:u.Cod_Usuario,nombre:u.Nomb_Usuario,rol:u.ROL_Cod_Rol,alumno:u.ALUMNO_DNI_Alu,cambiar:!!u.Debe_Cambiar_Clave,activar:!!u.Activacion_Requerida});
 function safe(fn){return (req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);}
@@ -115,6 +116,7 @@ router.post('/auth/change-password',authenticate,safe(async(req,res)=>{
 }));
 router.use(require('./accounts-api'));
 router.use(require('./v4-api'));
+router.use(require('./maintenance-api'));
 router.get('/meta',authenticate,admin,(req,res)=>res.json({modules:Object.values(model).map(m=>({...m,columns:m.columns.filter(c=>c.name!=='Clave_Hash')}))}));
 router.get('/options/:table',authenticate,admin,safe(async(req,res)=>{
   const m=filterSchema(req.params.table);
@@ -168,6 +170,7 @@ router.get('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
 }));
 async function save(req,res,isInsert) {
   const m=filterSchema(req.params.table);const payload=dataFor(m,req.body,isInsert);
+  if(isInsert&&fixedCatalogs.has(m.name))throw rule('Este catálogo del sistema tiene opciones definidas por las reglas académicas. Puedes editar sus descripciones permitidas.');
   if(m.name==='Pago')throw rule('Las obligaciones se generan al inscribir. Usa la gestión de pagos para confirmar o anular un cobro.');
   if(isInsert&&['ALUMNO','MATRICULA'].includes(m.name))throw rule('Utiliza el formulario de inscripción para crear alumno, cuenta, matrícula y cuotas en una transacción.');
   validateFields(m,payload);
@@ -188,6 +191,18 @@ async function save(req,res,isInsert) {
         if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||Buffer.byteLength(req.body.Nueva_Clave,'utf8')>72)throw rule('La contraseña debe tener al menos 12 caracteres y hasta 72 bytes.');
         payload.Clave_Hash=await bcrypt.hash(req.body.Nueva_Clave,12);payload.Debe_Cambiar_Clave=true;
       }
+    }
+    if(m.name==='Horario'&&(payload.TIPO_BLOQUE_Cod_Tipo??current?.TIPO_BLOQUE_Cod_Tipo)==='CLASE'){
+      const course=payload.Docente_Asignatura_CURSOS_Cod_Curso??current?.Docente_Asignatura_CURSOS_Cod_Curso;
+      const teacher=payload.Docente_Asignatura_Docente_DNI_Doc??current?.Docente_Asignatura_Docente_DNI_Doc;
+      const valid=(await operations.query(tx,`SELECT c.Cod_Curso FROM dbo.CURSOS c WITH (UPDLOCK,HOLDLOCK)
+        CROSS JOIN dbo.Docente d WITH (UPDLOCK,HOLDLOCK) WHERE c.Cod_Curso=@course AND c.Activa=1 AND d.DNI_Doc=@teacher AND d.Activo=1`,{course,teacher})).recordset[0];
+      if(!valid)throw rule('Selecciona un curso y un docente activos.');
+      await operations.query(tx,`IF NOT EXISTS(SELECT 1 FROM dbo.Docente_Asignatura WITH (UPDLOCK,HOLDLOCK) WHERE CURSOS_Cod_Curso=@course AND Docente_DNI_Doc=@teacher)
+        INSERT dbo.Docente_Asignatura(CURSOS_Cod_Curso,Docente_DNI_Doc) VALUES(@course,@teacher)`,{course,teacher});
+    }
+    if(m.name==='ALUMNO'&&await require('./schema-v43').ready(tx)&&Object.hasOwn(payload,'DNI_Apoderado')){
+      const linked={...current,...payload};await require('./guardians').attach(tx,linked);for(const k of ['DNI_Apoderado','Nomb_Apoderado','Cel_Apoderado','Correo_Apoderado'])payload[k]=linked[k];
     }
     await validate(m.name,payload,current,tx,req.user);
     // Campos calculados únicamente por el backend; no son confiables si vienen del navegador.
@@ -235,4 +250,5 @@ router.get('/student/overview',authenticate,student,safe(async(req,res)=>{
   ]);
   res.json({profile:profile[0]||null,groups,notes,schedule,exams,payments});
 }));
+router.use((req,res)=>res.status(404).json({error:'La operación solicitada no existe.'}));
 module.exports=router;

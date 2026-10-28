@@ -15,9 +15,13 @@ get('/academic/context',async(req,res)=>{
   const queries={
     programas:'SELECT Cod_Programa,Nomb_Programa FROM dbo.Programa WHERE Activo=1 ORDER BY Nomb_Programa',
     ciclos:"SELECT * FROM dbo.Ciclo WHERE ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY Fech_Inicio DESC",
-    grupos:`SELECT g.*,t.Nomb_Turno,a.Nomb_Aula,c.Nomb_Ciclo,c.Programa_Cod_Programa,c.Modalidad,c.Fech_Inicio,c.Fech_Fin,c.Nro_Mensualidades,c.Precio_Mensual
-      FROM dbo.Grupo g JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo
-      WHERE g.Activo=1 AND c.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY c.Fech_Inicio DESC,g.Nomb_Grupo`,
+    grupos:`SELECT g.*,t.Nomb_Turno,t.Hr_Inicio Turno_Inicio,t.Hr_Fin Turno_Fin,a.Nomb_Aula,c.Nomb_Ciclo,c.Programa_Cod_Programa,c.Modalidad,c.Fech_Inicio,c.Fech_Fin,c.Nro_Mensualidades,c.Precio_Mensual,
+      g.Cupo_Max-(SELECT COUNT(*) FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=g.Cod_Grupo AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA') Cupos_Disponibles
+      FROM dbo.Grupo g JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa
+      WHERE g.Activo=1 AND a.Activa=1 AND p.Activo=1 AND c.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY c.Fech_Inicio DESC,g.Nomb_Grupo`,
+    cursos:'SELECT Cod_Curso,Nomb_Curso FROM dbo.CURSOS WHERE Activa=1 ORDER BY Nomb_Curso',
+    docentes:'SELECT DNI_Doc,Nom_Doc FROM dbo.Docente WHERE Activo=1 ORDER BY Nom_Doc',
+    turnos:'SELECT * FROM dbo.Turno ORDER BY Hr_Inicio',
     carreras:'SELECT * FROM dbo.CARRERA ORDER BY Nomb_Carrera',
     parentescos:'SELECT * FROM dbo.PARENTESCO ORDER BY Tipo_Paren',
     asignaturas:`SELECT da.*,c.Nomb_Curso,d.Nom_Doc FROM dbo.Docente_Asignatura da JOIN dbo.CURSOS c ON c.Cod_Curso=da.CURSOS_Cod_Curso
@@ -56,7 +60,7 @@ post('/pagos/medios',async(req,res)=>{
 post('/pagos/:codigo/confirmar',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user)));
 post('/pagos/:codigo/anular',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user,true)));
 get('/auditoria/:entidad/:codigo',async(req,res)=>{
-  if((!Object.hasOwn(model,req.params.entidad)&&!['MEDIO_PAGO','Contacto'].includes(req.params.entidad))||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
+  if((!Object.hasOwn(model,req.params.entidad)&&!['MEDIO_PAGO','Contacto','APODERADO'].includes(req.params.entidad))||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
   res.json({rows:(await ops.query(null,`SELECT Id,Accion,Anterior,Nuevo,Usuario_Cod_Usuario,Motivo,Fecha FROM dbo.Auditoria_V4
     WHERE Entidad=@entity AND Codigo=@code ORDER BY Id DESC`,{entity:req.params.entidad,code:req.params.codigo})).recordset});
 });
