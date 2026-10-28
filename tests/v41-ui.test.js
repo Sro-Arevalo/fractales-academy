@@ -34,7 +34,7 @@ test('navegación agrupa administración por procesos y separa el espacio del al
   state.user.rol='ALUMNO';v41.renderNav();assert.ok($('navContent').querySelector('[data-nav="student-profile"]'));assert.equal($('navContent').querySelector('[data-nav="Usuario"]'),null);assert.equal($('navContent').querySelector('[data-nav="auditoria"]'),null);
 });
 test('dashboard utiliza indicadores recibidos de la API y accesos de procesos reales',async t=>{
-  const {v41,$}=setup(t);await v41.dashboard();assert.match($('content').textContent,/12/);assert.match($('content').textContent,/Grupos activos/);assert.match($('content').textContent,/Todavía no hay inscripciones/);assert.ok($('content').querySelector('[data-go="inscripcion"]'));assert.ok($('content').querySelector('img[src="/assets/estudio-ilustracion.svg"]'));
+  const {v41,$}=setup(t);await v41.dashboard();assert.match($('content').textContent,/12/);assert.match($('content').textContent,/Horarios activos/);assert.match($('content').textContent,/Todavía no hay inscripciones/);assert.ok($('content').querySelector('[data-go="inscripcion"]'));assert.ok($('content').querySelector('img[src="/assets/estudio-ilustracion.svg"]'));
 });
 test('tabla permite ordenar y las tarjetas móviles conservan etiquetas y acciones accesibles',async t=>{
   const {v41,$,w,calls}=setup(t);await v41.setup();await v41.tableView('CURSOS');await new Promise(resolve=>setImmediate(resolve));

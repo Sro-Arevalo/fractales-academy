@@ -1,114 +1,77 @@
-# Fractales Academy V4.3
+# Fractales Academy V4.4
 
-Aplicación existente de gestión académica con Express, HTML/CSS/JavaScript y SQL Server/Azure SQL. Se conserva la identidad institucional y el portal del estudiante.
+Proyecto existente con Node.js/Express, HTML/CSS/JavaScript y Azure SQL. V4.4 incorpora una cuadrícula semanal con guardado transaccional, borradores, docentes, copia a otro período, colores y exportación PNG. El contacto del apoderado es opcional y pertenece a cada alumno. La eliminación distingue datos ficticios de notas reales y cobros protegidos.
 
-La entrega, decisiones de tablas y limitaciones están en [AUDITORIA_Y_ENTREGA_V4_3.md](AUDITORIA_Y_ENTREGA_V4_3.md). Consulta también [las relaciones](RELACIONES_V4_3.md), [los resultados de pruebas](RESULTADOS_PRUEBAS_V4_3.md) y [el inventario de archivos](ARCHIVOS_ENTREGA_V4_3.md).
+La base estándar pasa de **36 a 35 tablas y conserva 41 FK**. Grupo se reutiliza como cabecera técnica del horario; sustituirla reproduciría la misma entidad y relaciones. Su gestión separada desaparece del menú. APODERADO se retira solo mediante el paso SQL manual 04 después de transferir, respaldar y verificar sus datos.
 
-## Ejecutar desde VS Code
+Documentación:
 
-Abrir esta carpeta y una terminal PowerShell. Requiere Node.js 22 o posterior por las dependencias Azure resueltas; las pruebas aquí se ejecutaron con Node 24.20.0. En PowerShell usar `npm.cmd` evita cambiar la política de ejecución de scripts del sistema.
+- [Auditoría de las 36 tablas](AUDITORIA_Y_ENTREGA_V4_4.md).
+- [Diagrama actualizado](RELACIONES_V4_4.md).
+- [Actualización Azure, GitHub y despliegue](GUIA_MIGRACION_AZURE_V4_4.md).
+- [Resultados de pruebas](RESULTADOS_PRUEBAS_V4_4.md).
+- [Archivos modificados](ARCHIVOS_ENTREGA_V4_4.md).
+- [Plan de recuperación](sql/migrations/v4_4/06_PLAN_RECUPERACION.md).
+
+## Ejecutar
+
+Node 22 o posterior; probado con Node 24.20.0. En Windows, npm.cmd evita cambiar la política de PowerShell.
 
 ```powershell
 npm.cmd ci
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-Conservar el `.env` existente al actualizar. Para una instalación nueva, editarlo solo en el equipo: servidor, nombre de base, usuario SQL limitado, contraseña SQL y `JWT_SECRET` aleatorio. Generar el secreto sin incluirlo en commits ni capturas:
+Conservar el .env existente. Para una instalación nueva, completar solo localmente conexión y JWT_SECRET aleatorio de al menos 32 caracteres. No subirlo al repositorio. La conexión normal usa TLS validando el certificado y admite usuario SQL limitado o identidad Entra.
+
+**Completar manualmente V4.3 → V4.4 antes de iniciar esta versión.** Para una base nueva, instalar primero V4.3 con su instalador histórico y seguir después las etapas V4.4. No ejecutar instaladores de base nueva sobre una base poblada. seed:admin solo se utiliza cuando hace falta el primer administrador.
 
 ```powershell
-node -e "process.stdout.write(require('node:crypto').randomBytes(48).toString('hex'))"
-```
-
-Crear el esquema siguiendo la ruta de instalación que corresponda más abajo. No basta con ejecutar Express sobre una base vacía.
-
-```powershell
-npm.cmd run seed:admin
 npm.cmd start
+# http://localhost:3000
 ```
 
-`seed:admin` solicita la contraseña sin mostrarla y solo crea el primer administrador si no existe otro activo. Abrir `http://localhost:3000`. `npm.cmd run dev` reinicia Express al editar archivos. La conexión normal usa TLS y validación del certificado; el adaptador Windows sin TLS se limita a los scripts de pruebas en localhost.
+npm.cmd run dev reinicia al editar archivos. npm start no ejecuta SQL de migración ni habilita accesos ficticios.
 
-## Elegir la instalación SQL correcta
+## SQL V4.4
 
-Los scripts están en `sql/migrations/v4_3/`. Seleccionar expresamente la base destino en SSMS o Azure Query Editor, verificar servidor y sustituir `@BaseEsperada` por **el mismo nombre** configurado en `DB_DATABASE`. El valor de ejemplo de `.env` puede diferir del valor de guardia del SQL: no ignorar esa comprobación.
+En sql/migrations/v4_4 hay archivos separados: 00 diagnóstico, 01 preparación, 02 traslado, 03 verificación, 04 retirada manual y 05 verificación final; 06 documenta recuperación y 07 complementa permisos opcionales. Detener escrituras durante toda la ventana. Revisar servidor, nombre de base, administrador responsable y confirmación del DROP. El paso 04 obtiene el nombre real de la FK y vuelve a comprobar las huellas antes de retirar APODERADO. No se modificó Azure durante esta implementación.
 
-| Situación | Orden |
-|---|---|
-| Base nueva y vacía, previamente creada | `02_BASE_NUEVA_COMPLETA.sql`, luego `99_VERIFICAR.sql` |
-| Base existente V4.1/V4.2 | Respaldo y ensayo; `00_DIAGNOSTICO.sql`, `01_APODERADOS_Y_PRUEBAS.sql`, `99_VERIFICAR.sql` |
-| Base anterior sin V4/V4.1 completas | Seguir primero [V4](GUIA_MIGRACION_AZURE_V4.md) y [V4.1](GUIA_MIGRACION_AZURE_V4_1.md); después V4.3 |
-| Cuenta de aplicación con permisos por tabla | Revisar y adaptar `03_PERMISOS_OPCIONALES.sql` después de las migraciones |
-
-`02` contiene la instalación completa en una transacción; **no se ejecuta sobre una base que ya tenga tablas**. `01` conserva los datos, rechaza apoderados incompatibles con el mismo DNI y puede reejecutarse. No usar los SQL de referencia como instaladores. No se ejecutan migraciones automáticamente al iniciar el servidor.
-
-`04_DATOS_FICTICIOS.sql` y `05_LIMPIEZA_SEGURA_PRUEBAS.sql` muestran su alcance sin escribir por defecto. Ambos requieren completar sus parámetros y confirmación para ejecutar; la carga ficticia solo admite una base independiente de pruebas. La limpieza conserva apoderados/catálogos compartidos y auditorías. Para recuperación consultar [98_RECUPERACION.md](sql/migrations/v4_3/98_RECUPERACION.md).
-
-## Probar sin Azure ni correos reales
-
-En Windows con SQL Server local y ODBC Driver 18, el siguiente comando crea **dos bases nuevas** con nombres `FractalesAcademy_Pruebas_V4_3_...`: una para instalación completa y otra para migración y operaciones. Utiliza autenticación Windows, no `.env`; no borra ni reutiliza bases existentes. El nombre aparece en la salida. Se conservan las bases de ensayo para inspección.
+## Pruebas y vista local
 
 ```powershell
-npm.cmd test
 npm.cmd run check
-npm.cmd run test:sql:v43
+npm.cmd test
+npm.cmd run test:sql:v44
 ```
 
-Para abrir la base de operaciones de ese ensayo:
+El último comando requiere SQL Server local, ODBC Driver 18 y autenticación Windows con permisos locales para crear, respaldar y restaurar bases. Prepara una base NUEVA V4.3 ficticia, hace BACKUP COPY_ONLY/VERIFYONLY y restaura en otra base NUEVA antes de ensayar V4.4. Muestra el nombre de la copia restaurada para usar en el preview. No utiliza .env para conectarse, no reutiliza ni elimina bases; conserva el origen y el respaldo local. Las suites SQL anteriores se conservan como evidencia histórica de esas versiones; la suite vigente es V4.4.
 
 ```powershell
-$env:V43_SQL_TEST_DATABASE = 'NOMBRE_DE_LA_BASE_DE_OPERACIONES_MOSTRADO_POR_EL_ENSAYO'
-npm.cmd run preview:v43
-```
-
-Abrir `http://127.0.0.1:3001/__local/login`. Es un acceso de desarrollo exclusivo del servidor de pruebas ligado a loopback; crea una sesión administradora sin compartir contraseñas. `http://127.0.0.1:3001/__local/student` abre el estudiante ficticio habilitado por el caso G. Estos accesos **no existen en `npm start`** y el script de vista previa no se despliega.
-
-Para pruebas de navegador, dejar abierta esa terminal y ejecutar en otra:
-
-```powershell
+$env:V44_SQL_TEST_DATABASE = 'NOMBRE_DE_COPIA_RESTAURADA_MOSTRADO_POR_EL_ENSAYO'
+npm.cmd run preview:v44
+# http://127.0.0.1:3002/__local/login
+# En otra terminal:
 npx.cmd playwright install chromium
-npm.cmd run test:browser:v43
+npm.cmd run test:browser:v44
 ```
 
-El ensayo usa Chromium headless, guarda capturas en `artifacts/local-preview/v43/`, registra un estudiante ficticio y comprueba formularios, navegación, búsquedas, baja y confirmaciones. Sus pantallas nunca se capturan con la contraseña temporal visible.
+La vista previa liga un servidor separado a loopback, crea una sesión ficticia y simula el correo. Las capturas quedan en artifacts/local-preview/v44 y evitan fotografiar contraseñas/códigos. Ctrl+C detiene el preview. No desplegar sus scripts como servidor de producción.
 
-## Inscripción, apoderados y horarios
+## Funcionamiento
 
-Inscripciones presenta cinco pasos: datos personales, apoderado, enseñanza/modalidad, grupo y confirmación. Se consulta primero el DNI para distinguir reinscripción. El apoderado puede seleccionarse o crearse dentro de la misma transacción; su parentesco pertenece a cada alumno. Se conserva el nombre completo en `Nomb_Alu`, sin dividir ni alterar nombres históricos.
+Consultar el DNI distingue ficha nueva de reinscripción. Se selecciona un horario publicado, ciclo, modalidad y turno. Regular genera cuatro mensualidades de S/250; Acelerado dos. Un alumno nuevo recibe además un cargo inicial de S/50. No se recalculan deudas históricas ni se cargan inscripciones retroactivas a alumnos legados. Se conserva contraseña temporal individual o el modo opcional DNI + código de activación con entrega identificada; ambos exigen contraseña personal.
 
-Regular genera cuatro cuotas de S/250; Acelerado, dos. Cada alumno nuevo recibe además un único cargo de S/50 de matrícula/materiales. No se recalculan deudas ni se cargan inscripciones retroactivas a estudiantes legados. El precio nuevo se valida en backend y SQL; se preservan las tarifas históricas.
+La cuadrícula admite 200 bloques y siete días. Un horario activo por ciclo/turno/aula, cupos, cruces por fechas, excepciones de turno y versión de edición se validan dentro de transacción. Los borradores no admiten nuevas matrículas. El alumno solo lee clases propias publicadas y resultados publicados no anulados.
 
-Los cursos y docentes del horario se consultan directamente en SQL. Elegir ambos crea, si falta, `Docente_Asignatura` junto con el horario. Un fallo o cruce revierte esa relación nueva. Aula y turno se seleccionan al configurar el grupo y se muestran en el horario; para cambiar un aula de un grupo ya utilizado se requiere reorganizar sus bloques. Se pueden añadir aulas desde Catálogos.
+En Estudiantes → Acciones, Desactivar conserva todo y revoca el acceso. Reactivar devuelve el estado de acceso anterior. Eliminar definitivamente exige inactividad, revisión firmada, DNI escrito y motivo; vuelve a comprobar todas las relaciones bajo transacción. Las notas reales y los cobros, incluso revertidos, bloquean el borrado. Solo las notas de una ficha marcada inmutablemente como ficticia pueden retirarse junto con deudas pendientes. La auditoría permanece. Cursos/docentes sin uso y horarios sin matrículas ni otras dependencias protegidas también pueden retirarse.
 
-## Eliminación y limpieza
+## Recuperación y publicación
 
-Desde Estudiantes → Acciones, desactivar antes de eliminar. La revisión muestra cuenta, matrículas, deudas, contactos y controles de acceso, con importes y razones de bloqueo. Para eliminar se exige motivo, confirmación escrita `ELIMINAR DNI` y una revisión firmada que vence en diez minutos; si cambian los datos, hay que revisarlos otra vez.
+La recuperación utiliza correo verificado, OTP criptográfico de seis dígitos, diez minutos, cinco intentos, HMAC en SQL y un uso. Cada administrador verifica su propio correo desde Mi perfil. Un correo compartido no selecciona arbitrariamente una cuenta. Se conservan recuperación asistida y cambios auditados.
 
-Las deudas pendientes pueden retirarse en esa transacción. Cobros actuales, cobros anulados, notas históricas, auditorías cuyo autor sea la cuenta y dependencias adicionales protegidas bloquean la eliminación. Se conserva la auditoría del administrador y el apoderado compartido. No hay cascadas indiscriminadas ni borrado de notas para liberar relaciones.
+Para envío real configurar EMAIL_PROVIDER=smtp, SMTP_HOST, SMTP_PORT 587/465, SMTP_USER, SMTP_PASSWORD y EMAIL_FROM. La prueba local no contacta SMTP. EMAIL_PROVIDER=local está prohibido en producción; la bandeja simulada solo existe en el preview.
 
-Datos de prueba solo muestra alumnos con `Es_Prueba=1`, asignado explícitamente al crearlos. No se permite cambiar después esa marca ni reconocer pruebas por nombres. La limpieza admite hasta 50 alumnos revisados por lote y revierte el lote completo si uno deja de ser elegible. Para cuentas de alumno, la revisión conjunta se realiza desde su ficha. Una cuenta administradora sin operaciones protegidas puede desactivarse y retirarse con su control de sesiones; no se permite eliminar la cuenta propia.
+App Service usa NODE_ENV=production, ACCOUNT_SECURITY_V41=required, JWT_SECRET y conexión/correo en variables de entorno, Node 22+ y npm start; instalar con npm ci --omit=dev. No requiere Playwright ni ODBC nativo. Revisar permisos existentes y 07_PERMISOS_OPCIONALES.sql con la identidad limitada. Nunca conceder DELETE/UPDATE de auditorías ni usar db_owner para Express.
 
-## Recuperación de contraseña
-
-¿Olvidaste tu contraseña? solicita el correo registrado. El backend mantiene compatibilidad con solicitudes anteriores por DNI de estudiante; el formulario nuevo utiliza correo para estudiantes y administradores. El contacto debe estar verificado. Un correo compartido por varias cuentas no selecciona arbitrariamente una cuenta: se devuelve el mismo mensaje genérico y se recurre a administración.
-
-Los códigos tienen seis dígitos criptográficos, diez minutos de vigencia, cinco intentos y un uso. La base guarda HMAC con nonce, nunca el código. Hay límites por IP y por cuenta, y la contraseña se guarda mediante bcrypt. Se invalidan las sesiones anteriores y se exige cambiar las claves iniciales.
-
-Para correo real configurar `EMAIL_PROVIDER=smtp`, `SMTP_HOST`, puerto 587 o 465, `SMTP_USER`, `SMTP_PASSWORD` y `EMAIL_FROM` en variables de entorno. El remitente y la autorización de envío deben configurarse en el proveedor SMTP elegido. La entrega externa no se verificó en esta revisión.
-
-`EMAIL_PROVIDER=local` funciona únicamente con `NODE_ENV=development` o `test`. No contacta SMTP y guarda una bandeja temporal de hasta 50 mensajes en memoria. En `preview:v43`, revisar el código en `http://127.0.0.1:3001/__local/mail`; no aparece en logs ni en la API de producción. La bandeja se pierde al cerrar el proceso. En producción este proveedor provoca un error de configuración.
-
-Cada administrador puede registrar y verificar su propio correo desde el botón de perfil, confirmando su contraseña actual y el código recibido. Se reutiliza `Cuenta_Codigo_V41`; `Usuario.Correo_Recuperacion` y `Correo_Verificado` conservan únicamente la dirección y su estado. No se inventan ni verifican correos antiguos al migrar. Una vez verificado, el administrador también puede usar ¿Olvidaste tu contraseña? sin depender de otra cuenta administrativa.
-
-La inscripción conserva también el modo opcional de DNI inicial más código personal de activación, con verificación de identidad y entrega directa. La opción predeterminada es una contraseña temporal individual; ambos modos exigen después una contraseña propia.
-
-## Preparar Azure App Service
-
-No se ha cambiado ningún recurso de Azure. Antes de desplegar: respaldar, ensayar restauración en otra base, revisar el diagnóstico y aplicar manualmente las migraciones autorizadas. Usar una identidad SQL/Entra limitada y comprobar permisos con ese principal, incluida visibilidad de relaciones (`VIEW DEFINITION`). La API necesita permisos de borrado únicamente sobre las tablas indicadas en `03`; nunca sobre auditorías ni notas. No usar `db_owner` para la aplicación.
-
-En App Service, configurar `NODE_ENV=production`, `ACCOUNT_SECURITY_V41=required`, secreto JWT, correo y conexión en Configuration/Environment variables. Para identidad administrada: `DB_AUTH_MODE=entra`, `DB_SERVER`, `DB_DATABASE` y opcionalmente `AZURE_CLIENT_ID`; la identidad requiere usuario y permisos dentro de Azure SQL. Para SQL: `DB_AUTH_MODE=sql`, `DB_USER`, `DB_PASSWORD`. Habilitar HTTPS y revisar firewall/red entre App Service y Azure SQL. Usar Node 22+ y comando de inicio `npm start`; instalar producción con `npm ci --omit=dev`.
-
-Subir a GitHub los archivos listados en [ARCHIVOS_ENTREGA_V4_3.md](ARCHIVOS_ENTREGA_V4_3.md), el código anterior conservado y los recursos de `public/assets/`. El despliegue de aplicación solo necesita `server/`, `public/`, `package.json` y `package-lock.json`; los SQL se revisan y aplican por separado. Pruebas, documentación y generadores pueden permanecer en GitHub sin incluirse en el paquete de aplicación.
-
-Se preparó [fractales-deploy-v43-20261028.zip](fractales-deploy-v43-20261028.zip) con esas rutas, sin secretos ni herramientas de desarrollo. El paquete se comprobó en una carpeta temporal con una instalación de dependencias de producción y carga de Express; esa comprobación no contacta Azure ni sustituye la migración previa.
-
-Nunca subir `.env`, credenciales, contraseñas, códigos, cookies, logs, bases locales, BACPAC/BAK, exportaciones de personas, `node_modules/` ni la bandeja local. `.env.example` contiene solo marcadores. Las capturas de ensayo están ignoradas y usan datos ficticios. No compartir ZIP de toda la carpeta sin revisar su contenido.
+El paquete de aplicación contiene solo server/, public/, package.json y package-lock.json. SQL, documentación y pruebas se revisan por separado. No subir .env, secretos, node_modules, logs, bases, BAK/BACPAC, capturas con personas ni bandejas de correo. Ver la guía de migración para el orden y las verificaciones posteriores.

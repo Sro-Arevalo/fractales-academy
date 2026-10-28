@@ -1,7 +1,7 @@
 'use strict';
 const model=require('./model.json');const ops=require('./operations');const {validate,rule}=require('./rules');
 const {securityReady}=require('./security-schema');const accounts=require('./account-service');
-const physical=new Set(['ALUMNO','Usuario','CURSOS','CARRERA','Aula','Grupo','Ciclo','Docente','Docente_Asignatura','Examen','Horario']);
+const physical=new Set(['ALUMNO','Usuario','CURSOS','CARRERA','Aula','Grupo','Ciclo','Docente','Docente_Asignatura','Examen']);
 const activeField=m=>m.columns.find(c=>c.type==='bit'&&/^(Activo|Activa)$/i.test(c.name))?.name;
 const quote=name=>'['+name.replace(/]/g,']]')+']';
 function schema(table){const m=model[table];if(!m)throw rule('Módulo no encontrado.');return m;}
@@ -11,6 +11,7 @@ function auditCode(m,row){return m.pk.map(k=>String(row[k])).join('|');}
 function policy(m){return {physical:physical.has(m.name),activeField:activeField(m),controlled:['ALUMNO','MATRICULA','Pago','Usuario','Nota_Examen','Examen_Grupo','Ciclo'].includes(m.name)};}
 async function rowFor(tx,m,id){const s=selector(m,keys(m,id));const row=(await ops.query(tx,`SELECT * FROM dbo.${quote(m.name)} WITH (UPDLOCK,HOLDLOCK) WHERE ${s.where}`,s.inputs)).recordset[0];if(!row)throw Object.assign(rule('Registro no encontrado.'),{status:404});return row;}
 async function dependencies(tx,m,row){
+  if(!(await ops.query(tx,"SELECT HAS_PERMS_BY_NAME(DB_NAME(),'DATABASE','VIEW DEFINITION') n")).recordset[0].n)throw Object.assign(rule('Se requiere VIEW DEFINITION para comprobar todas las dependencias antes de eliminar.'),{status:503});
   const fields=(await ops.query(tx,`SELECT fk.object_id AS Id,fk.name AS Relacion,fk.is_disabled AS Deshabilitada,fk.is_not_trusted AS NoConfiable,s.name AS Esquema,t.name AS Tabla,c.name AS Columna,rc.name AS Referencia
     FROM sys.foreign_keys fk JOIN sys.foreign_key_columns fc ON fc.constraint_object_id=fk.object_id
     JOIN sys.tables t ON t.object_id=fc.parent_object_id JOIN sys.schemas s ON s.schema_id=t.schema_id
@@ -31,6 +32,16 @@ async function dependencies(tx,m,row){
     WHERE Entidad=@entity AND Codigo=@code AND Accion<>'CREAR'`,{entity:m.name,code:auditCode(m,row)})).recordset[0].n);
   if(history)result.push({tabla:'Auditoria_V4',nombre:'Historial de operaciones sobre este registro',cantidad:history,tipo:'historial'});
   return result;
+}
+async function removableDependencies(tx,m,row,deps){
+  // El historial de edicion de un catalogo puede conservarse sin retener un registro sin uso.
+  let blockers=deps.filter(d=>d.tipo!=='historial');
+  if(m.name==='Grupo'){
+    const blocks=(await ops.query(tx,'SELECT * FROM dbo.Horario WITH(UPDLOCK,HOLDLOCK) WHERE Grupo_Cod_Grupo=@id',{id:row.Cod_Grupo})).recordset;
+    for(const block of blocks)blockers.push(...(await dependencies(tx,model.Horario,block)).filter(d=>d.tipo!=='historial'));
+    blockers=blockers.filter(d=>d.tabla!=='Horario');
+  }
+  return blockers;
 }
 async function deletionGuard(tx,m,row,actor){
   if(m.name!=='Usuario')return '';
@@ -55,14 +66,14 @@ async function review(table,id,actor){
     const dni=keys(schema(table),id)[0],p=await require('./student-lifecycle').review(dni,actor);
     const enabled=!p.bloqueos.some(b=>b.startsWith('Primero desactiva'));
     return {dependencias:p.dependencias,activo:!enabled,controlado:true,revision:p.revision,dni,totalPendiente:p.totalPendiente,
-      explicacion:p.conserva,acciones:[{id:'eliminar',label:'Eliminar definitivamente',enabled:p.permitido,explanation:p.permitido?'Se eliminarán únicamente las relaciones revisadas y las obligaciones pendientes.':p.bloqueos.join(' ')},
+      explicacion:p.conserva,detalle:p.detalle,acciones:[{id:'eliminar',label:'Eliminar definitivamente',enabled:p.permitido,explanation:p.permitido?'Se eliminarán únicamente las relaciones revisadas y las obligaciones pendientes.':p.bloqueos.join(' ')},
         {id:enabled?'restaurar':'desactivar',label:enabled?'Reactivar':'Desactivar',enabled:true,explanation:'La desactivación conserva matrículas, pagos e historial.'}]};
   }
   const m=schema(table);return ops.transaction(async tx=>{
     const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row),p=policy(m),enabled=await state(tx,m,row),ready=await securityReady(tx);
     const actions=[];
     const modernUser=m.name==='Usuario'&&await require('./schema-v43').ready(tx);
-    const blockers=modernUser?deps.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):deps;
+    const blockers=modernUser?deps.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):await removableDependencies(tx,m,row,deps);
     const guard=p.physical?(modernUser&&row.Activo?'Primero desactiva la cuenta antes de eliminarla definitivamente.':modernUser&&row.ALUMNO_DNI_Alu?'Revisa la eliminación conjunta desde la ficha del estudiante para comprobar matrícula, deudas e historial.':await deletionGuard(tx,m,row,actor)):'';
     if(p.physical)actions.push({id:'eliminar',label:'Eliminar definitivamente',enabled:!guard&&!blockers.length,explanation:guard||(blockers.length?'Hay dependencias o historial de operaciones. Revisa la información vinculada y utiliza desactivar, dar de baja o anular cuando corresponda.':'La cuenta o registro no tiene operaciones protegidas. Se retirará también su control de sesiones; la auditoría administrativa se conserva.')});
     if(m.name==='Pago')return {dependencias:deps,acciones:[],explicacion:'Confirma o anula la confirmación desde Gestión de pagos. Las obligaciones no se eliminan.'};
@@ -80,22 +91,24 @@ async function remove(table,id,body,actor){
   const m=schema(table);if(!physical.has(table))throw rule('Este registro conserva historial. Utiliza desactivar, anular o corregir.');
   if(body?.confirmacion!=='ELIMINAR')throw rule('Confirma la eliminación después de revisar las dependencias.');const motive=accountsReason(body.motivo);
   return ops.transaction(async tx=>{
+    if(m.name==='Grupo')await require('./schedules').lock(tx);
     const row=await rowFor(tx,m,id),guard=await deletionGuard(tx,m,row,actor);
     if(guard)throw Object.assign(rule(guard),{status:409});
     const modernUser=m.name==='Usuario'&&await require('./schema-v43').ready(tx);
     if(modernUser&&row.Activo)throw Object.assign(rule('Primero desactiva la cuenta antes de eliminarla definitivamente.'),{status:409});
     if(modernUser&&row.ALUMNO_DNI_Alu)throw Object.assign(rule('Revisa la eliminación conjunta desde la ficha del estudiante.'),{status:409});
-    const all=await dependencies(tx,m,row),deps=modernUser?all.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):all;
+    const all=await dependencies(tx,m,row),deps=modernUser?all.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):await removableDependencies(tx,m,row,all);
     if(deps.length)throw Object.assign(rule('No se puede eliminar: hay información académica, financiera o administrativa vinculada. Puedes desactivar el registro cuando corresponda.'),{status:409,dependencias:deps});
     const s=selector(m,keys(m,id));
     if(modernUser)await ops.query(tx,'DELETE FROM dbo.Usuario_Seguridad_V41 WHERE Usuario_Cod_Usuario=@id',{id:row.Cod_Usuario});
+    let blocks=[];if(m.name==='Grupo'){blocks=(await ops.query(tx,'SELECT * FROM dbo.Horario WITH(UPDLOCK,HOLDLOCK) WHERE Grupo_Cod_Grupo=@id',{id:row.Cod_Grupo})).recordset;await ops.query(tx,'DELETE dbo.Horario WHERE Grupo_Cod_Grupo=@id',{id:row.Cod_Grupo});}
     try{await ops.query(tx,`DELETE FROM dbo.${quote(m.name)} WHERE ${s.where}`,s.inputs);}
     catch(e){const number=e.number||e.originalError?.info?.number;
       if(number===229)throw Object.assign(rule('La cuenta SQL de la aplicación no tiene permiso para eliminar este tipo de registro. Solicita revisar el script de permisos V4.2; no cambies las relaciones SQL.'),{status:503});
       if(number===547)throw Object.assign(rule('SQL impidió la eliminación porque existe información vinculada. Actualiza la revisión de dependencias.'),{status:409});
       throw e;
     }
-    await ops.audit(tx,actor,m.name,auditCode(m,row),'ELIMINAR',row,null,motive);return {ok:true};
+    await ops.audit(tx,actor,m.name,auditCode(m,row),'ELIMINAR',m.name==='Grupo'?{...row,bloques:blocks}:row,null,motive);return {ok:true};
   });
 }
 function accountsReason(value){return require('./account-security').reason(value);}
@@ -104,6 +117,7 @@ async function changeState(table,id,body,actor){
   if(body?.confirmacion!==true)throw rule('Confirma la operación después de revisar el historial.');const motive=accountsReason(body.motivo);
   if(!policy(m).activeField&&!policy(m).controlled||m.name==='Pago')throw rule('Este registro no permite esa acción.');
   return ops.transaction(async tx=>{
+    if(m.name==='Grupo')await require('./schedules').lock(tx);
     const row=await rowFor(tx,m,id),beforeActive=await state(tx,m,row),restoring=action==='restaurar';
     const cancellation=['MATRICULA','Nota_Examen','Examen_Grupo','Ciclo'].includes(m.name);
     if(!restoring&&action!==(cancellation?'anular':'desactivar'))throw rule('Esta acción no corresponde al tipo de registro.');
@@ -134,7 +148,7 @@ async function changeState(table,id,body,actor){
       }
       if(m.name==='Usuario')await accounts.ready(tx);
       if(m.name!=='MATRICULA'||change.ESTADO_MATRICULA_Cod_Estado_Matricula==='ACTIVA')await validate(m.name,change,row,tx,actor);
-      const s=selector(m,keys(m,id));await ops.query(tx,`UPDATE dbo.${quote(m.name)} SET ${Object.keys(change).map((k,i)=>`${quote(k)}=@v${i}`).join(',')} WHERE ${s.where}`,{...s.inputs,...Object.fromEntries(Object.values(change).map((v,i)=>['v'+i,v]))});
+      const s=selector(m,keys(m,id));await ops.query(tx,`UPDATE dbo.${quote(m.name)} SET ${Object.keys(change).map((k,i)=>`${quote(k)}=@v${i}`).join(',')}${m.name==='Grupo'?',Version_Horario=Version_Horario+1':''} WHERE ${s.where}`,{...s.inputs,...Object.fromEntries(Object.values(change).map((v,i)=>['v'+i,v]))});
       if(m.name==='Usuario')await accounts.revoke(tx,row.Cod_Usuario);
     }
     const before=m.name==='ALUMNO'?{...row,Activo:beforeActive}:m.name==='Nota_Examen'?{...row,Anulada:!beforeActive}:row;

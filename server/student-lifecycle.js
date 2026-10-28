@@ -6,8 +6,8 @@ const {rule}=require('./rules');
 const {reason}=require('./account-security');
 const schema=require('./schema-v43');
 const quote=s=>'['+s.replace(/]/g,']]')+']';
-const primary={ALUMNO:'DNI_Alu',Usuario:'Cod_Usuario',MATRICULA:'Cod_Matricula',Pago:'Cod_Pago',Cuenta_Codigo_V41:'Id',Usuario_Seguridad_V41:'Usuario_Cod_Usuario',Contacto_Verificado_V41:'Id',Solicitud_Contacto_V41:'Id',Alumno_Estado_V41:'ALUMNO_DNI_Alu'};
-const labels={ALUMNO:'Estudiante',Usuario:'Cuenta de acceso',MATRICULA:'Matrículas',Pago:'Obligaciones pendientes',Cuenta_Codigo_V41:'Códigos temporales',Usuario_Seguridad_V41:'Control de sesiones',Contacto_Verificado_V41:'Contactos verificados',Solicitud_Contacto_V41:'Solicitudes de contacto',Alumno_Estado_V41:'Estado del estudiante'};
+const primary={ALUMNO:'DNI_Alu',Usuario:'Cod_Usuario',MATRICULA:'Cod_Matricula',Pago:'Cod_Pago',Cuenta_Codigo_V41:'Id',Usuario_Seguridad_V41:'Usuario_Cod_Usuario',Contacto_Verificado_V41:'Id',Solicitud_Contacto_V41:'Id',Alumno_Estado_V41:'ALUMNO_DNI_Alu',Nota_Examen:'Cod_Nota',Nota_Estado_V41:'Nota_Examen_Cod_Nota'};
+const labels={ALUMNO:'Estudiante',Usuario:'Cuenta de acceso',MATRICULA:'Matrículas',Pago:'Obligaciones pendientes',Cuenta_Codigo_V41:'Códigos temporales',Usuario_Seguridad_V41:'Control de sesiones',Contacto_Verificado_V41:'Contactos verificados',Solicitud_Contacto_V41:'Solicitudes de contacto',Alumno_Estado_V41:'Estado del estudiante',Nota_Examen:'Resultados académicos de prueba',Nota_Estado_V41:'Estado de resultados de prueba'};
 function secret(){if(!process.env.JWT_SECRET||process.env.JWT_SECRET.length<32)throw Error('JWT_SECRET no configurado.');return process.env.JWT_SECRET;}
 function digest(value){return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');}
 function token(actor,scope,hash){return jwt.sign({sub:actor.Cod_Usuario,scope,hash},secret(),{expiresIn:'10m',issuer:'fractales-deletion',audience:'fractales-admin',algorithm:'HS256'});}
@@ -28,6 +28,13 @@ async function plan(tx,dni,actor){
   for(const table of ['Alumno_Estado_V41','Contacto_Verificado_V41','Solicitud_Contacto_V41'])entities[table]=await rows(`SELECT * FROM dbo.${quote(table)} WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni ORDER BY ${quote(primary[table])}`);
   entities.Cuenta_Codigo_V41=await rows(`SELECT c.Id,c.Usuario_Cod_Usuario,c.Consumido,c.Intentos,c.Expira FROM dbo.Cuenta_Codigo_V41 c WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Usuario u ON u.Cod_Usuario=c.Usuario_Cod_Usuario WHERE u.ALUMNO_DNI_Alu=@dni ORDER BY c.Id`);
   entities.Usuario_Seguridad_V41=await rows(`SELECT s.* FROM dbo.Usuario_Seguridad_V41 s WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Usuario u ON u.Cod_Usuario=s.Usuario_Cod_Usuario WHERE u.ALUMNO_DNI_Alu=@dni ORDER BY s.Usuario_Cod_Usuario`);
+  // Prueba se identifica al CREAR al alumno; el trigger impide reclasificar una persona real.
+  // No basta con que la nota este anulada ni con escribir "prueba" en su nombre.
+  entities.Nota_Examen=[];entities.Nota_Estado_V41=[];
+  if(student.Es_Prueba&&await require('./schema-v44').ready(tx)){
+    entities.Nota_Examen=await rows('SELECT n.* FROM dbo.Nota_Examen n WITH(UPDLOCK,HOLDLOCK) JOIN dbo.MATRICULA m ON m.Cod_Matricula=n.MATRICULA_Cod_Matricula WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY n.Cod_Nota');
+    entities.Nota_Estado_V41=await rows('SELECT s.* FROM dbo.Nota_Estado_V41 s WITH(UPDLOCK,HOLDLOCK) JOIN dbo.Nota_Examen n ON n.Cod_Nota=s.Nota_Examen_Cod_Nota JOIN dbo.MATRICULA m ON m.Cod_Matricula=n.MATRICULA_Cod_Matricula WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY s.Nota_Examen_Cod_Nota');
+  }
   const blocked=[];
   if(entities.Alumno_Estado_V41[0]?.Activo!==false&&entities.Alumno_Estado_V41[0]?.Activo!==0)blocked.push('Primero desactiva al estudiante. Sus matrículas y deudas permanecerán guardadas hasta confirmar la eliminación.');
   if(entities.Usuario.some(u=>u.Activo))blocked.push('Todas las cuentas del estudiante deben estar desactivadas.');
@@ -64,16 +71,18 @@ async function plan(tx,dni,actor){
   }
   const dependencias=Object.entries(entities).filter(([,r])=>r.length).map(([tabla,r])=>({tabla,nombre:labels[tabla],cantidad:r.length})).concat(extra);
   const total=entities.Pago.reduce((n,p)=>n+Math.round(Number(p.Monto)*100),0)/100;
-  const result={dni,nombre:student.Nomb_Alu,esPrueba:!!student.Es_Prueba,permitido:!blocked.length,bloqueos:[...new Set(blocked)],dependencias,totalPendiente:total,conserva:'Se conserva la auditoría administrativa y el apoderado compartido.'};
+  const result={dni,nombre:student.Nomb_Alu,esPrueba:!!student.Es_Prueba,permitido:!blocked.length,bloqueos:[...new Set(blocked)],dependencias,totalPendiente:total,
+    detalle:{estudiante:{dni,nombre:student.Nomb_Alu,celular:student.Cel_Alu},cuentas:entities.Usuario.map(u=>({usuario:u.Nomb_Usuario,activo:!!u.Activo})),matriculas:entities.MATRICULA.map(m=>({codigo:m.Cod_Matricula,horario:m.Grupo_Cod_Grupo,estado:m.ESTADO_MATRICULA_Cod_Estado_Matricula})),obligaciones:entities.Pago.map(p=>({codigo:p.Cod_Pago,monto:Number(p.Monto),estado:p.ESTADO_PAGO_Cod_Estado})),notas:entities.Nota_Examen.map(n=>({codigo:n.Cod_Nota,puntaje:n.Puntaje_total}))},
+    conserva:'La auditoría permanece. Las notas de personas reales y cualquier historial de cobros bloquean la eliminación; puedes conservar todo mediante Desactivar.'};
   return {public:result,entities,hash:digest({entities,history,extra})};
 }
 async function execute(tx,p,actor,motive){
   if(!p.public.permitido)throw Object.assign(rule(p.public.bloqueos.join(' ')),{status:409});
   // Orden explícito; nunca DELETE CASCADE ni eliminación de auditorías.
-  for(const table of ['Solicitud_Contacto_V41','Contacto_Verificado_V41','Cuenta_Codigo_V41','Usuario_Seguridad_V41','Alumno_Estado_V41','Pago','MATRICULA','Usuario','ALUMNO']){
+  for(const table of ['Nota_Estado_V41','Nota_Examen','Solicitud_Contacto_V41','Contacto_Verificado_V41','Cuenta_Codigo_V41','Usuario_Seguridad_V41','Alumno_Estado_V41','Pago','MATRICULA','Usuario','ALUMNO']){
     for(const row of p.entities[table])await ops.query(tx,`DELETE FROM dbo.${quote(table)} WHERE ${quote(primary[table])}=@id`,{id:row[primary[table]]});
   }
-  await ops.audit(tx,actor,'ALUMNO',p.public.dni,'ELIMINAR_CONTROLADO',null,{dependencias:p.public.dependencias,totalPendiente:p.public.totalPendiente,esPrueba:p.public.esPrueba},motive);
+  await ops.audit(tx,actor,'ALUMNO',p.public.dni,'ELIMINAR_CONTROLADO',null,{dependencias:p.public.dependencias,totalPendiente:p.public.totalPendiente,esPrueba:p.public.esPrueba,resultadosPrueba:p.public.detalle.notas},motive);
 }
 async function review(dni,actor){return ops.transaction(async tx=>{const p=await plan(tx,dni,actor);return {...p.public,revision:token(actor,'student:'+dni,p.hash)};});}
 async function remove(dni,body,actor){

@@ -27,6 +27,10 @@ async function validate(table,data,existing,tx,actor) {
     if(!update&&v('ROL_Cod_Rol')==='ALUMNO')throw rule('Las cuentas de alumnos se crean mediante la inscripción.');
     unchanged(['ROL_Cod_Rol','ALUMNO_DNI_Alu','Nomb_Usuario']);
     if(update&&existing.Cod_Usuario===actor.Cod_Usuario&&(v('Activo')===false||v('Activo')===0))throw rule('No puedes desactivar tu propia cuenta.');
+    if(update&&existing.ROL_Cod_Rol==='ADMIN'&&existing.Activo&&(v('Activo')===false||v('Activo')===0)){
+      const n=await first(tx,"SELECT COUNT_BIG(*) n FROM dbo.Usuario WITH(UPDLOCK,HOLDLOCK) WHERE ROL_Cod_Rol='ADMIN' AND Activo=1");
+      if(Number(n.n)<=1)throw rule('Debe conservarse al menos una cuenta administradora activa.');
+    }
   }
   if(table==='Ciclo'&&update&&['Modalidad','Fech_Inicio','Fech_Fin','Nro_Mensualidades','Programa_Cod_Programa'].some(k=>Object.hasOwn(data,k))){
     const used=await first(tx,'SELECT TOP 1 m.Cod_Matricula FROM dbo.MATRICULA m JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo WHERE g.Ciclo_Cod_Ciclo=@id',{id:existing.Cod_Ciclo});
@@ -154,4 +158,4 @@ async function validate(table,data,existing,tx,actor) {
   }
   if(table==='Usuario' && update && existing.Cod_Usuario===actor.Cod_Usuario && data.Activo===false) throw rule('No puedes desactivar tu propia cuenta.');
 }
-module.exports={validate,rule};
+module.exports={validate,rule,timeHHMM};

@@ -72,7 +72,7 @@
         "type": "varchar",
         "length": 120,
         "scale": null,
-        "required": true,
+        "required": false,
         "default": false,
         "pk": false,
         "references": null
@@ -112,7 +112,7 @@
         "type": "varchar",
         "length": 5,
         "scale": null,
-        "required": true,
+        "required": false,
         "default": false,
         "pk": false,
         "references": {
@@ -934,7 +934,7 @@
   },
   "Grupo": {
     "name": "Grupo",
-    "label": "Grupos académicos",
+    "label": "Horarios académicos",
     "category": "Principal",
     "pk": [
       "Cod_Grupo"
