@@ -46,15 +46,38 @@ function createAccountSecurity(notifications=createNotifications()){
       .catch(async()=>{await ops.query(null,'UPDATE dbo.Cuenta_Codigo_V41 SET Consumido=1,Desafio_Hash=NULL WHERE Id=@id',{id}).catch(()=>{});console.error('[Fractales cuentas] No se completó la entrega del código.');})
       .finally(()=>pending.delete(job));pending.add(job);
   }
-  async function requestRecovery(dni,channel='EMAIL'){
+  function identity(value){
+    const input=typeof value==='string'?value.trim():'';
+    if(emailAddress(input))return {email:input.toLowerCase(),dni:null};
+    if(/^\d{8}$/.test(input))return {email:null,dni:input};
+    throw rule('Ingresa tu correo registrado o un DNI de ocho dígitos.');
+  }
+  async function recoveryUser(tx,identifier,channel,projection){
+    if(await require('./schema-v43').ready(tx)){
+      const target=identity(identifier),select=projection==='u.*'?'u.*':`u.Cod_Usuario,u.Activo,CASE WHEN u.ROL_Cod_Rol='ADMIN' THEN u.Correo_Recuperacion ELSE c.Destino END AS Destino`;
+      const rows=(await ops.query(tx,`SELECT TOP(2) ${select} FROM dbo.Usuario u WITH (UPDLOCK,HOLDLOCK)
+        LEFT JOIN dbo.ALUMNO a ON a.DNI_Alu=u.ALUMNO_DNI_Alu LEFT JOIN dbo.Alumno_Estado_V41 es ON es.ALUMNO_DNI_Alu=a.DNI_Alu
+        LEFT JOIN dbo.Contacto_Verificado_V41 c ON c.ALUMNO_DNI_Alu=a.DNI_Alu AND c.Tipo=@channel AND c.Activo=1
+        WHERE u.Activo=1 AND (
+          (u.ROL_Cod_Rol='ADMIN' AND @channel='EMAIL' AND @email IS NOT NULL AND LOWER(u.Correo_Recuperacion)=@email AND u.Correo_Verificado=1)
+          OR (u.ROL_Cod_Rol='ALUMNO' AND ISNULL(es.Activo,1)=1 AND ((@dni IS NOT NULL AND a.DNI_Alu=@dni) OR (@email IS NOT NULL AND LOWER(a.Correo_Alu)=@email))
+          AND c.Destino=CASE WHEN @channel='EMAIL' THEN a.Correo_Alu ELSE a.Cel_Alu END)) ORDER BY u.Cod_Usuario`,{...target,channel})).recordset;
+      return rows.length===1?rows[0]:null;
+    }
+    const users=(await ops.query(tx,`SELECT TOP(2) ${projection} FROM dbo.Usuario u WITH (UPDLOCK,HOLDLOCK)
+      JOIN dbo.ALUMNO a ON a.DNI_Alu=u.ALUMNO_DNI_Alu LEFT JOIN dbo.Alumno_Estado_V41 es ON es.ALUMNO_DNI_Alu=a.DNI_Alu
+      JOIN dbo.Contacto_Verificado_V41 c ON c.ALUMNO_DNI_Alu=a.DNI_Alu
+      WHERE ((@dni IS NOT NULL AND a.DNI_Alu=@dni) OR (@email IS NOT NULL AND LOWER(a.Correo_Alu)=@email))
+      AND u.ROL_Cod_Rol='ALUMNO' AND u.Activo=1 AND ISNULL(es.Activo,1)=1 AND c.Tipo=@channel AND c.Activo=1
+      AND c.Destino=CASE WHEN @channel='EMAIL' THEN a.Correo_Alu ELSE a.Cel_Alu END ORDER BY u.Cod_Usuario`,{...identity(identifier),channel})).recordset;
+    return users.length===1?users[0]:null;
+  }
+  async function requestRecovery(identifier,channel='EMAIL'){
     const configured=channel==='EMAIL'?notifications.emailConfigured:channel==='SMS'&&notifications.smsConfigured;
-    if(!/^\d{8}$/.test(dni||''))throw rule('Ingresa un DNI de ocho dígitos.');
+    identity(identifier);
     if(!configured||!await securityReady()||pending.size>=50)return {message:GENERIC,disponible:!!configured&&await securityReady()};
     const delivery=await ops.transaction(async tx=>{
-      const user=(await ops.query(tx,`SELECT u.Cod_Usuario,u.Activo,c.Destino FROM dbo.Usuario u WITH (UPDLOCK,HOLDLOCK)
-        JOIN dbo.ALUMNO a ON a.DNI_Alu=u.ALUMNO_DNI_Alu JOIN dbo.Contacto_Verificado_V41 c ON c.ALUMNO_DNI_Alu=a.DNI_Alu
-        WHERE u.ALUMNO_DNI_Alu=@dni AND u.ROL_Cod_Rol='ALUMNO' AND u.Activo=1 AND c.Tipo=@channel AND c.Activo=1
-        AND c.Destino=CASE WHEN @channel='EMAIL' THEN a.Correo_Alu ELSE a.Cel_Alu END`,{dni,channel})).recordset[0];
+      const user=await recoveryUser(tx,identifier,channel,'u.Cod_Usuario,u.Activo,c.Destino');
       if(!user||!await withinLimit(tx,user.Cod_Usuario,'RECUPERACION'))return null;
       const code=String(crypto.randomInt(0,1000000)).padStart(6,'0');
       const id=await issue(tx,user,'RECUPERACION',channel,user.Destino,code);
@@ -76,16 +99,19 @@ function createAccountSecurity(notifications=createNotifications()){
   async function completeRecovery(body){
     await ready();password(body?.nueva,body?.confirmacion,body?.dni);
     if(typeof body?.confirmacion!=='string')throw rule('Confirma tu nueva contraseña.');
-    if(!/^\d{8}$/.test(body?.dni||'')||typeof body?.codigo!=='string'||!/^\d{6}$/.test(body.codigo))throw rule('El código es inválido o ha expirado. Solicita uno nuevo.');
+    const identifier=body?.email||body?.dni;identity(identifier);
+    if(typeof body?.codigo!=='string'||!/^\d{6}$/.test(body.codigo))throw rule('El código es inválido o ha expirado. Solicita uno nuevo.');
     const success=await ops.transaction(async tx=>{
-      const user=(await ops.query(tx,"SELECT * FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE ALUMNO_DNI_Alu=@dni AND ROL_Cod_Rol='ALUMNO' AND Activo=1",{dni:body.dni})).recordset[0];
+      const user=await recoveryUser(tx,identifier,body.canal||'EMAIL','u.*');
       if(!user)return false;
       const code=await check(tx,user,'RECUPERACION',body.codigo,body.canal||'EMAIL');if(!code)return false;
       // El contacto debe seguir verificado y coincidir con el perfil al consumir el código.
-      const valid=(await ops.query(tx,`SELECT c.Id FROM dbo.Contacto_Verificado_V41 c JOIN dbo.ALUMNO a ON a.DNI_Alu=c.ALUMNO_DNI_Alu
+      const valid=user.ROL_Cod_Rol==='ADMIN'?(user.Correo_Verificado&&code.Canal==='EMAIL'&&code.Destino===user.Correo_Recuperacion):(await ops.query(tx,`SELECT c.Id FROM dbo.Contacto_Verificado_V41 c JOIN dbo.ALUMNO a ON a.DNI_Alu=c.ALUMNO_DNI_Alu
         WHERE c.ALUMNO_DNI_Alu=@dni AND c.Activo=1 AND c.Tipo=@channel AND c.Destino=@destination
-        AND c.Destino=CASE WHEN c.Tipo='EMAIL' THEN a.Correo_Alu ELSE a.Cel_Alu END`,{dni:body.dni,channel:code.Canal,destination:code.Destino})).recordset[0];
+        AND c.Destino=CASE WHEN c.Tipo='EMAIL' THEN a.Correo_Alu ELSE a.Cel_Alu END`,{dni:user.ALUMNO_DNI_Alu,channel:code.Canal,destination:code.Destino})).recordset[0];
       if(!valid)return false;
+      password(body.nueva,body.confirmacion,user.ALUMNO_DNI_Alu);
+      if(await bcrypt.compare(body.nueva,user.Clave_Hash))throw rule('Elige una contraseña diferente de la anterior.');
       await ops.query(tx,'UPDATE dbo.Usuario SET Clave_Hash=@hash,Debe_Cambiar_Clave=0 WHERE Cod_Usuario=@id',{id:user.Cod_Usuario,hash:await bcrypt.hash(body.nueva,12)});
       await revoke(tx,user.Cod_Usuario,false);
       await ops.audit(tx,user,'Usuario',user.Cod_Usuario,'RECUPERAR_ACCESO',null,{canal:code.Canal},'Código de contacto verificado');return true;
@@ -181,6 +207,29 @@ function createAccountSecurity(notifications=createNotifications()){
       await ops.query(tx,"UPDATE dbo.Solicitud_Contacto_V41 SET Estado='VERIFICADA',Resuelto=SYSUTCDATETIME(),Usuario_Cod_Usuario=@actor WHERE Id=@id",{id:request.Id,actor:user.Cod_Usuario});return true;
     });if(!success)throw rule('Código inválido o expirado.');return {ok:true};
   }
+  async function requestAdminEmail(user,body){
+    await require('./schema-v43').required();
+    if(user.ROL_Cod_Rol!=='ADMIN'||!emailAddress(body?.email))throw rule('Ingresa un correo electrónico válido.');
+    if(!notifications.emailConfigured)throw Object.assign(rule('Configura el servicio de correo antes de verificar tu dirección.'),{status:503});
+    if(pending.size>=50)throw rule('Hay solicitudes en curso. Intenta en unos minutos.');
+    const delivery=await ops.transaction(async tx=>{
+      const current=(await ops.query(tx,"SELECT Cod_Usuario,Clave_Hash FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Usuario=@id AND ROL_Cod_Rol='ADMIN' AND Activo=1",{id:user.Cod_Usuario})).recordset[0];
+      if(!current||typeof body.actual!=='string'||!await bcrypt.compare(body.actual,current.Clave_Hash))throw rule('Confirma tu contraseña actual.');
+      if(!await withinLimit(tx,user.Cod_Usuario,'VERIFICAR_CONTACTO'))throw rule('Espera antes de solicitar otro código.');
+      const code=String(crypto.randomInt(0,1000000)).padStart(6,'0'),destination=body.email.trim().toLowerCase();
+      const id=await issue(tx,user,'VERIFICAR_CONTACTO','EMAIL',destination,code);
+      return {id,to:destination,code,purpose:'VERIFICAR_CONTACTO'};
+    });dispatch(delivery.id,delivery,'EMAIL');return {ok:true,message:'Solicitud registrada. Introduce el código recibido para verificar tu correo.'};
+  }
+  async function confirmAdminEmail(user,code){
+    await require('./schema-v43').required();if(user.ROL_Cod_Rol!=='ADMIN'||typeof code!=='string'||!/^\d{6}$/.test(code))throw rule('Código inválido o expirado.');
+    const success=await ops.transaction(async tx=>{
+      const current=(await ops.query(tx,"SELECT Cod_Usuario,Correo_Recuperacion FROM dbo.Usuario WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Usuario=@id AND ROL_Cod_Rol='ADMIN' AND Activo=1",{id:user.Cod_Usuario})).recordset[0];
+      if(!current)return false;const valid=await check(tx,user,'VERIFICAR_CONTACTO',code,'EMAIL');if(!valid)return false;
+      await ops.query(tx,'UPDATE dbo.Usuario SET Correo_Recuperacion=@email,Correo_Verificado=1 WHERE Cod_Usuario=@id',{email:valid.Destino,id:user.Cod_Usuario});
+      await ops.audit(tx,user,'Usuario',user.Cod_Usuario,'VERIFICAR_CORREO',null,{correo:valid.Destino},'Control del correo mediante código temporal');return true;
+    });if(!success)throw rule('Código inválido o expirado.');return {ok:true};
+  }
   async function resolveContact(id,body,actor){
     await ready();const motive=reason(body?.motivo);
     if(typeof body?.aprobar!=='boolean'||body.aprobar&&body.identidadConfirmada!==true)throw rule('Confirma la identidad y el control del contacto antes de aprobarlo.');
@@ -193,6 +242,6 @@ function createAccountSecurity(notifications=createNotifications()){
       if(request.Codigo_Id)await ops.query(tx,'UPDATE dbo.Cuenta_Codigo_V41 SET Consumido=1 WHERE Id=@id',{id:request.Codigo_Id});return {ok:true};
     });
   }
-  return {notifications,requestRecovery,completeRecovery,prepareActivation,activationProof,changePassword,administrativeRecovery,requestContact,confirmContact,resolveContact,revoke,ready,flush:()=>Promise.all([...pending])};
+  return {notifications,requestRecovery,completeRecovery,prepareActivation,activationProof,changePassword,administrativeRecovery,requestContact,confirmContact,requestAdminEmail,confirmAdminEmail,resolveContact,revoke,ready,flush:()=>Promise.all([...pending])};
 }
 module.exports={createAccountSecurity,password,reason,protectedCode,matches,GENERIC};

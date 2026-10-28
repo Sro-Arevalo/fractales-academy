@@ -51,11 +51,20 @@ async function state(tx,m,row){
   return true;
 }
 async function review(table,id,actor){
+  if(table==='ALUMNO'&&await require('./schema-v43').ready()){
+    const dni=keys(schema(table),id)[0],p=await require('./student-lifecycle').review(dni,actor);
+    const enabled=!p.bloqueos.some(b=>b.startsWith('Primero desactiva'));
+    return {dependencias:p.dependencias,activo:!enabled,controlado:true,revision:p.revision,dni,totalPendiente:p.totalPendiente,
+      explicacion:p.conserva,acciones:[{id:'eliminar',label:'Eliminar definitivamente',enabled:p.permitido,explanation:p.permitido?'Se eliminarán únicamente las relaciones revisadas y las obligaciones pendientes.':p.bloqueos.join(' ')},
+        {id:enabled?'restaurar':'desactivar',label:enabled?'Reactivar':'Desactivar',enabled:true,explanation:'La desactivación conserva matrículas, pagos e historial.'}]};
+  }
   const m=schema(table);return ops.transaction(async tx=>{
     const row=await rowFor(tx,m,id),deps=await dependencies(tx,m,row),p=policy(m),enabled=await state(tx,m,row),ready=await securityReady(tx);
     const actions=[];
-    const guard=p.physical?await deletionGuard(tx,m,row,actor):'';
-    if(p.physical)actions.push({id:'eliminar',label:'Eliminar definitivamente',enabled:!guard&&!deps.length,explanation:guard||(deps.length?'Hay dependencias o historial de operaciones. Revisa la información vinculada y utiliza desactivar, dar de baja o anular cuando corresponda.':'No hay dependencias ni historial operativo. La eliminación es irreversible; la auditoría del alta y de esta eliminación se conserva.')});
+    const modernUser=m.name==='Usuario'&&await require('./schema-v43').ready(tx);
+    const blockers=modernUser?deps.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):deps;
+    const guard=p.physical?(modernUser&&row.Activo?'Primero desactiva la cuenta antes de eliminarla definitivamente.':modernUser&&row.ALUMNO_DNI_Alu?'Revisa la eliminación conjunta desde la ficha del estudiante para comprobar matrícula, deudas e historial.':await deletionGuard(tx,m,row,actor)):'';
+    if(p.physical)actions.push({id:'eliminar',label:'Eliminar definitivamente',enabled:!guard&&!blockers.length,explanation:guard||(blockers.length?'Hay dependencias o historial de operaciones. Revisa la información vinculada y utiliza desactivar, dar de baja o anular cuando corresponda.':'La cuenta o registro no tiene operaciones protegidas. Se retirará también su control de sesiones; la auditoría administrativa se conserva.')});
     if(m.name==='Pago')return {dependencias:deps,acciones:[],explicacion:'Confirma o anula la confirmación desde Gestión de pagos. Las obligaciones no se eliminan.'};
     if(p.activeField||p.controlled){
       const needsSchema=['ALUMNO','Nota_Examen','Usuario'].includes(m.name);
@@ -67,14 +76,19 @@ async function review(table,id,actor){
   });
 }
 async function remove(table,id,body,actor){
+  if(table==='ALUMNO'&&await require('./schema-v43').ready())return require('./student-lifecycle').remove(keys(schema(table),id)[0],body,actor);
   const m=schema(table);if(!physical.has(table))throw rule('Este registro conserva historial. Utiliza desactivar, anular o corregir.');
   if(body?.confirmacion!=='ELIMINAR')throw rule('Confirma la eliminación después de revisar las dependencias.');const motive=accountsReason(body.motivo);
   return ops.transaction(async tx=>{
     const row=await rowFor(tx,m,id),guard=await deletionGuard(tx,m,row,actor);
     if(guard)throw Object.assign(rule(guard),{status:409});
-    const deps=await dependencies(tx,m,row);
+    const modernUser=m.name==='Usuario'&&await require('./schema-v43').ready(tx);
+    if(modernUser&&row.Activo)throw Object.assign(rule('Primero desactiva la cuenta antes de eliminarla definitivamente.'),{status:409});
+    if(modernUser&&row.ALUMNO_DNI_Alu)throw Object.assign(rule('Revisa la eliminación conjunta desde la ficha del estudiante.'),{status:409});
+    const all=await dependencies(tx,m,row),deps=modernUser?all.filter(d=>d.tabla!=='Usuario_Seguridad_V41'&&d.tipo!=='historial'):all;
     if(deps.length)throw Object.assign(rule('No se puede eliminar: hay información académica, financiera o administrativa vinculada. Puedes desactivar el registro cuando corresponda.'),{status:409,dependencias:deps});
     const s=selector(m,keys(m,id));
+    if(modernUser)await ops.query(tx,'DELETE FROM dbo.Usuario_Seguridad_V41 WHERE Usuario_Cod_Usuario=@id',{id:row.Cod_Usuario});
     try{await ops.query(tx,`DELETE FROM dbo.${quote(m.name)} WHERE ${s.where}`,s.inputs);}
     catch(e){const number=e.number||e.originalError?.info?.number;
       if(number===229)throw Object.assign(rule('La cuenta SQL de la aplicación no tiene permiso para eliminar este tipo de registro. Solicita revisar el script de permisos V4.2; no cambies las relaciones SQL.'),{status:503});

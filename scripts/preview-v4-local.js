@@ -23,12 +23,22 @@ const settings='SET ANSI_NULLS ON; SET QUOTED_IDENTIFIER ON; SET ANSI_PADDING ON
   await ops.query(null,"UPDATE dbo.Usuario SET Clave_Hash=@hash,Activo=1,Debe_Cambiar_Clave=0 WHERE ALUMNO_DNI_Alu=@dni AND Nomb_Usuario=@dni AND ROL_Cod_Rol='ALUMNO'",{dni,hash:await bcrypt.hash(studentPassword,12)});
   const app=require('../server/index'),express=require('express'),fs=require('node:fs'),path=require('node:path');
   const preview=express();
+  // Accesos exclusivos de desarrollo, en loopback y una base ficticia seleccionada.
+  // Las claves aleatorias de estas cuentas no se imprimen ni se registran.
+  preview.get('/__local/login',async(req,res,next)=>{try{
+    const user=(await ops.query(null,"SELECT * FROM dbo.Usuario WHERE Cod_Usuario='V4-PREVIEW'")).recordset[0];
+    require('../server/auth').createSession(res,await require('../server/security-schema').securityFor(user));res.redirect('/');
+  }catch(e){next(e);}});
+  preview.get('/__local/student',async(req,res,next)=>{try{
+    const user=(await ops.query(null,"SELECT * FROM dbo.Usuario WHERE ALUMNO_DNI_Alu=@dni AND ROL_Cod_Rol='ALUMNO'",{dni})).recordset[0];
+    require('../server/auth').createSession(res,await require('../server/security-schema').securityFor(user));res.redirect('/');
+  }catch(e){next(e);}});
   // Cabecera institucional y aviso permanente solo en este servidor local. La app/API real sigue intacta.
   preview.get('/',(req,res,next)=>{
     const html=fs.readFileSync(path.join(__dirname,'../public/index.html'),'utf8').replace('<body>','<body><div class="v42-preview-notice" role="note">VISTA LOCAL · DATOS FICTICIOS · Correo y SMS desactivados</div>');
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; frame-ancestors 'none'");res.type('html').send(html);
   });
   preview.use(app);
-  const server=preview.listen(3001,'127.0.0.1',()=>console.log(JSON.stringify({aviso:'VISTA LOCAL CON DATOS FICTICIOS. No conecta a Azure ni envía mensajes.',url:'http://127.0.0.1:3001',database,administrador:{usuario:'v4-preview',claveSoloPruebas:password},alumno:{usuario:dni,claveSoloPruebas:studentPassword}})));
+  const server=preview.listen(3001,'127.0.0.1',()=>console.log(JSON.stringify({aviso:'VISTA LOCAL CON DATOS FICTICIOS. No conecta a Azure ni envía mensajes.',url:'http://127.0.0.1:3001',database,administrador:'http://127.0.0.1:3001/__local/login',alumno:'http://127.0.0.1:3001/__local/student'})));
   process.on('SIGINT',()=>server.close(async()=>{await pool.close();process.exit(0);}));
 })().catch(e=>{console.error(e.message);process.exit(1);});

@@ -153,7 +153,9 @@ test('V4: migraciones y API con SQL Server local real',async t=>{
     assert.equal((await http('/records/Horario','POST',block('V4-H3','V4-GR2','07:30','08:30'))).status,400);
     assert.equal((await http('/records/Grupo','POST',{Cod_Grupo:'V4-GR3',Nomb_Grupo:'Regular ficticio C',Cupo_Max:100,Turno_Cod_Turno:'MANANA',Aula_Cod_Aula:'V4-AULA',Ciclo_Cod_Ciclo:'V4-REGULAR'})).status,201);
     assert.equal((await http('/records/Horario','POST',{...block('V4-H4','V4-GR3','07:30','08:30'),Docente_Asignatura_CURSOS_Cod_Curso:'V4-API',Docente_Asignatura_Docente_DNI_Doc:'00000004'})).status,400);
-    assert.equal((await http('/records/Horario','POST',{...block('V4-H5','V4-GR2','09:00','10:00'),Docente_Asignatura_CURSOS_Cod_Curso:'V4-API',Docente_Asignatura_Docente_DNI_Doc:'00000003'})).status,400);
+    // V4.3 permite seleccionar cualquier curso/docente activo y crea la asignación de forma atómica.
+    assert.equal((await http('/records/Horario','POST',{...block('V4-H5','V4-GR2','09:00','10:00'),Docente_Asignatura_CURSOS_Cod_Curso:'V4-API',Docente_Asignatura_Docente_DNI_Doc:'00000003'})).status,201);
+    assert.equal(await scalar("SELECT COUNT(*) n FROM dbo.Docente_Asignatura WHERE CURSOS_Cod_Curso='V4-API' AND Docente_DNI_Doc='00000003'"),1);
   });
   await t.test('turnos mañana/tarde, recreos y consulta del horario semanal',async()=>{
     assert.equal((await http('/records/Horario','POST',block('V4-H6','V4-GR','12:30','13:30'))).status,400);
