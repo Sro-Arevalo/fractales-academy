@@ -1,0 +1,17 @@
+'use strict';
+const router=require('express').Router(),{authenticate,admin}=require('./auth'),trash=require('./trash'),audit=require('./audit-service');
+const safe=f=>(req,res,next)=>Promise.resolve(f(req,res)).catch(next);
+router.use('/admin/trash',authenticate,admin);router.use('/admin/system-audit',authenticate,admin);
+router.post('/records/:table/:id/trash',authenticate,admin,safe(async(req,res)=>res.json(await trash.send(req.params.table,req.params.id,req.body,req.user))));
+router.get('/admin/trash',safe(async(req,res)=>res.json(await trash.list(req.query))));
+router.get('/admin/trash/:id',safe(async(req,res)=>res.json(await trash.info(req.params.id,req.user))));
+router.post('/admin/trash/:id/restore',safe(async(req,res)=>res.json(await trash.restore(req.params.id,req.body,req.user))));
+router.delete('/admin/trash/:id',safe(async(req,res)=>res.json(await trash.erase(req.params.id,req.body,req.user))));
+router.get('/admin/system-audit',safe(async(req,res)=>res.json(await audit.list(req.query))));
+router.get('/admin/system-audit/policy',safe(async(req,res)=>res.json(await audit.policy())));
+router.post('/admin/system-audit/policy',safe(async(req,res)=>res.json(await audit.updatePolicy(req.body,req.user))));
+router.post('/admin/system-audit/preview',safe(async(req,res)=>res.json(await audit.preview(req.body,req.user))));
+router.post('/admin/system-audit/process',safe(async(req,res)=>res.json(await audit.processEvents(req.body,req.user))));
+router.get('/admin/system-audit/receipts',safe(async(req,res)=>res.json({rows:(await require('./operations').query(null,'SELECT TOP(100) CONVERT(varchar(20),ID) ID,FECHA AS FECHA_EVENTO,OPERACION,NOMBRE_ADMINISTRADOR,CANTIDAD,CONVERT(varchar(64),HUELLA,2) HUELLA,MOTIVO FROM dbo.CONSTANCIA_AUDITORIA ORDER BY ID DESC')).recordset})));
+router.get('/admin/system-audit/:id',safe(async(req,res)=>res.json(await audit.detail(req.params.id))));
+module.exports=router;

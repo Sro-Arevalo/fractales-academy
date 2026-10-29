@@ -1,0 +1,3993 @@
+{
+  "columns": [
+    {
+      "tabla": "ALUMNO",
+      "columna": "DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Nomb_Alu",
+      "tipo": "varchar",
+      "longitud": 120,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Correo_Alu",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Fech_Nac",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Cel_Alu",
+      "tipo": "varchar",
+      "longitud": 9,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Dir_Alu",
+      "tipo": "varchar",
+      "longitud": 200,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Nomb_Apoderado",
+      "tipo": "varchar",
+      "longitud": 120,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "DNI_Apoderado",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Cel_Apoderado",
+      "tipo": "varchar",
+      "longitud": 9,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Correo_Apoderado",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 10,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "PARENTESCO_Cod_Paren",
+      "tipo": "varchar",
+      "longitud": 5,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 11,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "CARRERA_Cod_Carrera",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 12,
+      "is_identity": false
+    },
+    {
+      "tabla": "ALUMNO",
+      "columna": "Es_Prueba",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 13,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "Usuario_Activo_Anterior",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "Motivo",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Alumno_Estado_V41",
+      "columna": "Fecha",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Id",
+      "tipo": "bigint",
+      "longitud": 8,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": true
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Entidad",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Codigo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Accion",
+      "tipo": "varchar",
+      "longitud": 30,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Anterior",
+      "tipo": "nvarchar",
+      "longitud": -1,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Nuevo",
+      "tipo": "nvarchar",
+      "longitud": -1,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Motivo",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "columna": "Fecha",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Aula",
+      "columna": "Cod_Aula",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Aula",
+      "columna": "Nomb_Aula",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Aula",
+      "columna": "Capacidad",
+      "tipo": "smallint",
+      "longitud": 2,
+      "precision": 5,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Aula",
+      "columna": "Activa",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "CARRERA",
+      "columna": "Cod_Carrera",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "CARRERA",
+      "columna": "Nomb_Carrera",
+      "tipo": "varchar",
+      "longitud": 120,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Cod_Ciclo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Programa_Cod_Programa",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Nomb_Ciclo",
+      "tipo": "varchar",
+      "longitud": 100,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Modalidad",
+      "tipo": "varchar",
+      "longitud": 12,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Fech_Inicio",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Fech_Fin",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Nro_Mensualidades",
+      "tipo": "tinyint",
+      "longitud": 1,
+      "precision": 3,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "Precio_Mensual",
+      "tipo": "decimal",
+      "longitud": 9,
+      "precision": 10,
+      "scale": 2,
+      "is_nullable": false,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Ciclo",
+      "columna": "ESTADO_CICLO_Cod_Estado",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "CONCEPTO_PAGO",
+      "columna": "Cod_Concepto",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "CONCEPTO_PAGO",
+      "columna": "Nomb_Concepto",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Id",
+      "tipo": "bigint",
+      "longitud": 8,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": true
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Tipo",
+      "tipo": "varchar",
+      "longitud": 7,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Destino",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Metodo",
+      "tipo": "varchar",
+      "longitud": 12,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "columna": "Verificado",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Control_Migracion_V4",
+      "columna": "Script",
+      "tipo": "varchar",
+      "longitud": 100,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Control_Migracion_V4",
+      "columna": "Fecha",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Id",
+      "tipo": "uniqueidentifier",
+      "longitud": 16,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Proposito",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Canal",
+      "tipo": "varchar",
+      "longitud": 7,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Destino",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Nonce",
+      "tipo": "char",
+      "longitud": 32,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Codigo_Hash",
+      "tipo": "char",
+      "longitud": 64,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Desafio_Hash",
+      "tipo": "char",
+      "longitud": 64,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Expira",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Intentos",
+      "tipo": "tinyint",
+      "longitud": 1,
+      "precision": 3,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 10,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Consumido",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 11,
+      "is_identity": false
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "columna": "Creado",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 12,
+      "is_identity": false
+    },
+    {
+      "tabla": "CURSOS",
+      "columna": "Cod_Curso",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "CURSOS",
+      "columna": "Nomb_Curso",
+      "tipo": "varchar",
+      "longitud": 100,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "CURSOS",
+      "columna": "Activa",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente",
+      "columna": "DNI_Doc",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente",
+      "columna": "Nom_Doc",
+      "tipo": "varchar",
+      "longitud": 120,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente",
+      "columna": "Cel_Doc",
+      "tipo": "varchar",
+      "longitud": 9,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente",
+      "columna": "Especialidad",
+      "tipo": "varchar",
+      "longitud": 120,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente_Asignatura",
+      "columna": "CURSOS_Cod_Curso",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Docente_Asignatura",
+      "columna": "Docente_DNI_Doc",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_CICLO",
+      "columna": "Cod_Estado_Ciclo",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_CICLO",
+      "columna": "Nomb_Estado_Ciclo",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_EXAMEN_GRUPO",
+      "columna": "Cod_Estado_Examen",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_EXAMEN_GRUPO",
+      "columna": "Nomb_Estado_Examen",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_MATRICULA",
+      "columna": "Cod_Estado_Matricula",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_MATRICULA",
+      "columna": "Nomb_Estado_Matricula",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_PAGO",
+      "columna": "Cod_Estado",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ESTADO_PAGO",
+      "columna": "Nomb_Estado",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen",
+      "columna": "Cod_Examen",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen",
+      "columna": "Nomb_Examen",
+      "tipo": "nvarchar",
+      "longitud": 300,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen",
+      "columna": "Descripcion",
+      "tipo": "nvarchar",
+      "longitud": 600,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen",
+      "columna": "puntaje_maximo",
+      "tipo": "decimal",
+      "longitud": 5,
+      "precision": 8,
+      "scale": 2,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen",
+      "columna": "activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Cod_examen_grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Fech_programada",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Hr_inicio",
+      "tipo": "time",
+      "longitud": 3,
+      "precision": 8,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Duracion_minutos",
+      "tipo": "smallint",
+      "longitud": 2,
+      "precision": 5,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Estado",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Publicado",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Examen_Cod_Examen",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "Grupo_Cod_Grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Examen_Grupo",
+      "columna": "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Cod_Grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Nomb_Grupo",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Cupo_Max",
+      "tipo": "smallint",
+      "longitud": 2,
+      "precision": 5,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Turno_Cod_Turno",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Aula_Cod_Aula",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Ciclo_Cod_Ciclo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Estado_Horario",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Grupo",
+      "columna": "Version_Horario",
+      "tipo": "int",
+      "longitud": 4,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Cod_Horario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Dia_Semana",
+      "tipo": "tinyint",
+      "longitud": 1,
+      "precision": 3,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Hr_Inicio",
+      "tipo": "time",
+      "longitud": 3,
+      "precision": 8,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Hr_Fin",
+      "tipo": "time",
+      "longitud": 3,
+      "precision": 8,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Grupo_Cod_Grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "TIPO_BLOQUE_Cod_Tipo",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Docente_Asignatura_CURSOS_Cod_Curso",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Docente_Asignatura_Docente_DNI_Doc",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Excepcion_Turno",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 10,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Motivo_Excepcion",
+      "tipo": "nvarchar",
+      "longitud": 500,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 11,
+      "is_identity": false
+    },
+    {
+      "tabla": "Horario",
+      "columna": "Autorizado_Por",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 12,
+      "is_identity": false
+    },
+    {
+      "tabla": "Linea_Base_V4",
+      "columna": "Tabla",
+      "tipo": "sysname",
+      "longitud": 256,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Linea_Base_V4",
+      "columna": "Clave",
+      "tipo": "nvarchar",
+      "longitud": 400,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Linea_Base_V4",
+      "columna": "Huella",
+      "tipo": "varbinary",
+      "longitud": 32,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "Cod_Matricula",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "ESTADO_MATRICULA_Cod_Estado_Matricula",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "Fech_Matricula",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "Observaciones",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "MATRICULA",
+      "columna": "Grupo_Cod_Grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "MEDIO_PAGO",
+      "columna": "Cod_Medio",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "MEDIO_PAGO",
+      "columna": "Nomb_Medio",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "MEDIO_PAGO",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Estado_V41",
+      "columna": "Nota_Examen_Cod_Nota",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Estado_V41",
+      "columna": "Anulada",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Estado_V41",
+      "columna": "Motivo",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Estado_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Estado_V41",
+      "columna": "Fecha",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "Cod_Nota",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "Puntaje_total",
+      "tipo": "decimal",
+      "longitud": 5,
+      "precision": 8,
+      "scale": 2,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "Fech_registro",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "MATRICULA_Cod_Matricula",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "Examen_Grupo_Cod_examen_grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Nota_Examen",
+      "columna": "Grupo_Cod_Grupo",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Cod_Pago",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "CONCEPTO_PAGO_Cod_Concepto",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Nro_Mensualidad",
+      "tipo": "tinyint",
+      "longitud": 1,
+      "precision": 3,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Monto",
+      "tipo": "decimal",
+      "longitud": 9,
+      "precision": 10,
+      "scale": 2,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Fech_Vencimiento",
+      "tipo": "date",
+      "longitud": 3,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "ESTADO_PAGO_Cod_Estado",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Fech_Pago",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Medio_Pago",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 10,
+      "is_identity": false
+    },
+    {
+      "tabla": "Pago",
+      "columna": "MATRICULA_Cod_Matricula",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 11,
+      "is_identity": false
+    },
+    {
+      "tabla": "PARENTESCO",
+      "columna": "Cod_Paren",
+      "tipo": "varchar",
+      "longitud": 5,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "PARENTESCO",
+      "columna": "Tipo_Paren",
+      "tipo": "varchar",
+      "longitud": 40,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Programa",
+      "columna": "Cod_Programa",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Programa",
+      "columna": "Nomb_Programa",
+      "tipo": "varchar",
+      "longitud": 100,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Programa",
+      "columna": "Descripcion",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Programa",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "ROL",
+      "columna": "Cod_Rol",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "ROL",
+      "columna": "Nomb_Rol",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Id",
+      "tipo": "uniqueidentifier",
+      "longitud": 16,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Tipo",
+      "tipo": "varchar",
+      "longitud": 7,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Destino",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Estado",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Codigo_Id",
+      "tipo": "uniqueidentifier",
+      "longitud": 16,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Creado",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Resuelto",
+      "tipo": "datetime2",
+      "longitud": 6,
+      "precision": 19,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "columna": "Motivo",
+      "tipo": "varchar",
+      "longitud": 250,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 10,
+      "is_identity": false
+    },
+    {
+      "tabla": "TIPO_BLOQUE",
+      "columna": "Cod_Tipo",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "TIPO_BLOQUE",
+      "columna": "Nomb_Tipo",
+      "tipo": "varchar",
+      "longitud": 60,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Turno",
+      "columna": "Cod_Turno",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Turno",
+      "columna": "Nomb_Turno",
+      "tipo": "varchar",
+      "longitud": 15,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Turno",
+      "columna": "Hr_Inicio",
+      "tipo": "time",
+      "longitud": 3,
+      "precision": 8,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Turno",
+      "columna": "Hr_Fin",
+      "tipo": "time",
+      "longitud": 3,
+      "precision": 8,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Nomb_Usuario",
+      "tipo": "varchar",
+      "longitud": 80,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Clave_Hash",
+      "tipo": "varchar",
+      "longitud": 255,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "ROL_Cod_Rol",
+      "tipo": "varchar",
+      "longitud": 10,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 4,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Activo",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 5,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Debe_Cambiar_Clave",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 6,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "ALUMNO_DNI_Alu",
+      "tipo": "varchar",
+      "longitud": 8,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 7,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Correo_Recuperacion",
+      "tipo": "varchar",
+      "longitud": 150,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": true,
+      "column_id": 8,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario",
+      "columna": "Correo_Verificado",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 9,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario_Seguridad_V41",
+      "columna": "Usuario_Cod_Usuario",
+      "tipo": "varchar",
+      "longitud": 20,
+      "precision": 0,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 1,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario_Seguridad_V41",
+      "columna": "Version_Sesion",
+      "tipo": "int",
+      "longitud": 4,
+      "precision": 10,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 2,
+      "is_identity": false
+    },
+    {
+      "tabla": "Usuario_Seguridad_V41",
+      "columna": "Activacion_Requerida",
+      "tipo": "bit",
+      "longitud": 1,
+      "precision": 1,
+      "scale": 0,
+      "is_nullable": false,
+      "column_id": 3,
+      "is_identity": false
+    }
+  ],
+  "objects": [
+    {
+      "nombre": "CK_ALUMNO_DNI",
+      "tipo": "C",
+      "tabla": "ALUMNO",
+      "definicion": "([DNI_Alu] like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ALUMNO_DNI_Apoderado",
+      "tipo": "C",
+      "tabla": "ALUMNO",
+      "definicion": "([DNI_Apoderado] IS NULL OR [DNI_Apoderado] like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Auditoria_V4_JSON",
+      "tipo": "C",
+      "tabla": "Auditoria_V4",
+      "definicion": "(([Anterior] IS NULL OR isjson([Anterior])=(1)) AND ([Nuevo] IS NULL OR isjson([Nuevo])=(1)))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Aula_Capacidad",
+      "tipo": "C",
+      "tabla": "Aula",
+      "definicion": "([Capacidad]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Ciclo_Fechas",
+      "tipo": "C",
+      "tabla": "Ciclo",
+      "definicion": "([Fech_Fin]>[Fech_Inicio])",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Ciclo_Modalidad",
+      "tipo": "C",
+      "tabla": "Ciclo",
+      "definicion": "([Modalidad]='REGULAR' AND [Nro_Mensualidades]=(4) OR [Modalidad]='ACELERADO' AND [Nro_Mensualidades]=(2))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Ciclo_Precio",
+      "tipo": "C",
+      "tabla": "Ciclo",
+      "definicion": "([Precio_Mensual]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Codigo_V41_Canal",
+      "tipo": "C",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "([Canal]='DIRECTO' OR [Canal]='SMS' OR [Canal]='EMAIL')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Codigo_V41_Fechas",
+      "tipo": "C",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "([Expira]>[Creado])",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Codigo_V41_Hash",
+      "tipo": "C",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "(datalength([Codigo_Hash])=(64) AND NOT ([Codigo_Hash]) collate Latin1_General_100_BIN2 like '%[^0-9a-f]%' AND datalength([Nonce])=(32) AND NOT ([Nonce]) collate Latin1_General_100_BIN2 like '%[^0-9a-f]%' AND ([Desafio_Hash] IS NULL OR datalength([Desafio_Hash])=(64) AND NOT ([Desafio_Hash]) collate Latin1_General_100_BIN2 like '%[^0-9a-f]%'))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Codigo_V41_Intentos",
+      "tipo": "C",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "([Intentos]<=(5))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Codigo_V41_Proposito",
+      "tipo": "C",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "([Proposito]='VERIFICAR_CONTACTO' OR [Proposito]='RECUPERACION' OR [Proposito]='ACTIVACION')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_CONCEPTO_PAGO_Codigos",
+      "tipo": "C",
+      "tabla": "CONCEPTO_PAGO",
+      "definicion": "([Cod_Concepto]='MENSUALIDAD' OR [Cod_Concepto]='MATERIALES' OR [Cod_Concepto]='MATRICULA_INICIAL')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Contacto_V41_Destino",
+      "tipo": "C",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": "([Tipo]='SMS' AND datalength([Destino])=(9) AND NOT ([Destino]) collate Latin1_General_100_BIN2 like '%[^0-9]%' OR [Tipo]='EMAIL' AND [Destino] like '%_@_%._%' AND NOT [Destino] like '% %')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Contacto_V41_Metodo",
+      "tipo": "C",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": "([Metodo]='PRESENCIAL' OR [Metodo]='CODIGO')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Contacto_V41_Tipo",
+      "tipo": "C",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": "([Tipo]='SMS' OR [Tipo]='EMAIL')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Docente_DNI",
+      "tipo": "C",
+      "tabla": "Docente",
+      "definicion": "([DNI_Doc] like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ESTADO_CICLO_Codigos",
+      "tipo": "C",
+      "tabla": "ESTADO_CICLO",
+      "definicion": "([Cod_Estado_Ciclo]='CANCELADO' OR [Cod_Estado_Ciclo]='FINALIZADO' OR [Cod_Estado_Ciclo]='ACTIVO' OR [Cod_Estado_Ciclo]='PROGRAMADO')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ESTADO_EXAMEN_GRUPO_Codigos",
+      "tipo": "C",
+      "tabla": "ESTADO_EXAMEN_GRUPO",
+      "definicion": "([Cod_Estado_Examen]='CANCELADO' OR [Cod_Estado_Examen]='RENDIDO' OR [Cod_Estado_Examen]='PROGRAMADO')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ESTADO_MATRICULA_Codigos",
+      "tipo": "C",
+      "tabla": "ESTADO_MATRICULA",
+      "definicion": "([Cod_Estado_Matricula]='ANULADA' OR [Cod_Estado_Matricula]='RETIRADA' OR [Cod_Estado_Matricula]='FINALIZADA' OR [Cod_Estado_Matricula]='ACTIVA')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ESTADO_PAGO_Codigos",
+      "tipo": "C",
+      "tabla": "ESTADO_PAGO",
+      "definicion": "([Cod_Estado]='PAGADO' OR [Cod_Estado]='PENDIENTE')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Examen_Puntaje",
+      "tipo": "C",
+      "tabla": "Examen",
+      "definicion": "([puntaje_maximo]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ExamenGrupo_Duracion",
+      "tipo": "C",
+      "tabla": "Examen_Grupo",
+      "definicion": "([duracion_minutos]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ExamenGrupo_Estado",
+      "tipo": "C",
+      "tabla": "Examen_Grupo",
+      "definicion": "([Estado]=[ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen])",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Grupo_Cupo",
+      "tipo": "C",
+      "tabla": "Grupo",
+      "definicion": "([Cupo_Max]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Grupo_EstadoHorario",
+      "tipo": "C",
+      "tabla": "Grupo",
+      "definicion": "([Estado_Horario]='PUBLICADO' OR [Estado_Horario]='BORRADOR')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Grupo_VersionHorario",
+      "tipo": "C",
+      "tabla": "Grupo",
+      "definicion": "([Version_Horario]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Horario_Bloque",
+      "tipo": "C",
+      "tabla": "Horario",
+      "definicion": "([TIPO_BLOQUE_Cod_Tipo]='CLASE' AND [Docente_Asignatura_Docente_DNI_Doc] IS NOT NULL AND [Docente_Asignatura_CURSOS_Cod_Curso] IS NOT NULL OR [TIPO_BLOQUE_Cod_Tipo]='RECREO' AND [Docente_Asignatura_Docente_DNI_Doc] IS NULL AND [Docente_Asignatura_CURSOS_Cod_Curso] IS NULL)",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Horario_Dia",
+      "tipo": "C",
+      "tabla": "Horario",
+      "definicion": "([Dia_Semana]>=(1) AND [Dia_Semana]<=(7))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Horario_Excepcion",
+      "tipo": "C",
+      "tabla": "Horario",
+      "definicion": "([Excepcion_Turno]=(0) AND [Motivo_Excepcion] IS NULL AND [Autorizado_Por] IS NULL OR [Excepcion_Turno]=(1) AND len(ltrim(rtrim([Motivo_Excepcion])))>=(5) AND [Autorizado_Por] IS NOT NULL)",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Horario_Horas",
+      "tipo": "C",
+      "tabla": "Horario",
+      "definicion": "([Hr_Fin]>[Hr_Inicio])",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_MEDIO_PAGO_Codigo",
+      "tipo": "C",
+      "tabla": "MEDIO_PAGO",
+      "definicion": "(datalength([Cod_Medio])>=(1) AND datalength([Cod_Medio])<=(10) AND NOT ([Cod_Medio]) collate Latin1_General_100_BIN2 like '%[^A-Z0-9_-]%')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Nota_Puntaje",
+      "tipo": "C",
+      "tabla": "Nota_Examen",
+      "definicion": "([puntaje_total]>=(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Pago_Concepto",
+      "tipo": "C",
+      "tabla": "Pago",
+      "definicion": "(([CONCEPTO_PAGO_Cod_Concepto]='MATERIALES' OR [CONCEPTO_PAGO_Cod_Concepto]='MATRICULA_INICIAL') AND [MATRICULA_Cod_Matricula] IS NULL AND [Nro_Mensualidad] IS NULL OR [CONCEPTO_PAGO_Cod_Concepto]='MENSUALIDAD' AND [MATRICULA_Cod_Matricula] IS NOT NULL AND ([Nro_Mensualidad]>=(1) AND [Nro_Mensualidad]<=(4)))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Pago_Estado",
+      "tipo": "C",
+      "tabla": "Pago",
+      "definicion": "([ESTADO_PAGO_Cod_Estado]='PENDIENTE' AND [Fech_Pago] IS NULL AND [Medio_Pago] IS NULL AND [Usuario_Cod_Usuario] IS NULL OR [ESTADO_PAGO_Cod_Estado]='PAGADO' AND [Fech_Pago] IS NOT NULL AND [Medio_Pago] IS NOT NULL AND [Usuario_Cod_Usuario] IS NOT NULL)",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Pago_Monto",
+      "tipo": "C",
+      "tabla": "Pago",
+      "definicion": "([Monto]>(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Parentesco_Lista",
+      "tipo": "C",
+      "tabla": "PARENTESCO",
+      "definicion": "([Cod_Paren]='OTRO' OR [Cod_Paren]='TUTOR' OR [Cod_Paren]='ABUEL' OR [Cod_Paren]='HERM' OR [Cod_Paren]='TIO' OR [Cod_Paren]='MADRE' OR [Cod_Paren]='PADRE')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Programa_SoloDos",
+      "tipo": "C",
+      "tabla": "Programa",
+      "definicion": "([Cod_Programa]='PREUNIV' OR [Cod_Programa]='REFUERZO')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_ROL_Codigos",
+      "tipo": "C",
+      "tabla": "ROL",
+      "definicion": "([Cod_Rol]='ALUMNO' OR [Cod_Rol]='ADMIN')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Seguridad_V41_Version",
+      "tipo": "C",
+      "tabla": "Usuario_Seguridad_V41",
+      "definicion": "([Version_Sesion]>=(0))",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Solicitud_V41_Estado",
+      "tipo": "C",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": "([Estado]='REEMPLAZADA' OR [Estado]='RECHAZADA' OR [Estado]='APROBADA' OR [Estado]='VERIFICADA' OR [Estado]='PENDIENTE_ADMIN' OR [Estado]='PENDIENTE')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Solicitud_V41_Tipo",
+      "tipo": "C",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": "([Tipo]='SMS' OR [Tipo]='EMAIL')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_TIPO_BLOQUE_Codigos",
+      "tipo": "C",
+      "tabla": "TIPO_BLOQUE",
+      "definicion": "([Cod_Tipo]='RECREO' OR [Cod_Tipo]='CLASE')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Turno_DosOpciones",
+      "tipo": "C",
+      "tabla": "Turno",
+      "definicion": "([Cod_Turno]='MANANA' AND [Nomb_Turno]='MANANA' AND [Hr_Inicio]='07:00' AND [Hr_Fin]='13:00' OR [Cod_Turno]='TARDE' AND [Nomb_Turno]='TARDE' AND [Hr_Inicio]='15:00' AND [Hr_Fin]='21:00')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Usuario_CorreoVerificado",
+      "tipo": "C",
+      "tabla": "Usuario",
+      "definicion": "([Correo_Verificado]=(0) OR [Correo_Recuperacion] IS NOT NULL)",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_Usuario_Rol",
+      "tipo": "C",
+      "tabla": "Usuario",
+      "definicion": "([ROL_Cod_Rol]='ADMIN' AND [ALUMNO_DNI_Alu] IS NULL OR [ROL_Cod_Rol]='ALUMNO' AND [ALUMNO_DNI_Alu] IS NOT NULL)",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_V4_ALUMNO_Cel_Alu",
+      "tipo": "C",
+      "tabla": "ALUMNO",
+      "definicion": "([Cel_Alu] IS NULL OR datalength([Cel_Alu])=(9) AND NOT ([Cel_Alu]) collate Latin1_General_100_BIN2 like '%[^0-9]%')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_V4_ALUMNO_Cel_Apoderado",
+      "tipo": "C",
+      "tabla": "ALUMNO",
+      "definicion": "([Cel_Apoderado] IS NULL OR datalength([Cel_Apoderado])=(9) AND NOT ([Cel_Apoderado]) collate Latin1_General_100_BIN2 like '%[^0-9]%')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "CK_V4_Docente_Cel_Doc",
+      "tipo": "C",
+      "tabla": "Docente",
+      "definicion": "(datalength([Cel_Doc])=(9) AND NOT ([Cel_Doc]) collate Latin1_General_100_BIN2 like '%[^0-9]%')",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_ALUMNO_EsPrueba",
+      "tipo": "D",
+      "tabla": "ALUMNO",
+      "definicion": "((0))",
+      "columna": "Es_Prueba",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Alumno_Estado_V41_Fecha",
+      "tipo": "D",
+      "tabla": "Alumno_Estado_V41",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Fecha",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Auditoria_V4_Fecha",
+      "tipo": "D",
+      "tabla": "Auditoria_V4",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Fecha",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Aula_Activa",
+      "tipo": "D",
+      "tabla": "Aula",
+      "definicion": "((1))",
+      "columna": "Activa",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Ciclo_Precio",
+      "tipo": "D",
+      "tabla": "Ciclo",
+      "definicion": "((250.00))",
+      "columna": "Precio_Mensual",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Codigo_V41_Consumido",
+      "tipo": "D",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "((0))",
+      "columna": "Consumido",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Codigo_V41_Creado",
+      "tipo": "D",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Creado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Codigo_V41_Intentos",
+      "tipo": "D",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": "((0))",
+      "columna": "Intentos",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Contacto_V41_Activo",
+      "tipo": "D",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Contacto_V41_Fecha",
+      "tipo": "D",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Verificado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Control_V4_Fecha",
+      "tipo": "D",
+      "tabla": "Control_Migracion_V4",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Fecha",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Cursos_Activa",
+      "tipo": "D",
+      "tabla": "CURSOS",
+      "definicion": "((1))",
+      "columna": "Activa",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Docente_Activo",
+      "tipo": "D",
+      "tabla": "Docente",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Examen_Activo",
+      "tipo": "D",
+      "tabla": "Examen",
+      "definicion": "((1))",
+      "columna": "activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_ExamenGrupo_Estado",
+      "tipo": "D",
+      "tabla": "Examen_Grupo",
+      "definicion": "('PROGRAMADO')",
+      "columna": "Estado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_ExamenGrupo_Publicado",
+      "tipo": "D",
+      "tabla": "Examen_Grupo",
+      "definicion": "((0))",
+      "columna": "Publicado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Grupo_Activo",
+      "tipo": "D",
+      "tabla": "Grupo",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Grupo_EstadoHorario",
+      "tipo": "D",
+      "tabla": "Grupo",
+      "definicion": "('BORRADOR')",
+      "columna": "Estado_Horario",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Grupo_VersionHorario",
+      "tipo": "D",
+      "tabla": "Grupo",
+      "definicion": "((1))",
+      "columna": "Version_Horario",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Horario_Activo",
+      "tipo": "D",
+      "tabla": "Horario",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Horario_Excepcion",
+      "tipo": "D",
+      "tabla": "Horario",
+      "definicion": "((0))",
+      "columna": "Excepcion_Turno",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Matricula_Fecha",
+      "tipo": "D",
+      "tabla": "MATRICULA",
+      "definicion": "(CONVERT([date],getdate()))",
+      "columna": "Fech_Matricula",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_MEDIO_PAGO_Activo",
+      "tipo": "D",
+      "tabla": "MEDIO_PAGO",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Nota_Estado_V41_Fecha",
+      "tipo": "D",
+      "tabla": "Nota_Estado_V41",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Fecha",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Nota_Fecha",
+      "tipo": "D",
+      "tabla": "Nota_Examen",
+      "definicion": "(sysdatetime())",
+      "columna": "Fech_registro",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Programa_Activo",
+      "tipo": "D",
+      "tabla": "Programa",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Seguridad_V41_Activacion",
+      "tipo": "D",
+      "tabla": "Usuario_Seguridad_V41",
+      "definicion": "((0))",
+      "columna": "Activacion_Requerida",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Seguridad_V41_Version",
+      "tipo": "D",
+      "tabla": "Usuario_Seguridad_V41",
+      "definicion": "((0))",
+      "columna": "Version_Sesion",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Solicitud_V41_Creado",
+      "tipo": "D",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": "(sysutcdatetime())",
+      "columna": "Creado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Usuario_Activo",
+      "tipo": "D",
+      "tabla": "Usuario",
+      "definicion": "((1))",
+      "columna": "Activo",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Usuario_Cambiar",
+      "tipo": "D",
+      "tabla": "Usuario",
+      "definicion": "((1))",
+      "columna": "Debe_Cambiar_Clave",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "DF_Usuario_CorreoVerificado",
+      "tipo": "D",
+      "tabla": "Usuario",
+      "definicion": "((0))",
+      "columna": "Correo_Verificado",
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "Ciclo_ESTADO_CICLO",
+      "tipo": "F",
+      "tabla": "Ciclo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ESTADO_CICLO"
+    },
+    {
+      "nombre": "Docente_Asignatura_Docente",
+      "tipo": "F",
+      "tabla": "Docente_Asignatura",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Docente"
+    },
+    {
+      "nombre": "Examen_Grupo_ESTADO_EXAMEN_GRUPO",
+      "tipo": "F",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ESTADO_EXAMEN_GRUPO"
+    },
+    {
+      "nombre": "Examen_Grupo_Examen",
+      "tipo": "F",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Examen"
+    },
+    {
+      "nombre": "Examen_Grupo_Grupo",
+      "tipo": "F",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Grupo"
+    },
+    {
+      "nombre": "FK_Alumno_Carrera",
+      "tipo": "F",
+      "tabla": "ALUMNO",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "CARRERA"
+    },
+    {
+      "nombre": "FK_Alumno_Estado_V41_Alumno",
+      "tipo": "F",
+      "tabla": "Alumno_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "FK_Alumno_Estado_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Alumno_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Alumno_Parentesco",
+      "tipo": "F",
+      "tabla": "ALUMNO",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "PARENTESCO"
+    },
+    {
+      "nombre": "FK_Auditoria_V4_Usuario",
+      "tipo": "F",
+      "tabla": "Auditoria_V4",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Ciclo_Programa",
+      "tipo": "F",
+      "tabla": "Ciclo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Programa"
+    },
+    {
+      "nombre": "FK_Codigo_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Contacto_V41_Alumno",
+      "tipo": "F",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "FK_Contacto_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_DA_Curso",
+      "tipo": "F",
+      "tabla": "Docente_Asignatura",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "CURSOS"
+    },
+    {
+      "nombre": "FK_Horario_Autorizador",
+      "tipo": "F",
+      "tabla": "Horario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Nota_Estado_V41_Nota",
+      "tipo": "F",
+      "tabla": "Nota_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Nota_Examen"
+    },
+    {
+      "nombre": "FK_Nota_Estado_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Nota_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Seguridad_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Usuario_Seguridad_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_Solicitud_V41_Alumno",
+      "tipo": "F",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "FK_Solicitud_V41_Codigo",
+      "tipo": "F",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Cuenta_Codigo_V41"
+    },
+    {
+      "nombre": "FK_Solicitud_V41_Usuario",
+      "tipo": "F",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "FK_V4_Pago_Medio",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "MEDIO_PAGO"
+    },
+    {
+      "nombre": "Grupo_Aula",
+      "tipo": "F",
+      "tabla": "Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Aula"
+    },
+    {
+      "nombre": "Grupo_Ciclo",
+      "tipo": "F",
+      "tabla": "Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Ciclo"
+    },
+    {
+      "nombre": "Grupo_Turno",
+      "tipo": "F",
+      "tabla": "Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Turno"
+    },
+    {
+      "nombre": "Horario_Docente_Asignatura",
+      "tipo": "F",
+      "tabla": "Horario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Docente_Asignatura"
+    },
+    {
+      "nombre": "Horario_Grupo",
+      "tipo": "F",
+      "tabla": "Horario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Grupo"
+    },
+    {
+      "nombre": "Horario_TIPO_BLOQUE",
+      "tipo": "F",
+      "tabla": "Horario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "TIPO_BLOQUE"
+    },
+    {
+      "nombre": "MATRICULA_ALUMNO",
+      "tipo": "F",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "MATRICULA_ESTADO_MATRICULA",
+      "tipo": "F",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ESTADO_MATRICULA"
+    },
+    {
+      "nombre": "MATRICULA_Grupo",
+      "tipo": "F",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Grupo"
+    },
+    {
+      "nombre": "Nota_Examen_Examen_Grupo",
+      "tipo": "F",
+      "tabla": "Nota_Examen",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Examen_Grupo"
+    },
+    {
+      "nombre": "Nota_Examen_MATRICULA",
+      "tipo": "F",
+      "tabla": "Nota_Examen",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "MATRICULA"
+    },
+    {
+      "nombre": "Pago_ALUMNO",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "Pago_CONCEPTO_PAGO",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "CONCEPTO_PAGO"
+    },
+    {
+      "nombre": "Pago_ESTADO_PAGO",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ESTADO_PAGO"
+    },
+    {
+      "nombre": "Pago_MATRICULA",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "MATRICULA"
+    },
+    {
+      "nombre": "Pago_Usuario",
+      "tipo": "F",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "Usuario"
+    },
+    {
+      "nombre": "Usuario_ALUMNO",
+      "tipo": "F",
+      "tabla": "Usuario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ALUMNO"
+    },
+    {
+      "nombre": "Usuario_ROL",
+      "tipo": "F",
+      "tabla": "Usuario",
+      "definicion": null,
+      "columna": null,
+      "claves": null,
+      "referencia": "ROL"
+    },
+    {
+      "nombre": "PK_ALUMNO",
+      "tipo": "PK",
+      "tabla": "ALUMNO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"DNI_Alu\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Alumno_Estado_V41",
+      "tipo": "PK",
+      "tabla": "Alumno_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"ALUMNO_DNI_Alu\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Auditoria_V4",
+      "tipo": "PK",
+      "tabla": "Auditoria_V4",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Id\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Aula",
+      "tipo": "PK",
+      "tabla": "Aula",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Aula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_CARRERA",
+      "tipo": "PK",
+      "tabla": "CARRERA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Carrera\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Ciclo",
+      "tipo": "PK",
+      "tabla": "Ciclo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Ciclo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_CONCEPTO_PAGO",
+      "tipo": "PK",
+      "tabla": "CONCEPTO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Concepto\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Contacto_Verificado_V41",
+      "tipo": "PK",
+      "tabla": "Contacto_Verificado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Id\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Control_Migracion_V4",
+      "tipo": "PK",
+      "tabla": "Control_Migracion_V4",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Script\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Cuenta_Codigo_V41",
+      "tipo": "PK",
+      "tabla": "Cuenta_Codigo_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Id\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_CURSOS",
+      "tipo": "PK",
+      "tabla": "CURSOS",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Curso\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Docente",
+      "tipo": "PK",
+      "tabla": "Docente",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"DNI_Doc\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Docente_Asignatura",
+      "tipo": "PK",
+      "tabla": "Docente_Asignatura",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"CURSOS_Cod_Curso\"},{\"columna\":\"Docente_DNI_Doc\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_ESTADO_CICLO",
+      "tipo": "PK",
+      "tabla": "ESTADO_CICLO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Estado_Ciclo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_ESTADO_EXAMEN_GRUPO",
+      "tipo": "PK",
+      "tabla": "ESTADO_EXAMEN_GRUPO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Estado_Examen\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_ESTADO_MATRICULA",
+      "tipo": "PK",
+      "tabla": "ESTADO_MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Estado_Matricula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_ESTADO_PAGO",
+      "tipo": "PK",
+      "tabla": "ESTADO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Estado\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Examen",
+      "tipo": "PK",
+      "tabla": "Examen",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Examen\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Examen_Grupo",
+      "tipo": "PK",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_examen_grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Grupo",
+      "tipo": "PK",
+      "tabla": "Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Horario",
+      "tipo": "PK",
+      "tabla": "Horario",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Horario\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Linea_Base_V4",
+      "tipo": "PK",
+      "tabla": "Linea_Base_V4",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Tabla\"},{\"columna\":\"Clave\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_MATRICULA",
+      "tipo": "PK",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Matricula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_MEDIO_PAGO",
+      "tipo": "PK",
+      "tabla": "MEDIO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Medio\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Nota_Estado_V41",
+      "tipo": "PK",
+      "tabla": "Nota_Estado_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nota_Examen_Cod_Nota\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Nota_Examen",
+      "tipo": "PK",
+      "tabla": "Nota_Examen",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Nota\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Pago",
+      "tipo": "PK",
+      "tabla": "Pago",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Pago\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_PARENTESCO",
+      "tipo": "PK",
+      "tabla": "PARENTESCO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Paren\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Programa",
+      "tipo": "PK",
+      "tabla": "Programa",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Programa\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_ROL",
+      "tipo": "PK",
+      "tabla": "ROL",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Rol\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Solicitud_Contacto_V41",
+      "tipo": "PK",
+      "tabla": "Solicitud_Contacto_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Id\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_TIPO_BLOQUE",
+      "tipo": "PK",
+      "tabla": "TIPO_BLOQUE",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Tipo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Turno",
+      "tipo": "PK",
+      "tabla": "Turno",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Turno\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Usuario",
+      "tipo": "PK",
+      "tabla": "Usuario",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Usuario\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "PK_Usuario_Seguridad_V41",
+      "tipo": "PK",
+      "tabla": "Usuario_Seguridad_V41",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Usuario_Cod_Usuario\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "TR_Horario_Sin_Cruces",
+      "tipo": "TR",
+      "tabla": "Horario",
+      "definicion": "CREATE   TRIGGER dbo.TR_Horario_Sin_Cruces ON dbo.Horario AFTER INSERT,UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM inserted i JOIN dbo.Grupo g ON g.Cod_Grupo=i.Grupo_Cod_Grupo JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno\n    WHERE (i.Hr_Inicio<t.Hr_Inicio OR i.Hr_Fin>t.Hr_Fin) AND\n    (i.Excepcion_Turno=0 OR NOT EXISTS(SELECT 1 FROM dbo.Usuario u WHERE u.Cod_Usuario=i.Autorizado_Por AND u.ROL_Cod_Rol='ADMIN' AND u.Activo=1)))\n    THROW 54430,'Bloque fuera del turno sin excepcion administradora autorizada.',1;\n   IF EXISTS(SELECT 1 FROM inserted i JOIN dbo.Grupo gi ON gi.Cod_Grupo=i.Grupo_Cod_Grupo JOIN dbo.Ciclo ci ON ci.Cod_Ciclo=gi.Ciclo_Cod_Ciclo\n    JOIN dbo.Horario h WITH(UPDLOCK,HOLDLOCK) ON h.Cod_Horario<>i.Cod_Horario AND h.Dia_Semana=i.Dia_Semana AND i.Hr_Inicio<h.Hr_Fin AND h.Hr_Inicio<i.Hr_Fin\n    JOIN dbo.Grupo gh ON gh.Cod_Grupo=h.Grupo_Cod_Grupo JOIN dbo.Ciclo ch ON ch.Cod_Ciclo=gh.Ciclo_Cod_Ciclo\n    WHERE (i.Grupo_Cod_Grupo=h.Grupo_Cod_Grupo OR (i.Activo=1 AND h.Activo=1 AND gi.Activo=1 AND gh.Activo=1\n      AND ci.Fech_Inicio<=ch.Fech_Fin AND ch.Fech_Inicio<=ci.Fech_Fin AND\n      (gi.Aula_Cod_Aula=gh.Aula_Cod_Aula OR i.Docente_Asignatura_Docente_DNI_Doc=h.Docente_Asignatura_Docente_DNI_Doc))))\n    THROW 54431,'Cruce de horario: conjunto academico, aula o docente ocupado.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_Matricula_CupoMaximo",
+      "tipo": "TR",
+      "tabla": "MATRICULA",
+      "definicion": "-- Restringe cupos en matriculas ACTIVAS.\nCREATE   TRIGGER TR_Matricula_CupoMaximo\nON MATRICULA AFTER INSERT, UPDATE\nAS\nBEGIN\n    SET NOCOUNT ON;\n    IF EXISTS (\n        SELECT 1\n        FROM (SELECT DISTINCT Grupo_Cod_Grupo FROM inserted) AS gr\n        JOIN Grupo AS g ON g.Cod_Grupo = gr.Grupo_Cod_Grupo\n        CROSS APPLY (\n            SELECT COUNT_BIG(*) AS Cantidad\n            FROM MATRICULA AS m\n            WHERE m.Grupo_Cod_Grupo = g.Cod_Grupo\n              AND m.ESTADO_MATRICULA_Cod_Estado_Matricula = 'ACTIVA'\n        ) AS ocupacion\n        WHERE ocupacion.Cantidad > g.Cupo_Max\n    )\n        THROW 51005, 'La cantidad de matriculas activas supera el cupo del grupo.', 1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_Nota_Examen_Puntaje",
+      "tipo": "TR",
+      "tabla": "Nota_Examen",
+      "definicion": "-- La nota debe estar dentro del maximo permitido por el examen.\nCREATE   TRIGGER TR_Nota_Examen_Puntaje\nON Nota_Examen AFTER INSERT, UPDATE\nAS\nBEGIN\n    SET NOCOUNT ON;\n    IF EXISTS (\n        SELECT 1 FROM inserted AS n\n        JOIN Examen_Grupo AS eg ON eg.Cod_examen_grupo = n.Examen_Grupo_Cod_examen_grupo\n        JOIN Examen AS e ON e.Cod_Examen = eg.Examen_Cod_Examen\n        WHERE n.Puntaje_total > e.puntaje_maximo\n    )\n        THROW 51004, 'La nota supera el puntaje maximo del simulacro.', 1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_Pago_Mes_Valido",
+      "tipo": "TR",
+      "tabla": "Pago",
+      "definicion": "-- Evita registrar mensualidad 3 o 4 cuando un ciclo acelerado dura solo 2 meses.\nCREATE   TRIGGER TR_Pago_Mes_Valido\nON Pago AFTER INSERT, UPDATE\nAS\nBEGIN\n    SET NOCOUNT ON;\n    IF EXISTS (\n        SELECT 1\n        FROM inserted AS p\n        INNER JOIN MATRICULA AS m ON m.Cod_Matricula = p.MATRICULA_Cod_Matricula\n        INNER JOIN Grupo AS g ON g.Cod_Grupo = m.Grupo_Cod_Grupo\n        INNER JOIN Ciclo AS c ON c.Cod_Ciclo = g.Ciclo_Cod_Ciclo\n        WHERE p.CONCEPTO_PAGO_Cod_Concepto = 'MENSUALIDAD'\n          AND p.Nro_Mensualidad > c.Nro_Mensualidades\n    )\n    BEGIN\n        THROW 51001, 'Numero de mensualidad fuera del ciclo del alumno.', 1;\n    END\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Auditoria_Inmutable",
+      "tipo": "TR",
+      "tabla": "Auditoria_V4",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Auditoria_Inmutable ON dbo.Auditoria_V4 INSTEAD OF UPDATE,DELETE AS\nBEGIN SET NOCOUNT ON; THROW 54037,'El historial de auditoria no se puede modificar ni eliminar.',1; END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Ciclo_Historial",
+      "tipo": "TR",
+      "tabla": "Ciclo",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Ciclo_Historial ON dbo.Ciclo AFTER UPDATE AS\nBEGIN SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Ciclo=i.Cod_Ciclo WHERE (i.Programa_Cod_Programa<>d.Programa_Cod_Programa OR i.Modalidad<>d.Modalidad OR i.Fech_Inicio<>d.Fech_Inicio OR i.Fech_Fin<>d.Fech_Fin OR i.Nro_Mensualidades<>d.Nro_Mensualidades)\n AND EXISTS (SELECT 1 FROM dbo.Grupo g WHERE g.Ciclo_Cod_Ciclo=i.Cod_Ciclo AND (EXISTS (SELECT 1 FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=g.Cod_Grupo) OR EXISTS (SELECT 1 FROM dbo.Horario h WHERE h.Grupo_Cod_Grupo=g.Cod_Grupo))))\n THROW 54055,'No se puede redefinir una edicion con matriculas u horarios.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Examen_Maximo",
+      "tipo": "TR",
+      "tabla": "Examen",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Examen_Maximo ON dbo.Examen AFTER UPDATE AS\nBEGIN SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted e JOIN dbo.Examen_Grupo eg ON eg.Examen_Cod_Examen=e.Cod_Examen JOIN dbo.Nota_Examen n ON n.Examen_Grupo_Cod_examen_grupo=eg.Cod_examen_grupo WHERE n.Puntaje_total>e.puntaje_maximo)\n THROW 54044,'El nuevo maximo es menor que un puntaje registrado.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Grupo_Historial",
+      "tipo": "TR",
+      "tabla": "Grupo",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Grupo_Historial ON dbo.Grupo AFTER UPDATE AS\nBEGIN SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Grupo=i.Cod_Grupo WHERE i.Ciclo_Cod_Ciclo<>d.Ciclo_Cod_Ciclo AND EXISTS (SELECT 1 FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=i.Cod_Grupo))\n THROW 54052,'No se puede cambiar el ciclo de un grupo con matriculas.',1;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Grupo=i.Cod_Grupo WHERE (i.Aula_Cod_Aula<>d.Aula_Cod_Aula OR i.Turno_Cod_Turno<>d.Turno_Cod_Turno OR i.Ciclo_Cod_Ciclo<>d.Ciclo_Cod_Ciclo) AND EXISTS (SELECT 1 FROM dbo.Horario h WHERE h.Grupo_Cod_Grupo=i.Cod_Grupo))\n THROW 54053,'Reorganice los bloques antes de cambiar aula, turno o ciclo.',1;\n IF EXISTS (SELECT 1 FROM inserted i JOIN dbo.Aula a ON a.Cod_Aula=i.Aula_Cod_Aula WHERE i.Cupo_Max>a.Capacidad OR i.Cupo_Max<(SELECT COUNT_BIG(*) FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=i.Cod_Grupo AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA'))\n THROW 54054,'Cupo incompatible con aula o matriculas activas.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Matricula_Historial",
+      "tipo": "TR",
+      "tabla": "MATRICULA",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Matricula_Historial ON dbo.MATRICULA AFTER INSERT,UPDATE AS\nBEGIN\n SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Matricula=i.Cod_Matricula WHERE i.ALUMNO_DNI_Alu<>d.ALUMNO_DNI_Alu OR i.Grupo_Cod_Grupo<>d.Grupo_Cod_Grupo OR i.Fech_Matricula<>d.Fech_Matricula)\n THROW 54022,'No se permite reasignar alumno, grupo o fecha de una matricula historica.',1;\n IF EXISTS (SELECT m.ALUMNO_DNI_Alu,g.Ciclo_Cod_Ciclo FROM dbo.MATRICULA m WITH (UPDLOCK,HOLDLOCK) JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo\n JOIN (SELECT DISTINCT ALUMNO_DNI_Alu FROM inserted) i ON i.ALUMNO_DNI_Alu=m.ALUMNO_DNI_Alu GROUP BY m.ALUMNO_DNI_Alu,g.Ciclo_Cod_Ciclo HAVING COUNT_BIG(*)>1)\n THROW 54023,'El alumno ya tiene matricula en este ciclo.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Nota_Unica",
+      "tipo": "TR",
+      "tabla": "Nota_Examen",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Nota_Unica ON dbo.Nota_Examen AFTER INSERT,UPDATE AS\nBEGIN\n SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Nota=i.Cod_Nota WHERE i.MATRICULA_Cod_Matricula<>d.MATRICULA_Cod_Matricula OR i.Examen_Grupo_Cod_examen_grupo<>d.Examen_Grupo_Cod_examen_grupo OR i.Grupo_Cod_Grupo<>d.Grupo_Cod_Grupo OR i.Fech_registro<>d.Fech_registro)\n THROW 54042,'La correccion de puntaje no puede reasignar su historial.',1;\n IF EXISTS (SELECT m.ALUMNO_DNI_Alu,eg.Examen_Cod_Examen FROM dbo.Nota_Examen n WITH (UPDLOCK,HOLDLOCK) JOIN dbo.MATRICULA m ON m.Cod_Matricula=n.MATRICULA_Cod_Matricula\n JOIN dbo.Examen_Grupo eg ON eg.Cod_examen_grupo=n.Examen_Grupo_Cod_examen_grupo\n WHERE eg.Examen_Cod_Examen IN (SELECT e.Examen_Cod_Examen FROM inserted i JOIN dbo.Examen_Grupo e ON e.Cod_examen_grupo=i.Examen_Grupo_Cod_examen_grupo)\n GROUP BY m.ALUMNO_DNI_Alu,eg.Examen_Cod_Examen HAVING COUNT_BIG(*)>1)\n THROW 54043,'Solo se permite un puntaje total por alumno y simulacro.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V4_Pago_Obligacion",
+      "tipo": "TR",
+      "tabla": "Pago",
+      "definicion": "CREATE   TRIGGER dbo.TR_V4_Pago_Obligacion ON dbo.Pago AFTER INSERT,UPDATE AS\nBEGIN\n SET NOCOUNT ON;\n IF EXISTS (SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Pago=i.Cod_Pago\n WHERE i.ALUMNO_DNI_Alu<>d.ALUMNO_DNI_Alu OR i.CONCEPTO_PAGO_Cod_Concepto<>d.CONCEPTO_PAGO_Cod_Concepto OR i.Monto<>d.Monto\n OR ISNULL(i.MATRICULA_Cod_Matricula,'')<>ISNULL(d.MATRICULA_Cod_Matricula,'') OR ISNULL(i.Nro_Mensualidad,0)<>ISNULL(d.Nro_Mensualidad,0)\n OR ISNULL(i.Fech_Vencimiento,CONVERT(date,'00010101'))<>ISNULL(d.Fech_Vencimiento,CONVERT(date,'00010101')))\n THROW 54034,'Las obligaciones conservan alumno, concepto, matricula, cuota, importe y vencimiento originales.',1;\n IF EXISTS (SELECT 1 FROM inserted i LEFT JOIN deleted d ON d.Cod_Pago=i.Cod_Pago\n WHERE d.Cod_Pago IS NULL AND i.CONCEPTO_PAGO_Cod_Concepto IN ('MATRICULA_INICIAL','MATERIALES') AND\n (SELECT COUNT_BIG(*) FROM dbo.Pago p WITH (UPDLOCK,HOLDLOCK) WHERE p.ALUMNO_DNI_Alu=i.ALUMNO_DNI_Alu AND p.CONCEPTO_PAGO_Cod_Concepto IN ('MATRICULA_INICIAL','MATERIALES'))>1)\n THROW 54035,'El alumno ya tiene un cargo inicial; no duplicar matricula y materiales.',1;\n IF EXISTS (SELECT 1 FROM inserted i LEFT JOIN deleted d ON d.Cod_Pago=i.Cod_Pago WHERE d.Cod_Pago IS NULL AND i.CONCEPTO_PAGO_Cod_Concepto='MATRICULA_INICIAL' AND i.Monto<>50)\n THROW 54036,'El cargo de inscripcion inicial nuevo debe ser S/ 50.',1;\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V41_Alumno_Contacto",
+      "tipo": "TR",
+      "tabla": "ALUMNO",
+      "definicion": "CREATE   TRIGGER dbo.TR_V41_Alumno_Contacto ON dbo.ALUMNO AFTER UPDATE AS\nBEGIN SET NOCOUNT ON;\n UPDATE c SET Activo=0 FROM dbo.Contacto_Verificado_V41 c JOIN inserted i ON i.DNI_Alu=c.ALUMNO_DNI_Alu\n WHERE c.Activo=1 AND ((c.Tipo='EMAIL' AND (i.Correo_Alu IS NULL OR c.Destino<>i.Correo_Alu)) OR (c.Tipo='SMS' AND (i.Cel_Alu IS NULL OR c.Destino<>i.Cel_Alu)));\nEND;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V43_MarcaPrueba",
+      "tipo": "TR",
+      "tabla": "ALUMNO",
+      "definicion": "CREATE   TRIGGER dbo.TR_V43_MarcaPrueba ON dbo.ALUMNO AFTER UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM inserted i JOIN deleted d ON d.DNI_Alu=i.DNI_Alu WHERE i.Es_Prueba<>d.Es_Prueba)\n    THROW 54305,'La identificacion de prueba solo se establece al crear el estudiante.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V43_Tarifa_Ciclo",
+      "tipo": "TR",
+      "tabla": "Ciclo",
+      "definicion": "CREATE   TRIGGER dbo.TR_V43_Tarifa_Ciclo ON dbo.Ciclo AFTER INSERT,UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM inserted i LEFT JOIN deleted d ON d.Cod_Ciclo=i.Cod_Ciclo WHERE i.Precio_Mensual<>250 AND (d.Cod_Ciclo IS NULL OR d.Precio_Mensual<>i.Precio_Mensual))\n    THROW 54309,'La tarifa nueva debe ser S/250 por mensualidad. Las obligaciones historicas se conservan.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V43_Usuario_Correo",
+      "tipo": "TR",
+      "tabla": "Usuario",
+      "definicion": "CREATE   TRIGGER dbo.TR_V43_Usuario_Correo ON dbo.Usuario AFTER UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM inserted i JOIN deleted d ON d.Cod_Usuario=i.Cod_Usuario\n     WHERE (ISNULL(i.Correo_Recuperacion,'')<>ISNULL(d.Correo_Recuperacion,'') OR d.Correo_Verificado=0) AND i.Correo_Verificado=1\n     AND NOT EXISTS(SELECT 1 FROM dbo.Cuenta_Codigo_V41 c WHERE c.Usuario_Cod_Usuario=i.Cod_Usuario AND c.Proposito='VERIFICAR_CONTACTO' AND c.Canal='EMAIL' AND c.Destino=i.Correo_Recuperacion AND c.Consumido=1 AND c.Expira>SYSUTCDATETIME()))\n    THROW 54309,'El correo de recuperacion debe verificarse con un codigo vigente.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V44_Grupo_Publicacion",
+      "tipo": "TR",
+      "tabla": "Grupo",
+      "definicion": "CREATE   TRIGGER dbo.TR_V44_Grupo_Publicacion ON dbo.Grupo AFTER UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   UPDATE h SET Activo=CASE WHEN i.Estado_Horario='PUBLICADO' THEN 1 ELSE 0 END\n   FROM dbo.Horario h JOIN inserted i ON i.Cod_Grupo=h.Grupo_Cod_Grupo JOIN deleted d ON d.Cod_Grupo=i.Cod_Grupo\n   WHERE i.Activo<>d.Activo OR i.Estado_Horario<>d.Estado_Horario;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V44_Matricula_Publicada",
+      "tipo": "TR",
+      "tabla": "MATRICULA",
+      "definicion": "CREATE   TRIGGER dbo.TR_V44_Matricula_Publicada ON dbo.MATRICULA AFTER INSERT,UPDATE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM inserted i LEFT JOIN deleted d ON d.Cod_Matricula=i.Cod_Matricula JOIN dbo.Grupo g ON g.Cod_Grupo=i.Grupo_Cod_Grupo\n   WHERE i.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND (d.Cod_Matricula IS NULL OR d.ESTADO_MATRICULA_Cod_Estado_Matricula<>'ACTIVA') AND (g.Estado_Horario<>'PUBLICADO' OR g.Activo=0))\n    THROW 54432,'El horario debe estar activo y publicado para matricular o restaurar la matricula.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V44_Nota_Eliminar",
+      "tipo": "TR",
+      "tabla": "Nota_Examen",
+      "definicion": "CREATE   TRIGGER dbo.TR_V44_Nota_Eliminar ON dbo.Nota_Examen AFTER DELETE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM deleted n JOIN dbo.MATRICULA m ON m.Cod_Matricula=n.MATRICULA_Cod_Matricula JOIN dbo.ALUMNO a ON a.DNI_Alu=m.ALUMNO_DNI_Alu WHERE a.Es_Prueba=0)\n    THROW 54433,'Las notas de personas reales se conservan; utiliza correccion o anulacion auditada.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "TR_V44_Pago_Eliminar",
+      "tipo": "TR",
+      "tabla": "Pago",
+      "definicion": "CREATE   TRIGGER dbo.TR_V44_Pago_Eliminar ON dbo.Pago AFTER DELETE AS\n  BEGIN SET NOCOUNT ON;\n   IF EXISTS(SELECT 1 FROM deleted d WHERE d.ESTADO_PAGO_Cod_Estado<>'PENDIENTE' OR d.Fech_Pago IS NOT NULL OR d.Medio_Pago IS NOT NULL OR d.Usuario_Cod_Usuario IS NOT NULL\n    OR EXISTS(SELECT 1 FROM dbo.Auditoria_V4 a WHERE a.Entidad='Pago' AND a.Codigo=d.Cod_Pago AND a.Accion IN('CONFIRMAR_PAGO','ANULAR_CONFIRMACION')))\n    THROW 54434,'Se conserva todo cobro realizado, incluso si fue revertido.',1;\n  END;",
+      "columna": null,
+      "claves": null,
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Aula_Nombre",
+      "tipo": "UQ",
+      "tabla": "Aula",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Aula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_CARRERA_Nombre",
+      "tipo": "UQ",
+      "tabla": "CARRERA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Carrera\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Ciclo_Edicion",
+      "tipo": "UQ",
+      "tabla": "Ciclo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Programa_Cod_Programa\"},{\"columna\":\"Modalidad\"},{\"columna\":\"Fech_Inicio\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_CONCEPTO_PAGO_Nombre",
+      "tipo": "UQ",
+      "tabla": "CONCEPTO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Concepto\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_CURSOS_Nombre",
+      "tipo": "UQ",
+      "tabla": "CURSOS",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Curso\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ESTADO_CICLO_Nombre",
+      "tipo": "UQ",
+      "tabla": "ESTADO_CICLO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Estado_Ciclo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ESTADO_EXAMEN_GRUPO_Nombre",
+      "tipo": "UQ",
+      "tabla": "ESTADO_EXAMEN_GRUPO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Estado_Examen\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ESTADO_MATRICULA_Nombre",
+      "tipo": "UQ",
+      "tabla": "ESTADO_MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Estado_Matricula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ESTADO_PAGO_Nombre",
+      "tipo": "UQ",
+      "tabla": "ESTADO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Estado\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ExamenGrupo_ExamenGrupo",
+      "tipo": "UQ",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Examen_Cod_Examen\"},{\"columna\":\"Grupo_Cod_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ExamenGrupo_IdGrupo",
+      "tipo": "UQ",
+      "tabla": "Examen_Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_examen_grupo\"},{\"columna\":\"Grupo_Cod_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Grupo_Ciclo_Nombre",
+      "tipo": "UQ",
+      "tabla": "Grupo",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Ciclo_Cod_Ciclo\"},{\"columna\":\"Nomb_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Matricula_Alumno_Grupo",
+      "tipo": "UQ",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"ALUMNO_DNI_Alu\"},{\"columna\":\"Grupo_Cod_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Matricula_IdAlumno",
+      "tipo": "UQ",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Matricula\"},{\"columna\":\"ALUMNO_DNI_Alu\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Matricula_IdGrupo",
+      "tipo": "UQ",
+      "tabla": "MATRICULA",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Cod_Matricula\"},{\"columna\":\"Grupo_Cod_Grupo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_MEDIO_PAGO_Nombre",
+      "tipo": "UQ",
+      "tabla": "MEDIO_PAGO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Medio\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Nota_ExamenMatricula",
+      "tipo": "UQ",
+      "tabla": "Nota_Examen",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Examen_Grupo_Cod_examen_grupo\"},{\"columna\":\"MATRICULA_Cod_Matricula\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_PARENTESCO_Tipo",
+      "tipo": "UQ",
+      "tabla": "PARENTESCO",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Tipo_Paren\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Programa_Nombre",
+      "tipo": "UQ",
+      "tabla": "Programa",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Programa\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_ROL_Nombre",
+      "tipo": "UQ",
+      "tabla": "ROL",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Rol\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_TIPO_BLOQUE_Nombre",
+      "tipo": "UQ",
+      "tabla": "TIPO_BLOQUE",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Tipo\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Turno_Nombre",
+      "tipo": "UQ",
+      "tabla": "Turno",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Turno\"}]",
+      "referencia": null
+    },
+    {
+      "nombre": "UQ_Usuario_Nombre",
+      "tipo": "UQ",
+      "tabla": "Usuario",
+      "definicion": null,
+      "columna": null,
+      "claves": "[{\"columna\":\"Nomb_Usuario\"}]",
+      "referencia": null
+    }
+  ],
+  "indexes": [
+    {
+      "tabla": "ALUMNO",
+      "nombre": "IX_ALUMNO_APODERADO",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "DNI_Apoderado",
+      "incluidas": null
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "nombre": "IX_Auditoria_V4_Referencia",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "Entidad,Codigo,Id",
+      "incluidas": null
+    },
+    {
+      "tabla": "Auditoria_V4",
+      "nombre": "IX_Auditoria_V41_Fecha",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "Fecha,Id",
+      "incluidas": "[{\"columna\":\"Entidad\"},{\"columna\":\"Codigo\"},{\"columna\":\"Accion\"},{\"columna\":\"Usuario_Cod_Usuario\"}]"
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "nombre": "IX_Codigo_V41_Limites",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "Usuario_Cod_Usuario,Proposito,Creado",
+      "incluidas": "[{\"columna\":\"Expira\"},{\"columna\":\"Intentos\"},{\"columna\":\"Consumido\"}]"
+    },
+    {
+      "tabla": "Solicitud_Contacto_V41",
+      "nombre": "IX_Solicitud_V41_AlumnoFecha",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "ALUMNO_DNI_Alu,Creado",
+      "incluidas": "[{\"columna\":\"Estado\"}]"
+    },
+    {
+      "tabla": "Horario",
+      "nombre": "IX_V4_Horario_DiaGrupo",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "Dia_Semana,Grupo_Cod_Grupo,Hr_Inicio",
+      "incluidas": "[{\"columna\":\"Hr_Fin\"},{\"columna\":\"Activo\"},{\"columna\":\"Docente_Asignatura_Docente_DNI_Doc\"}]"
+    },
+    {
+      "tabla": "MATRICULA",
+      "nombre": "IX_V4_Matricula_GrupoEstado",
+      "is_unique": false,
+      "filter_definition": null,
+      "columnas": "Grupo_Cod_Grupo,ESTADO_MATRICULA_Cod_Estado_Matricula",
+      "incluidas": null
+    },
+    {
+      "tabla": "Cuenta_Codigo_V41",
+      "nombre": "UX_Codigo_V41_Pendiente",
+      "is_unique": true,
+      "filter_definition": "([Consumido]=(0))",
+      "columnas": "Usuario_Cod_Usuario,Proposito",
+      "incluidas": null
+    },
+    {
+      "tabla": "Contacto_Verificado_V41",
+      "nombre": "UX_Contacto_V41_Actual",
+      "is_unique": true,
+      "filter_definition": "([Activo]=(1))",
+      "columnas": "ALUMNO_DNI_Alu,Tipo",
+      "incluidas": null
+    },
+    {
+      "tabla": "Grupo",
+      "nombre": "UX_Grupo_UnidadPublicada",
+      "is_unique": true,
+      "filter_definition": "([Activo]=(1) AND [Estado_Horario]='PUBLICADO')",
+      "columnas": "Ciclo_Cod_Ciclo,Turno_Cod_Turno,Aula_Cod_Aula",
+      "incluidas": null
+    },
+    {
+      "tabla": "Pago",
+      "nombre": "UX_Pago_ConceptoUnicoAlumno",
+      "is_unique": true,
+      "filter_definition": "([CONCEPTO_PAGO_Cod_Concepto] IN ('MATRICULA_INICIAL', 'MATERIALES'))",
+      "columnas": "ALUMNO_DNI_Alu,CONCEPTO_PAGO_Cod_Concepto",
+      "incluidas": null
+    },
+    {
+      "tabla": "Pago",
+      "nombre": "UX_Pago_MensualidadMatricula",
+      "is_unique": true,
+      "filter_definition": "([CONCEPTO_PAGO_Cod_Concepto]='MENSUALIDAD')",
+      "columnas": "MATRICULA_Cod_Matricula,Nro_Mensualidad",
+      "incluidas": null
+    },
+    {
+      "tabla": "Usuario",
+      "nombre": "UX_Usuario_UnicaCuentaAlumno",
+      "is_unique": true,
+      "filter_definition": "([ALUMNO_DNI_Alu] IS NOT NULL)",
+      "columnas": "ALUMNO_DNI_Alu",
+      "incluidas": null
+    }
+  ]
+}

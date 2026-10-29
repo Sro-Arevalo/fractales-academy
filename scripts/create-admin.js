@@ -18,14 +18,14 @@ function askSecret(label){return new Promise(resolve=>{
   };stdin.on('data',handler);
 });}
 (async()=>{
-  const count=(await (await request()).query("SELECT COUNT(*) AS n FROM dbo.Usuario WHERE ROL_Cod_Rol='ADMIN' AND Activo=1")).recordset[0].n;
-  if(count>0){console.log('Ya existe un administrador activo. Para nuevos usuarios, utiliza la interfaz administrativa.');process.exit(0);}
+  const count=(await (await request()).query("SELECT COUNT(*) AS n FROM dbo.USUARIO WHERE ID_ROL='ADMIN' AND ACTIVO=1")).recordset[0].n;
+  if(count>0){console.log('Ya existe un administrador ACTIVO. Para nuevos usuarios, utiliza la interfaz administrativa.');process.exit(0);}
   const username=await ask('Nombre de usuario del primer administrador: ');
   rl.close();
   const password=await askSecret('Contraseña (no se mostrará, mínimo 12 caracteres): ');
-  if(!/^[a-zA-Z0-9._-]{3,50}$/.test(username)||password.length<12||password.length>72)throw Error('Usuario 3-50 caracteres (letras, números ._-); clave entre 12 y 72 caracteres.');
+  if(!/^[a-zA-Z0-9._-]{3,50}$/.test(username)||password.length<12||password.length>72)throw Error('USUARIO 3-50 caracteres (letras, números ._-); clave entre 12 y 72 caracteres.');
   const h=await bcrypt.hash(password,12);
   const q=await request();q.input('u',sql.VarChar(80),username);q.input('h',sql.VarChar(255),h);
-  await q.query("INSERT INTO dbo.Usuario (Cod_Usuario,Nomb_Usuario,Clave_Hash,ROL_Cod_Rol,Activo,Debe_Cambiar_Clave,ALUMNO_DNI_Alu) VALUES ('ADMIN001',@u,@h,'ADMIN',1,0,NULL)");
+  await q.query("INSERT INTO dbo.USUARIO (ID_USUARIO,NOMBRE_USUARIO,CLAVE_HASH,ID_ROL,ACTIVO,DEBE_CAMBIAR_CLAVE,DNI_ALUMNO) VALUES ('ADMIN001',@u,@h,'ADMIN',1,0,NULL)");
   console.log('Administrador creado. Inicia sesión y conserva la contraseña de forma segura.');
 })().catch(e=>{console.error('No se pudo crear el administrador:',e.message);process.exitCode=1;}).finally(async()=>{rl.close();try{(await pool()).close();}catch{}});

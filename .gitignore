@@ -21,3 +21,4 @@ Thumbs.db
 # Paquetes de despliegue y capturas de pruebas locales
 fractales-deploy*.zip
 artifacts/local-preview/
+artifacts/production-v45*/

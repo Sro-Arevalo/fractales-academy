@@ -32,6 +32,6 @@ test('migrador de base existente no borra tablas ni registros y valida duplicado
   assert.match(migrate,/CREATE UNIQUE INDEX/);
 });
 test('API comunica errores de triggers con mensajes comprensibles',()=>{
-  const source=read('server/api.js');
-  for(let n=51001;n<=51005;n++) assert.match(source,new RegExp(String(n)));
+  const source=read('server/index.js');
+  assert.match(source,/code>=51001&&code<=51005/);
 });
