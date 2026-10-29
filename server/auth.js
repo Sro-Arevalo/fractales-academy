@@ -10,8 +10,8 @@ function secret() {
   return process.env.JWT_SECRET;
 }
 function createSession(res, row, options={}) {
-  const scope=options.scope||(row.Debe_Cambiar_Clave?'password_change':'full');const ttl=scope==='full'?TTL:600;
-  const token = jwt.sign({sub:row.Cod_Usuario, role:row.ROL_Cod_Rol, student:row.ALUMNO_DNI_Alu || null, change:!!row.Debe_Cambiar_Clave,version:row.Version_Sesion||0,scope,...(options.activation?{activation:options.activation}:{})}, secret(), {expiresIn:ttl, issuer:'fractales-academy', audience:'fractales-app',algorithm:'HS256'});
+  const scope=options.scope||(row.DEBE_CAMBIAR_CLAVE?'password_change':'full');const ttl=scope==='full'?TTL:600;
+  const token = jwt.sign({sub:row.ID_USUARIO, role:row.ID_ROL, student:row.DNI_ALUMNO || null, change:!!row.DEBE_CAMBIAR_CLAVE,version:row.VERSION_SESION||0,scope,...(options.activation?{activation:options.activation}:{})}, secret(), {expiresIn:ttl, issuer:'fractales-academy', audience:'fractales-app',algorithm:'HS256'});
   res.cookie(COOKIE, token, {httpOnly:true, secure:process.env.NODE_ENV === 'production', sameSite:'strict', path:'/', maxAge:ttl * 1000});
 }
 function clearSession(res) { res.clearCookie(COOKIE, {httpOnly:true, secure:process.env.NODE_ENV === 'production', sameSite:'strict', path:'/'}); }
@@ -21,21 +21,21 @@ async function authenticate(req,res,next) {
     if (!token) return res.status(401).json({error:'Inicia sesión para continuar.'});
     const payload = jwt.verify(token,secret(),{issuer:'fractales-academy',audience:'fractales-app',algorithms:['HS256']});
     const r = await request(); r.input('id',sql.VarChar(20),payload.sub);
-    const user = (await r.query(`SELECT Cod_Usuario, Nomb_Usuario, ROL_Cod_Rol, ALUMNO_DNI_Alu, Debe_Cambiar_Clave FROM dbo.Usuario WHERE Cod_Usuario=@id AND Activo=1`)).recordset[0];
-    if (!user || user.ROL_Cod_Rol !== payload.role||(payload.student||null)!==(user.ALUMNO_DNI_Alu||null)) { clearSession(res); return res.status(401).json({error:'Sesión inválida o cuenta desactivada.'}); }
+    const user = (await r.query(`SELECT ID_USUARIO, NOMBRE_USUARIO, ID_ROL, DNI_ALUMNO, DEBE_CAMBIAR_CLAVE FROM dbo.USUARIO WHERE ID_USUARIO=@id AND ACTIVO=1`)).recordset[0];
+    if (!user || user.ID_ROL !== payload.role||(payload.student||null)!==(user.DNI_ALUMNO||null)) { clearSession(res); return res.status(401).json({error:'Sesión inválida o cuenta desactivada.'}); }
     const secured=await securityFor(user);
-    if((payload.version||0)!==secured.Version_Sesion||!secured.Alumno_Activo){clearSession(res);return res.status(401).json({error:'Tu sesión terminó. Ingresa nuevamente.'});}
+    if((payload.version||0)!==secured.VERSION_SESION||!secured.Alumno_Activo){clearSession(res);return res.status(401).json({error:'Tu sesión terminó. Ingresa nuevamente.'});}
     req.user = secured;req.auth=payload; next();
   } catch(e) { if (e.name === 'TokenExpiredError'|| e.name === 'JsonWebTokenError') return res.status(401).json({error:'Sesión vencida. Ingresa nuevamente.'}); next(e); }
 }
 function admin(req,res,next) {
-  if (req.user.Debe_Cambiar_Clave||req.user.Activacion_Requerida||req.auth?.scope&&req.auth.scope!=='full') return res.status(403).json({error:'Primero debes activar tu cuenta y cambiar tu contraseña.'});
-  if (req.user.ROL_Cod_Rol !== 'ADMIN') return res.status(403).json({error:'No tienes permiso para esta operación.'});
+  if (req.user.DEBE_CAMBIAR_CLAVE||req.user.ACTIVACION_REQUERIDA||req.auth?.scope&&req.auth.scope!=='full') return res.status(403).json({error:'Primero debes activar tu cuenta y cambiar tu contraseña.'});
+  if (req.user.ID_ROL !== 'ADMIN') return res.status(403).json({error:'No tienes permiso para esta operación.'});
   next();
 }
 function student(req,res,next) {
-  if (req.user.Debe_Cambiar_Clave||req.user.Activacion_Requerida||req.auth?.scope&&req.auth.scope!=='full') return res.status(403).json({error:'Primero debes activar tu cuenta y cambiar tu contraseña.'});
-  if (req.user.ROL_Cod_Rol !== 'ALUMNO' || !req.user.ALUMNO_DNI_Alu) return res.status(403).json({error:'Disponible solo para estudiantes.'});
+  if (req.user.DEBE_CAMBIAR_CLAVE||req.user.ACTIVACION_REQUERIDA||req.auth?.scope&&req.auth.scope!=='full') return res.status(403).json({error:'Primero debes activar tu cuenta y cambiar tu contraseña.'});
+  if (req.user.ID_ROL !== 'ALUMNO' || !req.user.DNI_ALUMNO) return res.status(403).json({error:'Disponible solo para estudiantes.'});
   next();
 }
 module.exports={bcrypt,createSession,clearSession,authenticate,admin,student};

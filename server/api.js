@@ -9,12 +9,14 @@ const {autoCode,validateFields}=require('./validation');
 const operations=require('./operations');
 const accounts=require('./account-service');
 const administration=require('./administration');
+const trash=require('./trash');
 const {securityFor,securityReady}=require('./security-schema');
 const router=express.Router();
-const fixedCatalogs=new Set(['Programa','ROL','Turno','PARENTESCO','ESTADO_CICLO','ESTADO_MATRICULA','ESTADO_PAGO','ESTADO_EXAMEN_GRUPO','CONCEPTO_PAGO','TIPO_BLOQUE']);
+const fixedCatalogs=new Set(['PROGRAMA','ROL','TURNO','PARENTESCO','ESTADO_CICLO','ESTADO_MATRICULA','ESTADO_PAGO','ESTADO_SIMULACRO','CONCEPTO_PAGO','TIPO_BLOQUE']);
 const invalidAccess={error:'No pudimos verificar el acceso. Revisa tu usuario, contraseña y, si corresponde, el código de activación.'};
-const publicUser=u=>({id:u.Cod_Usuario,nombre:u.Nomb_Usuario,rol:u.ROL_Cod_Rol,alumno:u.ALUMNO_DNI_Alu,cambiar:!!u.Debe_Cambiar_Clave,activar:!!u.Activacion_Requerida});
+const publicUser=u=>({id:u.ID_USUARIO,nombre:u.NOMBRE_USUARIO,rol:u.ID_ROL,alumno:u.DNI_ALUMNO,cambiar:!!u.DEBE_CAMBIAR_CLAVE,activar:!!u.ACTIVACION_REQUERIDA});
 function safe(fn){return (req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);}
+router.use(safe(async(req,res,next)=>{await require('./schema-v45').required();next();}));
 function filterSchema(t){ const m=model[t]; if(!m) throw rule('El módulo solicitado no existe.');return m;}
 function idFor(m,row){return Buffer.from(JSON.stringify(m.pk.map(k=>row[k]))).toString('base64url');}
 function parseId(m,id){
@@ -55,13 +57,13 @@ function existingWhere(m,values,req,prefix='key'){
 function canAutoCode(m,col){return autoCode(m,col);}
 function dataFor(m,body,isInsert){
   if(!body||typeof body!=='object'||Array.isArray(body)) throw rule('Envía un objeto JSON válido.');
-  if(m.name==='Usuario'&&Object.hasOwn(body,'Debe_Cambiar_Clave'))throw rule('El cambio obligatorio de contraseña se administra automáticamente.');
-  const writable=m.columns.filter(c=>c.name!=='Clave_Hash');const allowed=new Set([...writable.map(c=>c.name),...(m.name==='Usuario'?['Nueva_Clave']:[]),...(['Nota_Examen','Examen_Grupo'].includes(m.name)?['Motivo_Cambio']:[])]);
+  if(m.name==='USUARIO'&&Object.hasOwn(body,'DEBE_CAMBIAR_CLAVE'))throw rule('El cambio obligatorio de contraseña se administra automáticamente.');
+  const writable=m.columns.filter(c=>c.name!=='CLAVE_HASH');const allowed=new Set([...writable.map(c=>c.name),...(m.name==='USUARIO'?['NUEVA_CLAVE']:[]),...(['RESULTADO_SIMULACRO','SIMULACRO_HORARIO'].includes(m.name)?['Motivo_Cambio']:[])]);
   for(const name of Object.keys(body)) if(!allowed.has(name)) throw rule(`Campo desconocido o protegido: ${name}`);
   const data={};
   for(const col of writable){
     if(!Object.prototype.hasOwnProperty.call(body,col.name)) {
-      if(isInsert && col.required&&!col.default && !canAutoCode(m,col) && !['Estado','Usuario_Cod_Usuario'].includes(col.name)) throw rule(`Completa el campo «${col.name}».`);
+      if(isInsert && col.required&&!col.default && !canAutoCode(m,col) && !['ESTADO','ID_USUARIO_RESPONSABLE'].includes(col.name)) throw rule(`Completa el campo «${col.name}».`);
       continue;
     }
     let value=body[col.name];if(value==='')value=null;
@@ -70,43 +72,28 @@ function dataFor(m,body,isInsert){
     if(isInsert&&canAutoCode(m,col)){if(value!==null)throw rule(`El código ${col.name} se genera automáticamente.`);continue;}
     data[col.name]=value;
   }
-  if(m.name==='Examen_Grupo'&&isInsert && !Object.prototype.hasOwnProperty.call(data,'Estado'))data.Estado=data.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen;
-  if(m.name==='Pago' && isInsert && data.ESTADO_PAGO_Cod_Estado==='PAGADO') {
-    data.Usuario_Cod_Usuario='RESUELTO_POR_BACKEND';
-    if(!data.Fech_Pago)data.Fech_Pago=new Date().toISOString().slice(0,19).replace('T',' ');
+  if(m.name==='SIMULACRO_HORARIO'&&isInsert && !Object.prototype.hasOwnProperty.call(data,'ESTADO'))data.ESTADO=data.ID_ESTADO_SIMULACRO;
+  if(m.name==='PAGO' && isInsert && data.ID_ESTADO_PAGO==='PAGADO') {
+    data.ID_USUARIO_RESPONSABLE='RESUELTO_POR_BACKEND';
+    if(!data.FECHA_PAGO)data.FECHA_PAGO=new Date().toISOString().slice(0,19).replace('T',' ');
   }
   return data;
 }
-function projection(m){return m.columns.filter(c=>c.name!=='Clave_Hash').map(c=>`[${c.name}]`).join(', ');}
+function projection(m){return m.columns.filter(c=>c.name!=='CLAVE_HASH').map(c=>`[${m.name}].[${c.name}]`).join(', ');}
 function sqlError(e){
-  if(e.status) return e;
-  const code=e.number||e.originalError?.info?.number;
-  if(code===2627||code===2601) return rule('Ya existe un registro con ese identificador o combinación de valores.');
-  if(code===547) return rule('La operación incumple una relación o regla de la base de datos. Verifica las referencias y los valores.');
-  if(code===515) return rule('Falta un campo obligatorio.');
-  if(code===8152||code===2628) return rule('Uno de los textos supera la longitud permitida.');
-  const triggers={
-    51001:'Número de mensualidad fuera de la duración del ciclo.',
-    51002:'El bloque está fuera del horario del turno.',
-    51003:'Cruce de horario: el grupo, aula o docente ya está ocupado.',
-    51004:'La nota supera el puntaje máximo del simulacro.',
-    51005:'El grupo ha excedido el cupo de matrículas activas.'
-  };
-  if(triggers[code])return rule(triggers[code]);
-  if(code===1205){const err=rule('Conflicto de acceso simultáneo. Intenta nuevamente.');err.status=409;return err;}
-  return e;
+ const friendly=require('./sql-errors').friendly(e);if(friendly){e.status=400;e.public=true;e.message=friendly;}return e;
 }
-router.get('/health',safe(async(req,res)=>{ const r=await request();await r.query('SELECT 1 AS ok');res.json({ok:true,service:'Fractales Academy'}); }));
+router.get('/health',safe(async(req,res)=>{ const r=await request();await r.query('SELECT 1 AS ok');res.json({ok:true,service:'Fractales Academy',version:'4.5.0',schema:'V45'}); }));
 router.post('/auth/login',limit({windowMs:15*60*1000,limit:10,standardHeaders:'draft-7',legacyHeaders:false,message:{error:'Demasiados intentos. Espera 15 minutos.'}}),safe(async(req,res)=>{
   const name=String(req.body?.usuario||'').trim().slice(0,80),pass=String(req.body?.clave||'');
   if(!name||!pass||pass.length>200) return res.status(400).json({error:'Ingresa usuario y contraseña.'});
   const q=await request();q.input('name',sql.VarChar(80),name);
-  const u=(await q.query('SELECT Cod_Usuario,Nomb_Usuario,Clave_Hash,ROL_Cod_Rol,ALUMNO_DNI_Alu,Debe_Cambiar_Clave FROM dbo.Usuario WHERE Nomb_Usuario=@name AND Activo=1')).recordset[0];
-  if(!u||!['ADMIN','ALUMNO'].includes(u.ROL_Cod_Rol)||!(await bcrypt.compare(pass,u.Clave_Hash)))return res.status(401).json(invalidAccess);
+  const u=(await q.query('SELECT ID_USUARIO,NOMBRE_USUARIO,CLAVE_HASH,ID_ROL,DNI_ALUMNO,DEBE_CAMBIAR_CLAVE FROM dbo.USUARIO WHERE NOMBRE_USUARIO=@name AND ACTIVO=1')).recordset[0];
+  if(!u||!['ADMIN','ALUMNO'].includes(u.ID_ROL)||!(await bcrypt.compare(pass,u.CLAVE_HASH)))return res.status(401).json(invalidAccess);
   const secured=await securityFor(u);
   if(!secured.Alumno_Activo)return res.status(401).json(invalidAccess);
   let proof=null;
-  if(secured.Activacion_Requerida){proof=await accounts.activationProof(secured,req.body?.codigoActivacion);if(!proof)return res.status(401).json(invalidAccess);}
+  if(secured.ACTIVACION_REQUERIDA){proof=await accounts.activationProof(secured,req.body?.codigoActivacion);if(!proof)return res.status(401).json(invalidAccess);}
   createSession(res,secured,proof?{scope:'onboarding',activation:proof}:{});res.json({user:publicUser(secured)});
 }));
 router.post('/auth/logout',(req,res)=>{clearSession(res);res.json({ok:true});});
@@ -117,7 +104,8 @@ router.post('/auth/change-password',authenticate,safe(async(req,res)=>{
 router.use(require('./accounts-api'));
 router.use(require('./v4-api'));
 router.use(require('./maintenance-api'));
-router.get('/meta',authenticate,admin,(req,res)=>res.json({modules:Object.values(model).map(m=>({...m,columns:m.columns.filter(c=>c.name!=='Clave_Hash')}))}));
+router.use(require('./v45-api'));
+router.get('/meta',authenticate,admin,(req,res)=>res.json({modules:Object.values(model).map(m=>({...m,columns:m.columns.filter(c=>c.name!=='CLAVE_HASH')}))}));
 router.get('/options/:table',authenticate,admin,safe(async(req,res)=>{
   const m=filterSchema(req.params.table);
   const term=String(req.query.q||'').trim().slice(0,60);
@@ -125,20 +113,20 @@ router.get('/options/:table',authenticate,admin,safe(async(req,res)=>{
   if(!m.columns.some(c=>c.name===valueCol))throw rule('Columna de referencia desconocida.');
   const r=await request();r.input('q',sql.NVarChar(100),`%${term}%`);
   const displayCols=m.display.map(n=>`CONVERT(nvarchar(200),[${n}]) LIKE @q`).join(' OR ');
-  const rows=(await r.query(`SELECT TOP (80) ${projection(m)} FROM dbo.[${m.name}] WHERE ${displayCols} ORDER BY [${m.pk[0]}]`)).recordset;
+  const rows=(await r.query(`SELECT TOP (80) ${projection(m)} FROM dbo.[${m.name}] WHERE (${displayCols}) AND ${trash.visible(m)} ORDER BY [${m.pk[0]}]`)).recordset;
   res.json({rows:rows.map(row=>({value:row[valueCol],label:m.display.map(k=>row[k]).filter(v=>v!==null&&v!==undefined).join(' · '),row}))});
 }));
 router.get('/dashboard',authenticate,admin,safe(async(req,res)=>{
   const p=await pool();const [a,b,c,d,e,f,g,h,i]=await Promise.all([
-    p.request().query('SELECT COUNT_BIG(*) n FROM dbo.ALUMNO'),
-    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.MATRICULA WHERE ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA'"),
-    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PENDIENTE'"),
-    p.request().query("SELECT ISNULL(SUM(Monto),0) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PAGADO' AND Fech_Pago>=DATEFROMPARTS(YEAR(GETDATE()),MONTH(GETDATE()),1)"),
-    p.request().query(`SELECT TOP 6 m.Cod_Matricula,a.Nomb_Alu,g.Nomb_Grupo,m.Fech_Matricula FROM dbo.MATRICULA m JOIN dbo.ALUMNO a ON a.DNI_Alu=m.ALUMNO_DNI_Alu JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo ORDER BY m.Fech_Matricula DESC,m.Cod_Matricula DESC`),
-    p.request().query(`SELECT TOP 5 eg.Fech_programada,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo WHERE eg.Fech_programada>=CONVERT(date,GETDATE()) AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`),
-    p.request().query('SELECT COUNT_BIG(*) n FROM dbo.Grupo WHERE Activo=1'),
-    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Ciclo WHERE ESTADO_CICLO_Cod_Estado='ACTIVO'"),
-    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.Pago WHERE ESTADO_PAGO_Cod_Estado='PAGADO'")
+    p.request().query(`SELECT COUNT_BIG(*) n FROM dbo.ALUMNO WHERE ${trash.visible(model.ALUMNO)}`),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.MATRICULA WHERE ID_ESTADO_MATRICULA='ACTIVA'"),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.PAGO WHERE ID_ESTADO_PAGO='PENDIENTE'"),
+    p.request().query("SELECT ISNULL(SUM(MONTO),0) n FROM dbo.PAGO WHERE ID_ESTADO_PAGO='PAGADO' AND FECHA_PAGO>=DATEFROMPARTS(YEAR(GETDATE()),MONTH(GETDATE()),1)"),
+    p.request().query(`SELECT TOP 6 m.ID_MATRICULA,a.NOMBRE_COMPLETO,g.NOMBRE_HORARIO,m.FECHA_MATRICULA FROM dbo.MATRICULA m JOIN dbo.ALUMNO a ON a.DNI_ALUMNO=m.DNI_ALUMNO JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO WHERE ${trash.visible(model.ALUMNO,'a')} ORDER BY m.FECHA_MATRICULA DESC,m.ID_MATRICULA DESC`),
+    p.request().query(`SELECT TOP 5 eg.FECHA_PROGRAMADA,e.NOMBRE_SIMULACRO,g.NOMBRE_HORARIO FROM dbo.SIMULACRO_HORARIO eg JOIN dbo.SIMULACRO e ON e.ID_SIMULACRO=eg.ID_SIMULACRO JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=eg.ID_HORARIO_ACADEMICO WHERE eg.FECHA_PROGRAMADA>=CONVERT(date,GETDATE()) AND eg.ID_ESTADO_SIMULACRO='PROGRAMADO' ORDER BY eg.FECHA_PROGRAMADA`),
+    p.request().query('SELECT COUNT_BIG(*) n FROM dbo.HORARIO_ACADEMICO WHERE ACTIVO=1'),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.CICLO WHERE ID_ESTADO_CICLO='ACTIVO'"),
+    p.request().query("SELECT COUNT_BIG(*) n FROM dbo.PAGO WHERE ID_ESTADO_PAGO='PAGADO'")
   ]);
   res.json({alumnos:Number(a.recordset[0].n),matriculas:Number(b.recordset[0].n),pendientes:Number(c.recordset[0].n),ingresos:Number(d.recordset[0].n),recent:e.recordset,exams:f.recordset,grupos:Number(g.recordset[0].n),ciclosActivos:Number(h.recordset[0].n),pagosRegistrados:Number(i.recordset[0].n)});
 }));
@@ -147,17 +135,17 @@ router.get('/records/:table',authenticate,admin,safe(async(req,res)=>{
   const page=Math.max(1,Math.min(100000,parseInt(req.query.page,10)||1));const limitPage=15;
   const search=String(req.query.q||'').trim().slice(0,80);
   const p=await pool();const q=p.request();q.input('q',sql.NVarChar(180),`%${search}%`);q.input('offset',sql.Int,(page-1)*limitPage);q.input('lim',sql.Int,limitPage);
-  const look=m.display.map(k=>`CONVERT(nvarchar(200),[${k}]) LIKE @q`).join(' OR ');
-  const active=administration.policy(m).activeField,sidecar=['ALUMNO','Nota_Examen'].includes(m.name)&&await securityReady();
-  const join=sidecar?(m.name==='ALUMNO'?'LEFT JOIN dbo.Alumno_Estado_V41 es ON es.ALUMNO_DNI_Alu=ALUMNO.DNI_Alu':'LEFT JOIN dbo.Nota_Estado_V41 es ON es.Nota_Examen_Cod_Nota=Nota_Examen.Cod_Nota'):'';
-  const statusExpression=sidecar?(m.name==='ALUMNO'?'ISNULL(es.Activo,1)':'CASE WHEN ISNULL(es.Anulada,0)=0 THEN 1 ELSE 0 END'):active?`[${active}]`:null;
+  const look=m.display.map(k=>`CONVERT(nvarchar(200),[${m.name}].[${k}]) LIKE @q`).join(' OR ');
+  const active=administration.policy(m).activeField,sidecar=['ALUMNO','RESULTADO_SIMULACRO'].includes(m.name)&&await securityReady();
+  const join=sidecar?(m.name==='ALUMNO'?'LEFT JOIN dbo.ESTADO_ALUMNO es ON es.DNI_ALUMNO=ALUMNO.DNI_ALUMNO':'LEFT JOIN dbo.ESTADO_RESULTADO es ON es.ID_RESULTADO=RESULTADO_SIMULACRO.ID_RESULTADO'):'';
+  const statusExpression=sidecar?(m.name==='ALUMNO'?'ISNULL(es.ACTIVO,1)':'CASE WHEN ISNULL(es.ANULADO,0)=0 THEN 1 ELSE 0 END'):active?`[${active}]`:null;
   const extra=sidecar?`,CASE WHEN (${statusExpression})=1 THEN '${m.name==='ALUMNO'?'ACTIVO':'VIGENTE'}' ELSE '${m.name==='ALUMNO'?'BAJA':'ANULADA'}' END AS _estadoGestion`:'';
-  const state=String(req.query.estado||'');if(state&&!['activo','inactivo'].includes(state))throw rule('Filtro de estado inválido.');
-  const where=[...(search?[`(${look})`]:[]),...(statusExpression&&state?[`(${statusExpression})=${state==='activo'?1:0}`]:[])];
+  const state=String(req.query.estado||'');if(state&&!['ACTIVO','inactivo'].includes(state))throw rule('Filtro de estado inválido.');
+  const where=[trash.visible(m),...(search?[`(${look})`]:[]),...(statusExpression&&state?[`(${statusExpression})=${state==='ACTIVO'?1:0}`]:[])];
   const condition=where.length?'WHERE '+where.join(' AND '):'';
-  const column=String(req.query.orden||m.pk[0]);if(!m.columns.some(c=>c.name===column&&c.name!=='Clave_Hash'))throw rule('Ordenamiento inválido.');
+  const column=String(req.query.orden||m.pk[0]);if(!m.columns.some(c=>c.name===column&&c.name!=='CLAVE_HASH'))throw rule('Ordenamiento inválido.');
   const direction=req.query.direccion==='desc'?'DESC':'ASC';
-  const sort=`[${column}] ${direction}`+(m.pk.includes(column)?'':','+m.pk.map(k=>`[${k}]`).join(','));
+  const sort=`[${m.name}].[${column}] ${direction}`+(m.pk.includes(column)?'':','+m.pk.map(k=>`[${m.name}].[${k}]`).join(','));
   const rows=(await q.query(`SELECT ${projection(m)}${extra} FROM dbo.[${m.name}] ${join} ${condition} ORDER BY ${sort} OFFSET @offset ROWS FETCH NEXT @lim ROWS ONLY`)).recordset;
   const r=p.request();r.input('q',sql.NVarChar(180),`%${search}%`);
   const count=(await r.query(`SELECT COUNT_BIG(*) n FROM dbo.[${m.name}] ${join} ${condition}`)).recordset[0].n;
@@ -170,43 +158,44 @@ router.get('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
 }));
 async function save(req,res,isInsert) {
   const m=filterSchema(req.params.table);const payload=dataFor(m,req.body,isInsert);
-  if(['Grupo','Horario'].includes(m.name))throw rule('Edita y guarda el horario semanal completo desde Horarios académicos.');
+  if(['HORARIO_ACADEMICO','BLOQUE_HORARIO'].includes(m.name))throw rule('Edita y guarda el horario semanal completo desde Horarios académicos.');
   if(isInsert&&fixedCatalogs.has(m.name))throw rule('Este catálogo del sistema tiene opciones definidas por las reglas académicas. Puedes editar sus descripciones permitidas.');
-  if(m.name==='Pago')throw rule('Las obligaciones se generan al inscribir. Usa la gestión de pagos para confirmar o anular un cobro.');
+  if(m.name==='PAGO')throw rule('Las obligaciones se generan al inscribir. Usa la gestión de pagos para confirmar o anular un cobro.');
   if(isInsert&&['ALUMNO','MATRICULA'].includes(m.name))throw rule('Utiliza el formulario de inscripción para crear alumno, cuenta, matrícula y cuotas en una transacción.');
   validateFields(m,payload);
   const p=await pool();const tx=new sql.Transaction(p);await tx.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
   try {
-    if(isInsert)for(const c of m.columns)if(canAutoCode(m,c))payload[c.name]=await operations.nextCode(tx,({Usuario:'U4',Nota_Examen:'N4',Examen_Grupo:'E4'})[m.name]||'O4');
+    if(isInsert)for(const c of m.columns)if(canAutoCode(m,c))payload[c.name]=await operations.nextCode(tx,({USUARIO:'U4',RESULTADO_SIMULACRO:'N4',SIMULACRO_HORARIO:'E4'})[m.name]||'O4');
     let current=null;
     if(!isInsert){const r=await request(tx);const where=existingWhere(m,parseId(m,req.params.id),r);
       current=(await r.query(`SELECT * FROM dbo.[${m.name}] WITH (UPDLOCK,HOLDLOCK) WHERE ${where}`)).recordset[0];
       if(!current)throw Object.assign(new Error('Registro no encontrado.'),{status:404});
+      if(await trash.current(tx,m.name,req.params.id))throw rule('Restaura el registro desde la papelera antes de editarlo.');
     }
-    if(m.name==='Usuario') {
+    if(m.name==='USUARIO') {
       if(isInsert){
-        if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||Buffer.byteLength(req.body.Nueva_Clave,'utf8')>72)throw rule('La contraseña inicial debe tener al menos 12 caracteres y hasta 72 bytes.');
-        payload.Clave_Hash=await bcrypt.hash(req.body.Nueva_Clave,12);
-        payload.Debe_Cambiar_Clave=true;
-      } else if(Object.prototype.hasOwnProperty.call(req.body,'Nueva_Clave') && req.body.Nueva_Clave) {
-        if(typeof req.body.Nueva_Clave!=='string'||req.body.Nueva_Clave.length<12||Buffer.byteLength(req.body.Nueva_Clave,'utf8')>72)throw rule('La contraseña debe tener al menos 12 caracteres y hasta 72 bytes.');
-        payload.Clave_Hash=await bcrypt.hash(req.body.Nueva_Clave,12);payload.Debe_Cambiar_Clave=true;
+        if(typeof req.body.NUEVA_CLAVE!=='string'||req.body.NUEVA_CLAVE.length<12||Buffer.byteLength(req.body.NUEVA_CLAVE,'utf8')>72)throw rule('La contraseña inicial debe tener al menos 12 caracteres y hasta 72 bytes.');
+        payload.CLAVE_HASH=await bcrypt.hash(req.body.NUEVA_CLAVE,12);
+        payload.DEBE_CAMBIAR_CLAVE=true;
+      } else if(Object.prototype.hasOwnProperty.call(req.body,'NUEVA_CLAVE') && req.body.NUEVA_CLAVE) {
+        if(typeof req.body.NUEVA_CLAVE!=='string'||req.body.NUEVA_CLAVE.length<12||Buffer.byteLength(req.body.NUEVA_CLAVE,'utf8')>72)throw rule('La contraseña debe tener al menos 12 caracteres y hasta 72 bytes.');
+        payload.CLAVE_HASH=await bcrypt.hash(req.body.NUEVA_CLAVE,12);payload.DEBE_CAMBIAR_CLAVE=true;
       }
     }
-    if(m.name==='Horario'&&(payload.TIPO_BLOQUE_Cod_Tipo??current?.TIPO_BLOQUE_Cod_Tipo)==='CLASE'){
-      const course=payload.Docente_Asignatura_CURSOS_Cod_Curso??current?.Docente_Asignatura_CURSOS_Cod_Curso;
-      const teacher=payload.Docente_Asignatura_Docente_DNI_Doc??current?.Docente_Asignatura_Docente_DNI_Doc;
-      const valid=(await operations.query(tx,`SELECT c.Cod_Curso FROM dbo.CURSOS c WITH (UPDLOCK,HOLDLOCK)
-        CROSS JOIN dbo.Docente d WITH (UPDLOCK,HOLDLOCK) WHERE c.Cod_Curso=@course AND c.Activa=1 AND d.DNI_Doc=@teacher AND d.Activo=1`,{course,teacher})).recordset[0];
+    if(m.name==='BLOQUE_HORARIO'&&(payload.ID_TIPO_BLOQUE??current?.ID_TIPO_BLOQUE)==='CLASE'){
+      const course=payload.ID_CURSO??current?.ID_CURSO;
+      const teacher=payload.DNI_DOCENTE??current?.DNI_DOCENTE;
+      const valid=(await operations.query(tx,`SELECT c.ID_CURSO FROM dbo.CURSO c WITH (UPDLOCK,HOLDLOCK)
+        CROSS JOIN dbo.DOCENTE d WITH (UPDLOCK,HOLDLOCK) WHERE c.ID_CURSO=@course AND c.ACTIVO=1 AND d.DNI_DOCENTE=@teacher AND d.ACTIVO=1`,{course,teacher})).recordset[0];
       if(!valid)throw rule('Selecciona un curso y un docente activos.');
-      await operations.query(tx,`IF NOT EXISTS(SELECT 1 FROM dbo.Docente_Asignatura WITH (UPDLOCK,HOLDLOCK) WHERE CURSOS_Cod_Curso=@course AND Docente_DNI_Doc=@teacher)
-        INSERT dbo.Docente_Asignatura(CURSOS_Cod_Curso,Docente_DNI_Doc) VALUES(@course,@teacher)`,{course,teacher});
+      await operations.query(tx,`IF NOT EXISTS(SELECT 1 FROM dbo.CURSO_DOCENTE WITH (UPDLOCK,HOLDLOCK) WHERE ID_CURSO=@course AND DNI_DOCENTE=@teacher)
+        INSERT dbo.CURSO_DOCENTE(ID_CURSO,DNI_DOCENTE) VALUES(@course,@teacher)`,{course,teacher});
     }
     if(m.name==='ALUMNO')await require('./schema-v44').required(tx);
     await validate(m.name,payload,current,tx,req.user);
     // Campos calculados únicamente por el backend; no son confiables si vienen del navegador.
-    if(m.name==='Pago') {
-      if(Object.prototype.hasOwnProperty.call(req.body,'Usuario_Cod_Usuario'))throw rule('El cajero se toma de la sesión autenticada.');
+    if(m.name==='PAGO') {
+      if(Object.prototype.hasOwnProperty.call(req.body,'ID_USUARIO_RESPONSABLE'))throw rule('El cajero se toma de la sesión autenticada.');
     }
     const values=Object.entries(payload);
     if(isInsert && !values.length)throw rule('No hay campos para registrar.');
@@ -220,8 +209,8 @@ async function save(req,res,isInsert) {
     }
     await r.query(query);
     // Un alta no tiene sesiones anteriores. La revocación corresponde a cambios de cuentas existentes.
-    if(m.name==='Usuario'&&!isInsert&&(payload.Clave_Hash||Object.hasOwn(payload,'Activo')&&Boolean(payload.Activo)!==Boolean(current.Activo))&&await securityReady(tx))await accounts.revoke(tx,current.Cod_Usuario,payload.Clave_Hash?false:undefined);
-    if(['Nota_Examen','Examen_Grupo'].includes(m.name)){
+    if(m.name==='USUARIO'&&!isInsert&&(payload.CLAVE_HASH||Object.hasOwn(payload,'ACTIVO')&&Boolean(payload.ACTIVO)!==Boolean(current.ACTIVO))&&await securityReady(tx))await accounts.revoke(tx,current.ID_USUARIO,payload.CLAVE_HASH?false:undefined);
+    if(['RESULTADO_SIMULACRO','SIMULACRO_HORARIO'].includes(m.name)){
       const reason=req.body.Motivo_Cambio;
       if(!isInsert&&(typeof reason!=='string'||reason.trim().length<5||reason.length>250))throw rule('Describe el motivo del cambio (5 a 250 caracteres).');
       await operations.audit(tx,req.user,m.name,current?.[m.pk[0]]||payload[m.pk[0]],isInsert?'CREAR':'CORREGIR',current,{...current,...payload},reason);
@@ -237,15 +226,15 @@ router.delete('/records/:table/:id',authenticate,admin,safe(async(req,res)=>{
 router.get('/records/:table/:id/actions',authenticate,admin,safe(async(req,res)=>res.json(await administration.review(req.params.table,req.params.id,req.user))));
 router.post('/records/:table/:id/state',authenticate,admin,safe(async(req,res)=>res.json(await administration.changeState(req.params.table,req.params.id,req.body,req.user))));
 router.get('/student/overview',authenticate,student,safe(async(req,res)=>{
-  const dni=req.user.ALUMNO_DNI_Alu,p=await pool(),v41=await securityReady();
+  const dni=req.user.DNI_ALUMNO,p=await pool(),v41=await securityReady();
   async function query(text){const r=p.request();r.input('dni',sql.VarChar(8),dni);return (await r.query(text)).recordset;}
   const [profile,groups,notes,schedule,exams,payments]=await Promise.all([
-    query('SELECT DNI_Alu,Nomb_Alu,Correo_Alu,CARRERA_Cod_Carrera FROM dbo.ALUMNO WHERE DNI_Alu=@dni'),
-    query(`SELECT m.Cod_Matricula,m.Fech_Matricula,m.ESTADO_MATRICULA_Cod_Estado_Matricula,g.Cod_Grupo,g.Nomb_Grupo,c.Nomb_Ciclo,c.Cod_Ciclo,c.Fech_Inicio,c.Fech_Fin,c.Modalidad,p.Nomb_Programa,t.Nomb_Turno FROM dbo.MATRICULA m JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY m.Fech_Matricula DESC,m.Cod_Matricula DESC`),
-    query(`SELECT ne.Puntaje_total,ne.Fech_registro,ex.Nomb_Examen,ex.puntaje_maximo,g.Nomb_Grupo,eg.Fech_programada FROM dbo.Nota_Examen ne JOIN dbo.MATRICULA ma ON ma.Cod_Matricula=ne.MATRICULA_Cod_Matricula JOIN dbo.Examen_Grupo eg ON eg.Cod_examen_grupo=ne.Examen_Grupo_Cod_examen_grupo JOIN dbo.Examen ex ON ex.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=ma.Grupo_Cod_Grupo ${v41?'LEFT JOIN dbo.Nota_Estado_V41 ns ON ns.Nota_Examen_Cod_Nota=ne.Cod_Nota':''} WHERE ma.ALUMNO_DNI_Alu=@dni AND eg.Publicado=1 ${v41?'AND ISNULL(ns.Anulada,0)=0':''} ORDER BY eg.Fech_programada DESC`),
-    query(`SELECT h.Dia_Semana,h.Hr_Inicio,h.Hr_Fin,h.TIPO_BLOQUE_Cod_Tipo,co.Cod_Curso curso,co.Nomb_Curso,d.Nom_Doc,g.Nomb_Grupo,t.Nomb_Turno,a.Nomb_Aula FROM dbo.Horario h JOIN dbo.Grupo g ON g.Cod_Grupo=h.Grupo_Cod_Grupo JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo LEFT JOIN dbo.CURSOS co ON co.Cod_Curso=h.Docente_Asignatura_CURSOS_Cod_Curso LEFT JOIN dbo.Docente d ON d.DNI_Doc=h.Docente_Asignatura_Docente_DNI_Doc WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND h.Activo=1 AND g.Activo=1 ORDER BY h.Dia_Semana,h.Hr_Inicio`),
-    query(`SELECT eg.Fech_programada,eg.Hr_inicio,e.Nomb_Examen,g.Nomb_Grupo FROM dbo.Examen_Grupo eg JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo JOIN dbo.MATRICULA m ON m.Grupo_Cod_Grupo=g.Cod_Grupo WHERE m.ALUMNO_DNI_Alu=@dni AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA' AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen='PROGRAMADO' ORDER BY eg.Fech_programada`),
-    query(`SELECT Cod_Pago,MATRICULA_Cod_Matricula,CONCEPTO_PAGO_Cod_Concepto,Nro_Mensualidad,Monto,ESTADO_PAGO_Cod_Estado,Fech_Vencimiento,Fech_Pago,Medio_Pago FROM dbo.Pago WHERE ALUMNO_DNI_Alu=@dni ORDER BY Fech_Vencimiento DESC,Cod_Pago`)
+    query('SELECT DNI_ALUMNO,NOMBRE_COMPLETO,CORREO,ID_CARRERA FROM dbo.ALUMNO WHERE DNI_ALUMNO=@dni'),
+    query(`SELECT m.ID_MATRICULA,m.FECHA_MATRICULA,m.ID_ESTADO_MATRICULA,g.ID_HORARIO_ACADEMICO,g.NOMBRE_HORARIO,c.NOMBRE_CICLO,c.ID_CICLO,c.FECHA_INICIO,c.FECHA_FIN,c.MODALIDAD,p.NOMBRE_PROGRAMA,t.NOMBRE_TURNO FROM dbo.MATRICULA m JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO JOIN dbo.CICLO c ON c.ID_CICLO=g.ID_CICLO JOIN dbo.PROGRAMA p ON p.ID_PROGRAMA=c.ID_PROGRAMA JOIN dbo.TURNO t ON t.ID_TURNO=g.ID_TURNO WHERE m.DNI_ALUMNO=@dni ORDER BY m.FECHA_MATRICULA DESC,m.ID_MATRICULA DESC`),
+    query(`SELECT ne.PUNTAJE_TOTAL,ne.FECHA_REGISTRO,ex.NOMBRE_SIMULACRO,ex.PUNTAJE_MAXIMO,g.NOMBRE_HORARIO,eg.FECHA_PROGRAMADA FROM dbo.RESULTADO_SIMULACRO ne JOIN dbo.MATRICULA ma ON ma.ID_MATRICULA=ne.ID_MATRICULA JOIN dbo.SIMULACRO_HORARIO eg ON eg.ID_SIMULACRO_HORARIO=ne.ID_SIMULACRO_HORARIO JOIN dbo.SIMULACRO ex ON ex.ID_SIMULACRO=eg.ID_SIMULACRO JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=ma.ID_HORARIO_ACADEMICO ${v41?'LEFT JOIN dbo.ESTADO_RESULTADO ns ON ns.ID_RESULTADO=ne.ID_RESULTADO':''} WHERE ma.DNI_ALUMNO=@dni AND eg.PUBLICADO=1 ${v41?'AND ISNULL(ns.ANULADO,0)=0':''} ORDER BY eg.FECHA_PROGRAMADA DESC`),
+    query(`SELECT h.DIA_SEMANA,h.HORA_INICIO,h.HORA_FIN,h.ID_TIPO_BLOQUE,co.ID_CURSO curso,co.NOMBRE_CURSO,d.NOMBRE_COMPLETO,g.NOMBRE_HORARIO,t.NOMBRE_TURNO,a.NOMBRE_AULA FROM dbo.BLOQUE_HORARIO h JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=h.ID_HORARIO_ACADEMICO JOIN dbo.TURNO t ON t.ID_TURNO=g.ID_TURNO JOIN dbo.AULA a ON a.ID_AULA=g.ID_AULA JOIN dbo.MATRICULA m ON m.ID_HORARIO_ACADEMICO=g.ID_HORARIO_ACADEMICO LEFT JOIN dbo.CURSO co ON co.ID_CURSO=h.ID_CURSO LEFT JOIN dbo.DOCENTE d ON d.DNI_DOCENTE=h.DNI_DOCENTE WHERE m.DNI_ALUMNO=@dni AND m.ID_ESTADO_MATRICULA='ACTIVA' AND h.ACTIVO=1 AND g.ACTIVO=1 ORDER BY h.DIA_SEMANA,h.HORA_INICIO`),
+    query(`SELECT eg.FECHA_PROGRAMADA,eg.HORA_INICIO,e.NOMBRE_SIMULACRO,g.NOMBRE_HORARIO FROM dbo.SIMULACRO_HORARIO eg JOIN dbo.SIMULACRO e ON e.ID_SIMULACRO=eg.ID_SIMULACRO JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=eg.ID_HORARIO_ACADEMICO JOIN dbo.MATRICULA m ON m.ID_HORARIO_ACADEMICO=g.ID_HORARIO_ACADEMICO WHERE m.DNI_ALUMNO=@dni AND m.ID_ESTADO_MATRICULA='ACTIVA' AND eg.ID_ESTADO_SIMULACRO='PROGRAMADO' ORDER BY eg.FECHA_PROGRAMADA`),
+    query(`SELECT ID_PAGO,ID_MATRICULA,ID_CONCEPTO,NUMERO_MENSUALIDAD,MONTO,ID_ESTADO_PAGO,FECHA_VENCIMIENTO,FECHA_PAGO,ID_MEDIO_PAGO FROM dbo.PAGO WHERE DNI_ALUMNO=@dni ORDER BY FECHA_VENCIMIENTO DESC,ID_PAGO`)
   ]);
   res.json({profile:profile[0]||null,groups,notes,schedule,exams,payments});
 }));

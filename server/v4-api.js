@@ -14,20 +14,20 @@ function dni(value){if(!/^\d{8}$/.test(value||''))throw rule('El DNI debe conten
 get('/academic/context',async(req,res)=>{
   await require('./schema-v44').required();
   const queries={
-    programas:'SELECT Cod_Programa,Nomb_Programa FROM dbo.Programa WHERE Activo=1 ORDER BY Nomb_Programa',
-    ciclos:"SELECT * FROM dbo.Ciclo WHERE ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY Fech_Inicio DESC",
-    grupos:`SELECT g.*,t.Nomb_Turno,t.Hr_Inicio Turno_Inicio,t.Hr_Fin Turno_Fin,a.Nomb_Aula,c.Nomb_Ciclo,c.Programa_Cod_Programa,c.Modalidad,c.Fech_Inicio,c.Fech_Fin,c.Nro_Mensualidades,c.Precio_Mensual,
-      g.Cupo_Max-(SELECT COUNT(*) FROM dbo.MATRICULA m WHERE m.Grupo_Cod_Grupo=g.Cod_Grupo AND m.ESTADO_MATRICULA_Cod_Estado_Matricula='ACTIVA') Cupos_Disponibles
-      FROM dbo.Grupo g JOIN dbo.Turno t ON t.Cod_Turno=g.Turno_Cod_Turno JOIN dbo.Aula a ON a.Cod_Aula=g.Aula_Cod_Aula JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo JOIN dbo.Programa p ON p.Cod_Programa=c.Programa_Cod_Programa
-      WHERE g.Activo=1 AND g.Estado_Horario='PUBLICADO' AND a.Activa=1 AND p.Activo=1 AND c.ESTADO_CICLO_Cod_Estado IN ('ACTIVO','PROGRAMADO') ORDER BY c.Fech_Inicio DESC,g.Nomb_Grupo`,
-    aulas:'SELECT * FROM dbo.Aula WHERE Activa=1 ORDER BY Nomb_Aula',
-    cursos:'SELECT Cod_Curso,Nomb_Curso FROM dbo.CURSOS WHERE Activa=1 ORDER BY Nomb_Curso',
-    docentes:'SELECT DNI_Doc,Nom_Doc FROM dbo.Docente WHERE Activo=1 ORDER BY Nom_Doc',
-    turnos:'SELECT * FROM dbo.Turno ORDER BY Hr_Inicio',
-    carreras:'SELECT * FROM dbo.CARRERA ORDER BY Nomb_Carrera',
-    parentescos:'SELECT * FROM dbo.PARENTESCO ORDER BY Tipo_Paren',
-    asignaturas:`SELECT da.*,c.Nomb_Curso,d.Nom_Doc FROM dbo.Docente_Asignatura da JOIN dbo.CURSOS c ON c.Cod_Curso=da.CURSOS_Cod_Curso
-      JOIN dbo.Docente d ON d.DNI_Doc=da.Docente_DNI_Doc WHERE c.Activa=1 AND d.Activo=1 ORDER BY c.Nomb_Curso,d.Nom_Doc`
+    programas:'SELECT ID_PROGRAMA,NOMBRE_PROGRAMA FROM dbo.PROGRAMA WHERE ACTIVO=1 ORDER BY NOMBRE_PROGRAMA',
+    ciclos:"SELECT * FROM dbo.CICLO WHERE ID_ESTADO_CICLO IN ('ACTIVO','PROGRAMADO') ORDER BY FECHA_INICIO DESC",
+    grupos:`SELECT g.*,t.NOMBRE_TURNO,t.HORA_INICIO Turno_Inicio,t.HORA_FIN Turno_Fin,a.NOMBRE_AULA,c.NOMBRE_CICLO,c.ID_PROGRAMA,c.MODALIDAD,c.FECHA_INICIO,c.FECHA_FIN,c.NUMERO_MENSUALIDADES,c.PRECIO_MENSUAL,
+      g.CAPACIDAD_MAXIMA-(SELECT COUNT(*) FROM dbo.MATRICULA m WHERE m.ID_HORARIO_ACADEMICO=g.ID_HORARIO_ACADEMICO AND m.ID_ESTADO_MATRICULA='ACTIVA') Cupos_Disponibles
+      FROM dbo.HORARIO_ACADEMICO g JOIN dbo.TURNO t ON t.ID_TURNO=g.ID_TURNO JOIN dbo.AULA a ON a.ID_AULA=g.ID_AULA JOIN dbo.CICLO c ON c.ID_CICLO=g.ID_CICLO JOIN dbo.PROGRAMA p ON p.ID_PROGRAMA=c.ID_PROGRAMA
+      WHERE g.ACTIVO=1 AND g.ESTADO_HORARIO='PUBLICADO' AND a.ACTIVO=1 AND p.ACTIVO=1 AND c.ID_ESTADO_CICLO IN ('ACTIVO','PROGRAMADO') ORDER BY c.FECHA_INICIO DESC,g.NOMBRE_HORARIO`,
+    aulas:'SELECT * FROM dbo.AULA WHERE ACTIVO=1 ORDER BY NOMBRE_AULA',
+    cursos:'SELECT ID_CURSO,NOMBRE_CURSO FROM dbo.CURSO WHERE ACTIVO=1 ORDER BY NOMBRE_CURSO',
+    docentes:'SELECT DNI_DOCENTE,NOMBRE_COMPLETO FROM dbo.DOCENTE WHERE ACTIVO=1 ORDER BY NOMBRE_COMPLETO',
+    turnos:'SELECT * FROM dbo.TURNO ORDER BY HORA_INICIO',
+    carreras:`SELECT * FROM dbo.CARRERA WHERE ${require('./trash').visible(model.CARRERA)} ORDER BY NOMBRE_CARRERA`,
+    parentescos:'SELECT * FROM dbo.PARENTESCO ORDER BY PARENTESCO',
+    asignaturas:`SELECT da.*,c.NOMBRE_CURSO,d.NOMBRE_COMPLETO FROM dbo.CURSO_DOCENTE da JOIN dbo.CURSO c ON c.ID_CURSO=da.ID_CURSO
+      JOIN dbo.DOCENTE d ON d.DNI_DOCENTE=da.DNI_DOCENTE WHERE c.ACTIVO=1 AND d.ACTIVO=1 ORDER BY c.NOMBRE_CURSO,d.NOMBRE_COMPLETO`
   };
   const entries=await Promise.all(Object.entries(queries).map(async([key,text])=>[key,(await ops.query(null,text)).recordset]));
   res.json(Object.fromEntries(entries));
@@ -38,84 +38,86 @@ post('/academic/schedules',async(req,res)=>res.status(201).json(await require('.
 router.put('/academic/schedules/:id',authenticate,admin,safe(async(req,res)=>res.json(await require('./schedules').save(req.params.id,req.body,req.user))));
 get('/alumnos/:dni/inscripcion',async(req,res)=>{
   const inputs={dni:dni(req.params.dni)};
-  const alumno=(await ops.query(null,'SELECT * FROM dbo.ALUMNO WHERE DNI_Alu=@dni',inputs)).recordset[0]||null;
-  const historial=(await ops.query(null,`SELECT m.Cod_Matricula,m.Fech_Matricula,g.Nomb_Grupo,c.Nomb_Ciclo,m.ESTADO_MATRICULA_Cod_Estado_Matricula
-    FROM dbo.MATRICULA m JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo
-    WHERE m.ALUMNO_DNI_Alu=@dni ORDER BY m.Fech_Matricula DESC`,inputs)).recordset;
-  res.json({alumno,historial});
+  const alumno=(await ops.query(null,'SELECT * FROM dbo.ALUMNO WHERE DNI_ALUMNO=@dni',inputs)).recordset[0]||null;
+  const historial=(await ops.query(null,`SELECT m.ID_MATRICULA,m.FECHA_MATRICULA,g.NOMBRE_HORARIO,c.NOMBRE_CICLO,m.ID_ESTADO_MATRICULA
+    FROM dbo.MATRICULA m JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO JOIN dbo.CICLO c ON c.ID_CICLO=g.ID_CICLO
+    WHERE m.DNI_ALUMNO=@dni ORDER BY m.FECHA_MATRICULA DESC`,inputs)).recordset;
+  if(alumno&&(await ops.query(null,"SELECT ID FROM dbo.PAPELERA_REGISTRO WHERE ENTIDAD='ALUMNO' AND ID_REGISTRO=@dni AND ESTADO='EN_PAPELERA'",inputs)).recordset.length)throw rule('El estudiante está en papelera. Restáuralo antes de inscribirlo.');
+  const initial=(await ops.query(null,"SELECT ID_PAGO FROM dbo.PAGO WHERE DNI_ALUMNO=@dni AND ID_CONCEPTO='MATRICULA_INICIAL'",inputs)).recordset;
+  res.json({alumno,historial,primerIngreso:!historial.length&&!initial.length});
 });
 post('/inscripciones',async(req,res)=>res.status(201).json(await ops.enroll(req.body,req.user)));
 get('/pagos/alumno/:dni',async(req,res)=>{
   const inputs={dni:dni(req.params.dni)};
-  const alumno=(await ops.query(null,'SELECT DNI_Alu,Nomb_Alu FROM dbo.ALUMNO WHERE DNI_Alu=@dni',inputs)).recordset[0];
+  const alumno=(await ops.query(null,'SELECT DNI_ALUMNO,NOMBRE_COMPLETO FROM dbo.ALUMNO WHERE DNI_ALUMNO=@dni',inputs)).recordset[0];
   if(!alumno)return res.status(404).json({error:'Estudiante no encontrado.'});
-  const rows=(await ops.query(null,`SELECT p.*,c.Nomb_Ciclo,g.Nomb_Grupo FROM dbo.Pago p LEFT JOIN dbo.MATRICULA m ON m.Cod_Matricula=p.MATRICULA_Cod_Matricula
-    LEFT JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo LEFT JOIN dbo.Ciclo c ON c.Cod_Ciclo=g.Ciclo_Cod_Ciclo WHERE p.ALUMNO_DNI_Alu=@dni ORDER BY p.Fech_Vencimiento,p.Cod_Pago`,inputs)).recordset;
+  const rows=(await ops.query(null,`SELECT p.*,c.NOMBRE_CICLO,g.NOMBRE_HORARIO FROM dbo.PAGO p LEFT JOIN dbo.MATRICULA m ON m.ID_MATRICULA=p.ID_MATRICULA
+    LEFT JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO LEFT JOIN dbo.CICLO c ON c.ID_CICLO=g.ID_CICLO WHERE p.DNI_ALUMNO=@dni ORDER BY p.FECHA_VENCIMIENTO,p.ID_PAGO`,inputs)).recordset;
   res.json({alumno,rows});
 });
-get('/pagos/medios',async(req,res)=>res.json({rows:(await ops.query(null,'SELECT * FROM dbo.MEDIO_PAGO ORDER BY Nomb_Medio')).recordset}));
+get('/pagos/medios',async(req,res)=>res.json({rows:(await ops.query(null,'SELECT * FROM dbo.MEDIO_PAGO ORDER BY NOMBRE_MEDIO_PAGO')).recordset}));
 post('/pagos/medios',async(req,res)=>{
-  const {codigo,nombre,activo=true}=req.body||{};
-  if(!/^[A-Z0-9_-]{1,10}$/.test(codigo||'')||typeof nombre!=='string'||!nombre.trim()||nombre.length>60||typeof activo!=='boolean')throw rule('Código de medio obligatorio (1 a 10 caracteres A-Z, 0-9, _ o -), nombre hasta 60 caracteres y estado válido.');
+  const {codigo,nombre,ACTIVO=true}=req.body||{};
+  if(!/^[A-Z0-9_-]{1,10}$/.test(codigo||'')||typeof nombre!=='string'||!nombre.trim()||nombre.length>60||typeof ACTIVO!=='boolean')throw rule('Código de medio obligatorio (1 a 10 caracteres A-Z, 0-9, _ o -), nombre hasta 60 caracteres y estado válido.');
   await ops.transaction(async tx=>{
-    const before=(await ops.query(tx,'SELECT * FROM dbo.MEDIO_PAGO WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Medio=@codigo',{codigo})).recordset[0];
-    await ops.query(tx,before?'UPDATE dbo.MEDIO_PAGO SET Nomb_Medio=@nombre,Activo=@activo WHERE Cod_Medio=@codigo':'INSERT dbo.MEDIO_PAGO (Cod_Medio,Nomb_Medio,Activo) VALUES (@codigo,@nombre,@activo)',{codigo,nombre:nombre.trim(),activo});
-    await ops.audit(tx,req.user,'MEDIO_PAGO',codigo,before?'ACTUALIZAR':'CREAR',before,{codigo,nombre,activo},null);
+    const before=(await ops.query(tx,'SELECT * FROM dbo.MEDIO_PAGO WITH (UPDLOCK,HOLDLOCK) WHERE ID_MEDIO_PAGO=@codigo',{codigo})).recordset[0];
+    await ops.query(tx,before?'UPDATE dbo.MEDIO_PAGO SET NOMBRE_MEDIO_PAGO=@nombre,ACTIVO=@ACTIVO WHERE ID_MEDIO_PAGO=@codigo':'INSERT dbo.MEDIO_PAGO (ID_MEDIO_PAGO,NOMBRE_MEDIO_PAGO,ACTIVO) VALUES (@codigo,@nombre,@ACTIVO)',{codigo,nombre:nombre.trim(),ACTIVO});
+    await ops.audit(tx,req.user,'MEDIO_PAGO',codigo,before?'ACTUALIZAR':'CREAR',before,{codigo,nombre,ACTIVO},null);
   });res.json({ok:true});
 });
 post('/pagos/:codigo/confirmar',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user)));
 post('/pagos/:codigo/anular',async(req,res)=>res.json(await ops.payment(req.params.codigo,req.body,req.user,true)));
 get('/auditoria/:entidad/:codigo',async(req,res)=>{
-  if((!Object.hasOwn(model,req.params.entidad)&&!['MEDIO_PAGO','Contacto','APODERADO'].includes(req.params.entidad))||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
-  res.json({rows:(await ops.query(null,`SELECT Id,Accion,Anterior,Nuevo,Usuario_Cod_Usuario,Motivo,Fecha FROM dbo.Auditoria_V4
-    WHERE Entidad=@entity AND Codigo=@code ORDER BY Id DESC`,{entity:req.params.entidad,code:req.params.codigo})).recordset});
+  if((!Object.hasOwn(model,req.params.entidad)&&!['MEDIO_PAGO','CONTACTO','APODERADO'].includes(req.params.entidad))||req.params.codigo.length>20)throw rule('Referencia de historial inválida.');
+  res.json({rows:(await ops.query(null,`SELECT ID,ACCION,DATOS_ANTERIORES,DATOS_NUEVOS,ID_USUARIO_RESPONSABLE,MOTIVO,FECHA_EVENTO FROM dbo.AUDITORIA_SISTEMA
+    WHERE ENTIDAD=@entity AND ID_REGISTRO=@code ORDER BY ID DESC`,{entity:req.params.entidad,code:req.params.codigo})).recordset});
 });
-get('/simulacros',async(req,res)=>res.json({rows:(await ops.query(null,`SELECT e.*,eg.Cod_examen_grupo,eg.Grupo_Cod_Grupo,eg.Fech_programada,eg.Publicado,g.Nomb_Grupo
-  FROM dbo.Examen e LEFT JOIN dbo.Examen_Grupo eg ON eg.Examen_Cod_Examen=e.Cod_Examen LEFT JOIN dbo.Grupo g ON g.Cod_Grupo=eg.Grupo_Cod_Grupo
-  ORDER BY eg.Fech_programada DESC,e.Cod_Examen,g.Nomb_Grupo`)).recordset}));
+get('/simulacros',async(req,res)=>res.json({rows:(await ops.query(null,`SELECT e.*,eg.ID_SIMULACRO_HORARIO,eg.ID_HORARIO_ACADEMICO,eg.FECHA_PROGRAMADA,eg.PUBLICADO,g.NOMBRE_HORARIO
+  FROM dbo.SIMULACRO e LEFT JOIN dbo.SIMULACRO_HORARIO eg ON eg.ID_SIMULACRO=e.ID_SIMULACRO LEFT JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=eg.ID_HORARIO_ACADEMICO
+  ORDER BY eg.FECHA_PROGRAMADA DESC,e.ID_SIMULACRO,g.NOMBRE_HORARIO`)).recordset}));
 post('/simulacros',async(req,res)=>res.status(201).json(await ops.createExam(req.body,req.user)));
 get('/simulacros/:codigo/alumno/:dni',async(req,res)=>{
-  const rows=(await ops.query(null,`SELECT a.DNI_Alu,a.Nomb_Alu,m.Cod_Matricula,g.Nomb_Grupo,e.Nomb_Examen,e.puntaje_maximo,
-    n.Cod_Nota,n.Puntaje_total,eg.Publicado FROM dbo.MATRICULA m JOIN dbo.ALUMNO a ON a.DNI_Alu=m.ALUMNO_DNI_Alu
-    JOIN dbo.Grupo g ON g.Cod_Grupo=m.Grupo_Cod_Grupo JOIN dbo.Examen_Grupo eg ON eg.Grupo_Cod_Grupo=m.Grupo_Cod_Grupo
-    JOIN dbo.Examen e ON e.Cod_Examen=eg.Examen_Cod_Examen LEFT JOIN dbo.Nota_Examen n ON n.MATRICULA_Cod_Matricula=m.Cod_Matricula AND n.Examen_Grupo_Cod_examen_grupo=eg.Cod_examen_grupo
-    WHERE m.ALUMNO_DNI_Alu=@dni AND eg.Examen_Cod_Examen=@exam AND m.ESTADO_MATRICULA_Cod_Estado_Matricula<>'ANULADA'
-    AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen<>'CANCELADO'`,{dni:dni(req.params.dni),exam:req.params.codigo})).recordset;
+  const rows=(await ops.query(null,`SELECT a.DNI_ALUMNO,a.NOMBRE_COMPLETO,m.ID_MATRICULA,g.NOMBRE_HORARIO,e.NOMBRE_SIMULACRO,e.PUNTAJE_MAXIMO,
+    n.ID_RESULTADO,n.PUNTAJE_TOTAL,eg.PUBLICADO FROM dbo.MATRICULA m JOIN dbo.ALUMNO a ON a.DNI_ALUMNO=m.DNI_ALUMNO
+    JOIN dbo.HORARIO_ACADEMICO g ON g.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO JOIN dbo.SIMULACRO_HORARIO eg ON eg.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO
+    JOIN dbo.SIMULACRO e ON e.ID_SIMULACRO=eg.ID_SIMULACRO LEFT JOIN dbo.RESULTADO_SIMULACRO n ON n.ID_MATRICULA=m.ID_MATRICULA AND n.ID_SIMULACRO_HORARIO=eg.ID_SIMULACRO_HORARIO
+    WHERE m.DNI_ALUMNO=@dni AND eg.ID_SIMULACRO=@exam AND m.ID_ESTADO_MATRICULA<>'ANULADA'
+    AND eg.ID_ESTADO_SIMULACRO<>'CANCELADO'`,{dni:dni(req.params.dni),exam:req.params.codigo})).recordset;
   if(rows.length!==1)throw rule('El alumno debe pertenecer a un único grupo participante del simulacro.');
   res.json({alumno:rows[0]});
 });
 post('/simulacros/:codigo/resultados',async(req,res)=>{
-  const {DNI_Alu,Puntaje_total,Motivo_Cambio}=req.body||{};dni(DNI_Alu);
-  if(Object.keys(req.body).some(k=>!['DNI_Alu','Puntaje_total','Motivo_Cambio'].includes(k)))throw rule('Campo de resultado desconocido.');
-  validateFields(model.Nota_Examen,{Puntaje_total});
-  if(typeof Puntaje_total!=='number')throw rule('Ingresa un único puntaje total.');
+  const {DNI_ALUMNO,PUNTAJE_TOTAL,Motivo_Cambio}=req.body||{};dni(DNI_ALUMNO);
+  if(Object.keys(req.body).some(k=>!['DNI_ALUMNO','PUNTAJE_TOTAL','Motivo_Cambio'].includes(k)))throw rule('Campo de resultado desconocido.');
+  validateFields(model.RESULTADO_SIMULACRO,{PUNTAJE_TOTAL});
+  if(typeof PUNTAJE_TOTAL!=='number')throw rule('Ingresa un único puntaje total.');
   const result=await ops.transaction(async tx=>{
     // Bloquear el examen serializa los resultados del mismo simulacro entre grupos.
-    const exam=(await ops.query(tx,'SELECT Cod_Examen FROM dbo.Examen WITH (UPDLOCK,HOLDLOCK) WHERE Cod_Examen=@code',{code:req.params.codigo})).recordset[0];
+    const exam=(await ops.query(tx,'SELECT ID_SIMULACRO FROM dbo.SIMULACRO WITH (UPDLOCK,HOLDLOCK) WHERE ID_SIMULACRO=@code',{code:req.params.codigo})).recordset[0];
     if(!exam)throw rule('Simulacro no encontrado.');
-    const matches=(await ops.query(tx,`SELECT m.Cod_Matricula,m.Grupo_Cod_Grupo,eg.Cod_examen_grupo FROM dbo.MATRICULA m WITH (UPDLOCK,HOLDLOCK)
-      JOIN dbo.Examen_Grupo eg ON eg.Grupo_Cod_Grupo=m.Grupo_Cod_Grupo WHERE m.ALUMNO_DNI_Alu=@dni AND eg.Examen_Cod_Examen=@exam
-      AND m.ESTADO_MATRICULA_Cod_Estado_Matricula<>'ANULADA' AND eg.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen<>'CANCELADO'`,{dni:DNI_Alu,exam:req.params.codigo})).recordset;
+    const matches=(await ops.query(tx,`SELECT m.ID_MATRICULA,m.ID_HORARIO_ACADEMICO,eg.ID_SIMULACRO_HORARIO FROM dbo.MATRICULA m WITH (UPDLOCK,HOLDLOCK)
+      JOIN dbo.SIMULACRO_HORARIO eg ON eg.ID_HORARIO_ACADEMICO=m.ID_HORARIO_ACADEMICO WHERE m.DNI_ALUMNO=@dni AND eg.ID_SIMULACRO=@exam
+      AND m.ID_ESTADO_MATRICULA<>'ANULADA' AND eg.ID_ESTADO_SIMULACRO<>'CANCELADO'`,{dni:DNI_ALUMNO,exam:req.params.codigo})).recordset;
     if(matches.length!==1)throw rule('El alumno debe tener una matrícula válida en un único grupo participante.');
     const match=matches[0];
-    const before=(await ops.query(tx,'SELECT * FROM dbo.Nota_Examen WITH (UPDLOCK,HOLDLOCK) WHERE Examen_Grupo_Cod_examen_grupo=@eg AND MATRICULA_Cod_Matricula=@mat',{eg:match.Cod_examen_grupo,mat:match.Cod_Matricula})).recordset[0];
+    const before=(await ops.query(tx,'SELECT * FROM dbo.RESULTADO_SIMULACRO WITH (UPDLOCK,HOLDLOCK) WHERE ID_SIMULACRO_HORARIO=@eg AND ID_MATRICULA=@mat',{eg:match.ID_SIMULACRO_HORARIO,mat:match.ID_MATRICULA})).recordset[0];
     if(before&&(typeof Motivo_Cambio!=='string'||Motivo_Cambio.trim().length<5||Motivo_Cambio.length>250))throw rule('Ya existe un resultado. Para corregirlo indica un motivo (5 a 250 caracteres).');
-    const data={Cod_Nota:before?.Cod_Nota||await ops.nextCode(tx,'N4'),Puntaje_total,MATRICULA_Cod_Matricula:match.Cod_Matricula,Examen_Grupo_Cod_examen_grupo:match.Cod_examen_grupo,Grupo_Cod_Grupo:match.Grupo_Cod_Grupo};
-    await validate('Nota_Examen',data,before,tx,req.user);
-    await ops.query(tx,before?'UPDATE dbo.Nota_Examen SET Puntaje_total=@score WHERE Cod_Nota=@code':`INSERT dbo.Nota_Examen (Cod_Nota,Puntaje_total,MATRICULA_Cod_Matricula,Examen_Grupo_Cod_examen_grupo,Grupo_Cod_Grupo) VALUES (@code,@score,@mat,@eg,@group)`,before?{code:data.Cod_Nota,score:Puntaje_total}:{code:data.Cod_Nota,score:Puntaje_total,mat:match.Cod_Matricula,eg:match.Cod_examen_grupo,group:match.Grupo_Cod_Grupo});
-    await ops.audit(tx,req.user,'Nota_Examen',data.Cod_Nota,before?'CORREGIR':'CREAR',before,data,Motivo_Cambio);
-    return {ok:true,codigo:data.Cod_Nota,corregido:!!before};
+    const data={ID_RESULTADO:before?.ID_RESULTADO||await ops.nextCode(tx,'N4'),PUNTAJE_TOTAL,ID_MATRICULA:match.ID_MATRICULA,ID_SIMULACRO_HORARIO:match.ID_SIMULACRO_HORARIO,ID_HORARIO_ACADEMICO:match.ID_HORARIO_ACADEMICO};
+    await validate('RESULTADO_SIMULACRO',data,before,tx,req.user);
+    await ops.query(tx,before?'UPDATE dbo.RESULTADO_SIMULACRO SET PUNTAJE_TOTAL=@score WHERE ID_RESULTADO=@code':`INSERT dbo.RESULTADO_SIMULACRO (ID_RESULTADO,PUNTAJE_TOTAL,ID_MATRICULA,ID_SIMULACRO_HORARIO,ID_HORARIO_ACADEMICO) VALUES (@code,@score,@mat,@eg,@group)`,before?{code:data.ID_RESULTADO,score:PUNTAJE_TOTAL}:{code:data.ID_RESULTADO,score:PUNTAJE_TOTAL,mat:match.ID_MATRICULA,eg:match.ID_SIMULACRO_HORARIO,group:match.ID_HORARIO_ACADEMICO});
+    await ops.audit(tx,req.user,'RESULTADO_SIMULACRO',data.ID_RESULTADO,before?'CORREGIR':'CREAR',before,data,Motivo_Cambio);
+    return {ok:true,codigo:data.ID_RESULTADO,corregido:!!before};
   });res.json(result);
 });
 post('/simulacros/:codigo/publicacion',async(req,res)=>{
-  const {Publicado}=req.body||{};if(typeof Publicado!=='boolean'||Object.keys(req.body).length!==1)throw rule('Indica si se publican los resultados.');
+  const {PUBLICADO}=req.body||{};if(typeof PUBLICADO!=='boolean'||Object.keys(req.body).length!==1)throw rule('Indica si se publican los resultados.');
   await ops.transaction(async tx=>{
-    const rows=(await ops.query(tx,'SELECT * FROM dbo.Examen_Grupo WITH (UPDLOCK,HOLDLOCK) WHERE Examen_Cod_Examen=@exam',{exam:req.params.codigo})).recordset;
+    const rows=(await ops.query(tx,'SELECT * FROM dbo.SIMULACRO_HORARIO WITH (UPDLOCK,HOLDLOCK) WHERE ID_SIMULACRO=@exam',{exam:req.params.codigo})).recordset;
     if(!rows.length)throw rule('El simulacro no tiene grupos participantes.');
     for(const before of rows){
-      if(before.ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen==='CANCELADO'&&Publicado)throw rule('No se puede publicar un simulacro cancelado.');
-      await ops.query(tx,'UPDATE dbo.Examen_Grupo SET Publicado=@published WHERE Cod_examen_grupo=@code',{published:Publicado,code:before.Cod_examen_grupo});
-      await ops.audit(tx,req.user,'Examen_Grupo',before.Cod_examen_grupo,Publicado?'PUBLICAR':'RETIRAR_PUBLICACION',before,{...before,Publicado},'Publicación administrativa');
+      if(before.ID_ESTADO_SIMULACRO==='CANCELADO'&&PUBLICADO)throw rule('No se puede publicar un simulacro cancelado.');
+      await ops.query(tx,'UPDATE dbo.SIMULACRO_HORARIO SET PUBLICADO=@published WHERE ID_SIMULACRO_HORARIO=@code',{published:PUBLICADO,code:before.ID_SIMULACRO_HORARIO});
+      await ops.audit(tx,req.user,'SIMULACRO_HORARIO',before.ID_SIMULACRO_HORARIO,PUBLICADO?'PUBLICAR':'RETIRAR_PUBLICACION',before,{...before,PUBLICADO},'Publicación administrativa');
     }
   });res.json({ok:true});
 });

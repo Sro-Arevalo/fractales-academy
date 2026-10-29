@@ -4,11 +4,11 @@
     "label": "Estudiantes",
     "category": "Principal",
     "pk": [
-      "DNI_Alu"
+      "DNI_ALUMNO"
     ],
     "columns": [
       {
-        "name": "DNI_Alu",
+        "name": "DNI_ALUMNO",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -18,7 +18,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Alu",
+        "name": "NOMBRE_COMPLETO",
         "type": "varchar",
         "length": 120,
         "scale": null,
@@ -28,7 +28,7 @@
         "references": null
       },
       {
-        "name": "Correo_Alu",
+        "name": "CORREO",
         "type": "varchar",
         "length": 150,
         "scale": null,
@@ -38,7 +38,7 @@
         "references": null
       },
       {
-        "name": "Fech_Nac",
+        "name": "FECHA_NACIMIENTO",
         "type": "date",
         "length": null,
         "scale": null,
@@ -48,7 +48,7 @@
         "references": null
       },
       {
-        "name": "Cel_Alu",
+        "name": "CELULAR",
         "type": "varchar",
         "length": 9,
         "scale": null,
@@ -58,7 +58,7 @@
         "references": null
       },
       {
-        "name": "Dir_Alu",
+        "name": "DIRECCION",
         "type": "varchar",
         "length": 200,
         "scale": null,
@@ -68,7 +68,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Apoderado",
+        "name": "NOMBRE_APODERADO",
         "type": "varchar",
         "length": 120,
         "scale": null,
@@ -78,7 +78,7 @@
         "references": null
       },
       {
-        "name": "DNI_Apoderado",
+        "name": "DNI_APODERADO",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -88,7 +88,7 @@
         "references": null
       },
       {
-        "name": "Cel_Apoderado",
+        "name": "CELULAR_APODERADO",
         "type": "varchar",
         "length": 9,
         "scale": null,
@@ -98,7 +98,7 @@
         "references": null
       },
       {
-        "name": "Correo_Apoderado",
+        "name": "CORREO_APODERADO",
         "type": "varchar",
         "length": 150,
         "scale": null,
@@ -108,7 +108,7 @@
         "references": null
       },
       {
-        "name": "PARENTESCO_Cod_Paren",
+        "name": "ID_PARENTESCO",
         "type": "varchar",
         "length": 5,
         "scale": null,
@@ -117,11 +117,11 @@
         "pk": false,
         "references": {
           "table": "PARENTESCO",
-          "column": "Cod_Paren"
+          "column": "ID_PARENTESCO"
         }
       },
       {
-        "name": "CARRERA_Cod_Carrera",
+        "name": "ID_CARRERA",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -130,45 +130,45 @@
         "pk": false,
         "references": {
           "table": "CARRERA",
-          "column": "Cod_Carrera"
+          "column": "ID_CARRERA"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "CARRERA_Cod_Carrera"
+          "ID_CARRERA"
         ],
         "table": "CARRERA",
         "references": [
-          "Cod_Carrera"
+          "ID_CARRERA"
         ]
       },
       {
         "columns": [
-          "PARENTESCO_Cod_Paren"
+          "ID_PARENTESCO"
         ],
         "table": "PARENTESCO",
         "references": [
-          "Cod_Paren"
+          "ID_PARENTESCO"
         ]
       }
     ],
     "display": [
-      "Nomb_Alu",
-      "DNI_Alu"
+      "NOMBRE_COMPLETO",
+      "DNI_ALUMNO"
     ]
   },
-  "Aula": {
-    "name": "Aula",
+  "AULA": {
+    "name": "AULA",
     "label": "Aulas",
     "category": "Académico",
     "pk": [
-      "Cod_Aula"
+      "ID_AULA"
     ],
     "columns": [
       {
-        "name": "Cod_Aula",
+        "name": "ID_AULA",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -178,7 +178,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Aula",
+        "name": "NOMBRE_AULA",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -188,7 +188,7 @@
         "references": null
       },
       {
-        "name": "Capacidad",
+        "name": "CAPACIDAD",
         "type": "smallint",
         "length": null,
         "scale": null,
@@ -198,7 +198,7 @@
         "references": null
       },
       {
-        "name": "Activa",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -210,8 +210,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Aula",
-      "Cod_Aula"
+      "NOMBRE_AULA",
+      "ID_AULA"
     ]
   },
   "CARRERA": {
@@ -219,11 +219,11 @@
     "label": "Carreras profesionales",
     "category": "Académico",
     "pk": [
-      "Cod_Carrera"
+      "ID_CARRERA"
     ],
     "columns": [
       {
-        "name": "Cod_Carrera",
+        "name": "ID_CARRERA",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -233,7 +233,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Carrera",
+        "name": "NOMBRE_CARRERA",
         "type": "varchar",
         "length": 120,
         "scale": null,
@@ -245,8 +245,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Carrera",
-      "Cod_Carrera"
+      "NOMBRE_CARRERA",
+      "ID_CARRERA"
     ]
   },
   "CONCEPTO_PAGO": {
@@ -254,11 +254,11 @@
     "label": "Conceptos de pago",
     "category": "Administración",
     "pk": [
-      "Cod_Concepto"
+      "ID_CONCEPTO"
     ],
     "columns": [
       {
-        "name": "Cod_Concepto",
+        "name": "ID_CONCEPTO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -268,7 +268,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Concepto",
+        "name": "NOMBRE_CONCEPTO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -280,20 +280,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Concepto",
-      "Cod_Concepto"
+      "NOMBRE_CONCEPTO",
+      "ID_CONCEPTO"
     ]
   },
-  "CURSOS": {
-    "name": "CURSOS",
+  "CURSO": {
+    "name": "CURSO",
     "label": "Cursos",
     "category": "Académico",
     "pk": [
-      "Cod_Curso"
+      "ID_CURSO"
     ],
     "columns": [
       {
-        "name": "Cod_Curso",
+        "name": "ID_CURSO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -303,7 +303,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Curso",
+        "name": "NOMBRE_CURSO",
         "type": "varchar",
         "length": 100,
         "scale": null,
@@ -313,7 +313,7 @@
         "references": null
       },
       {
-        "name": "Activa",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -325,20 +325,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Curso",
-      "Cod_Curso"
+      "NOMBRE_CURSO",
+      "ID_CURSO"
     ]
   },
-  "Ciclo": {
-    "name": "Ciclo",
+  "CICLO": {
+    "name": "CICLO",
     "label": "Ciclos académicos",
     "category": "Académico",
     "pk": [
-      "Cod_Ciclo"
+      "ID_CICLO"
     ],
     "columns": [
       {
-        "name": "Cod_Ciclo",
+        "name": "ID_CICLO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -348,7 +348,7 @@
         "references": null
       },
       {
-        "name": "Programa_Cod_Programa",
+        "name": "ID_PROGRAMA",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -356,12 +356,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Programa",
-          "column": "Cod_Programa"
+          "table": "PROGRAMA",
+          "column": "ID_PROGRAMA"
         }
       },
       {
-        "name": "Nomb_Ciclo",
+        "name": "NOMBRE_CICLO",
         "type": "varchar",
         "length": 100,
         "scale": null,
@@ -371,7 +371,7 @@
         "references": null
       },
       {
-        "name": "Modalidad",
+        "name": "MODALIDAD",
         "type": "varchar",
         "length": 12,
         "scale": null,
@@ -381,7 +381,7 @@
         "references": null
       },
       {
-        "name": "Fech_Inicio",
+        "name": "FECHA_INICIO",
         "type": "date",
         "length": null,
         "scale": null,
@@ -391,7 +391,7 @@
         "references": null
       },
       {
-        "name": "Fech_Fin",
+        "name": "FECHA_FIN",
         "type": "date",
         "length": null,
         "scale": null,
@@ -401,7 +401,7 @@
         "references": null
       },
       {
-        "name": "Nro_Mensualidades",
+        "name": "NUMERO_MENSUALIDADES",
         "type": "tinyint",
         "length": null,
         "scale": null,
@@ -411,7 +411,7 @@
         "references": null
       },
       {
-        "name": "Precio_Mensual",
+        "name": "PRECIO_MENSUAL",
         "type": "decimal",
         "length": 10,
         "scale": 2,
@@ -421,7 +421,7 @@
         "references": null
       },
       {
-        "name": "ESTADO_CICLO_Cod_Estado",
+        "name": "ID_ESTADO_CICLO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -430,45 +430,45 @@
         "pk": false,
         "references": {
           "table": "ESTADO_CICLO",
-          "column": "Cod_Estado_Ciclo"
+          "column": "ID_ESTADO_CICLO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "ESTADO_CICLO_Cod_Estado"
+          "ID_ESTADO_CICLO"
         ],
         "table": "ESTADO_CICLO",
         "references": [
-          "Cod_Estado_Ciclo"
+          "ID_ESTADO_CICLO"
         ]
       },
       {
         "columns": [
-          "Programa_Cod_Programa"
+          "ID_PROGRAMA"
         ],
-        "table": "Programa",
+        "table": "PROGRAMA",
         "references": [
-          "Cod_Programa"
+          "ID_PROGRAMA"
         ]
       }
     ],
     "display": [
-      "Nomb_Ciclo",
-      "Cod_Ciclo"
+      "NOMBRE_CICLO",
+      "ID_CICLO"
     ]
   },
-  "Docente": {
-    "name": "Docente",
+  "DOCENTE": {
+    "name": "DOCENTE",
     "label": "Docentes",
     "category": "Principal",
     "pk": [
-      "DNI_Doc"
+      "DNI_DOCENTE"
     ],
     "columns": [
       {
-        "name": "DNI_Doc",
+        "name": "DNI_DOCENTE",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -478,7 +478,7 @@
         "references": null
       },
       {
-        "name": "Nom_Doc",
+        "name": "NOMBRE_COMPLETO",
         "type": "varchar",
         "length": 120,
         "scale": null,
@@ -488,7 +488,7 @@
         "references": null
       },
       {
-        "name": "Cel_Doc",
+        "name": "CELULAR",
         "type": "varchar",
         "length": 9,
         "scale": null,
@@ -498,7 +498,7 @@
         "references": null
       },
       {
-        "name": "Especialidad",
+        "name": "ESPECIALIDAD",
         "type": "varchar",
         "length": 120,
         "scale": null,
@@ -508,7 +508,7 @@
         "references": null
       },
       {
-        "name": "Activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -520,21 +520,21 @@
     ],
     "fks": [],
     "display": [
-      "Nom_Doc",
-      "DNI_Doc"
+      "NOMBRE_COMPLETO",
+      "DNI_DOCENTE"
     ]
   },
-  "Docente_Asignatura": {
-    "name": "Docente_Asignatura",
+  "CURSO_DOCENTE": {
+    "name": "CURSO_DOCENTE",
     "label": "Asignaturas por docente",
     "category": "Académico",
     "pk": [
-      "CURSOS_Cod_Curso",
-      "Docente_DNI_Doc"
+      "ID_CURSO",
+      "DNI_DOCENTE"
     ],
     "columns": [
       {
-        "name": "CURSOS_Cod_Curso",
+        "name": "ID_CURSO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -542,12 +542,12 @@
         "default": false,
         "pk": true,
         "references": {
-          "table": "CURSOS",
-          "column": "Cod_Curso"
+          "table": "CURSO",
+          "column": "ID_CURSO"
         }
       },
       {
-        "name": "Docente_DNI_Doc",
+        "name": "DNI_DOCENTE",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -555,34 +555,34 @@
         "default": false,
         "pk": true,
         "references": {
-          "table": "Docente",
-          "column": "DNI_Doc"
+          "table": "DOCENTE",
+          "column": "DNI_DOCENTE"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "Docente_DNI_Doc"
+          "DNI_DOCENTE"
         ],
-        "table": "Docente",
+        "table": "DOCENTE",
         "references": [
-          "DNI_Doc"
+          "DNI_DOCENTE"
         ]
       },
       {
         "columns": [
-          "CURSOS_Cod_Curso"
+          "ID_CURSO"
         ],
-        "table": "CURSOS",
+        "table": "CURSO",
         "references": [
-          "Cod_Curso"
+          "ID_CURSO"
         ]
       }
     ],
     "display": [
-      "CURSOS_Cod_Curso",
-      "Docente_DNI_Doc"
+      "ID_CURSO",
+      "DNI_DOCENTE"
     ]
   },
   "ESTADO_CICLO": {
@@ -590,11 +590,11 @@
     "label": "Estados de ciclo",
     "category": "Administración",
     "pk": [
-      "Cod_Estado_Ciclo"
+      "ID_ESTADO_CICLO"
     ],
     "columns": [
       {
-        "name": "Cod_Estado_Ciclo",
+        "name": "ID_ESTADO_CICLO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -604,7 +604,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Estado_Ciclo",
+        "name": "NOMBRE_ESTADO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -616,20 +616,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Estado_Ciclo",
-      "Cod_Estado_Ciclo"
+      "NOMBRE_ESTADO",
+      "ID_ESTADO_CICLO"
     ]
   },
-  "ESTADO_EXAMEN_GRUPO": {
-    "name": "ESTADO_EXAMEN_GRUPO",
+  "ESTADO_SIMULACRO": {
+    "name": "ESTADO_SIMULACRO",
     "label": "Estados de simulacro",
     "category": "Administración",
     "pk": [
-      "Cod_Estado_Examen"
+      "ID_ESTADO_SIMULACRO"
     ],
     "columns": [
       {
-        "name": "Cod_Estado_Examen",
+        "name": "ID_ESTADO_SIMULACRO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -639,7 +639,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Estado_Examen",
+        "name": "NOMBRE_ESTADO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -651,8 +651,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Estado_Examen",
-      "Cod_Estado_Examen"
+      "NOMBRE_ESTADO",
+      "ID_ESTADO_SIMULACRO"
     ]
   },
   "ESTADO_MATRICULA": {
@@ -660,11 +660,11 @@
     "label": "Estados de matrícula",
     "category": "Administración",
     "pk": [
-      "Cod_Estado_Matricula"
+      "ID_ESTADO_MATRICULA"
     ],
     "columns": [
       {
-        "name": "Cod_Estado_Matricula",
+        "name": "ID_ESTADO_MATRICULA",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -674,7 +674,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Estado_Matricula",
+        "name": "NOMBRE_ESTADO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -686,8 +686,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Estado_Matricula",
-      "Cod_Estado_Matricula"
+      "NOMBRE_ESTADO",
+      "ID_ESTADO_MATRICULA"
     ]
   },
   "ESTADO_PAGO": {
@@ -695,11 +695,11 @@
     "label": "Estados de pago",
     "category": "Administración",
     "pk": [
-      "Cod_Estado"
+      "ID_ESTADO_PAGO"
     ],
     "columns": [
       {
-        "name": "Cod_Estado",
+        "name": "ID_ESTADO_PAGO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -709,7 +709,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Estado",
+        "name": "NOMBRE_ESTADO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -721,20 +721,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Estado",
-      "Cod_Estado"
+      "NOMBRE_ESTADO",
+      "ID_ESTADO_PAGO"
     ]
   },
-  "Examen": {
-    "name": "Examen",
+  "SIMULACRO": {
+    "name": "SIMULACRO",
     "label": "Simulacros",
     "category": "Principal",
     "pk": [
-      "Cod_Examen"
+      "ID_SIMULACRO"
     ],
     "columns": [
       {
-        "name": "Cod_Examen",
+        "name": "ID_SIMULACRO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -744,7 +744,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Examen",
+        "name": "NOMBRE_SIMULACRO",
         "type": "nvarchar",
         "length": 150,
         "scale": null,
@@ -754,7 +754,7 @@
         "references": null
       },
       {
-        "name": "Descripcion",
+        "name": "DESCRIPCION",
         "type": "nvarchar",
         "length": 300,
         "scale": null,
@@ -764,7 +764,7 @@
         "references": null
       },
       {
-        "name": "puntaje_maximo",
+        "name": "PUNTAJE_MAXIMO",
         "type": "decimal",
         "length": 8,
         "scale": 2,
@@ -774,7 +774,7 @@
         "references": null
       },
       {
-        "name": "activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -786,20 +786,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Examen",
-      "Cod_Examen"
+      "NOMBRE_SIMULACRO",
+      "ID_SIMULACRO"
     ]
   },
-  "Examen_Grupo": {
-    "name": "Examen_Grupo",
+  "SIMULACRO_HORARIO": {
+    "name": "SIMULACRO_HORARIO",
     "label": "Simulacros por grupo",
     "category": "Principal",
     "pk": [
-      "Cod_examen_grupo"
+      "ID_SIMULACRO_HORARIO"
     ],
     "columns": [
       {
-        "name": "Cod_examen_grupo",
+        "name": "ID_SIMULACRO_HORARIO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -809,7 +809,7 @@
         "references": null
       },
       {
-        "name": "Fech_programada",
+        "name": "FECHA_PROGRAMADA",
         "type": "date",
         "length": null,
         "scale": null,
@@ -819,7 +819,7 @@
         "references": null
       },
       {
-        "name": "Hr_inicio",
+        "name": "HORA_INICIO",
         "type": "time",
         "length": 0,
         "scale": null,
@@ -829,7 +829,7 @@
         "references": null
       },
       {
-        "name": "Duracion_minutos",
+        "name": "DURACION_MINUTOS",
         "type": "smallint",
         "length": null,
         "scale": null,
@@ -839,7 +839,7 @@
         "references": null
       },
       {
-        "name": "Estado",
+        "name": "ESTADO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -849,7 +849,7 @@
         "references": null
       },
       {
-        "name": "Publicado",
+        "name": "PUBLICADO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -859,7 +859,7 @@
         "references": null
       },
       {
-        "name": "Examen_Cod_Examen",
+        "name": "ID_SIMULACRO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -867,12 +867,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Examen",
-          "column": "Cod_Examen"
+          "table": "SIMULACRO",
+          "column": "ID_SIMULACRO"
         }
       },
       {
-        "name": "Grupo_Cod_Grupo",
+        "name": "ID_HORARIO_ACADEMICO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -880,12 +880,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Grupo",
-          "column": "Cod_Grupo"
+          "table": "HORARIO_ACADEMICO",
+          "column": "ID_HORARIO_ACADEMICO"
         }
       },
       {
-        "name": "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen",
+        "name": "ID_ESTADO_SIMULACRO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -893,55 +893,55 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "ESTADO_EXAMEN_GRUPO",
-          "column": "Cod_Estado_Examen"
+          "table": "ESTADO_SIMULACRO",
+          "column": "ID_ESTADO_SIMULACRO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen"
+          "ID_ESTADO_SIMULACRO"
         ],
-        "table": "ESTADO_EXAMEN_GRUPO",
+        "table": "ESTADO_SIMULACRO",
         "references": [
-          "Cod_Estado_Examen"
+          "ID_ESTADO_SIMULACRO"
         ]
       },
       {
         "columns": [
-          "Examen_Cod_Examen"
+          "ID_SIMULACRO"
         ],
-        "table": "Examen",
+        "table": "SIMULACRO",
         "references": [
-          "Cod_Examen"
+          "ID_SIMULACRO"
         ]
       },
       {
         "columns": [
-          "Grupo_Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ],
-        "table": "Grupo",
+        "table": "HORARIO_ACADEMICO",
         "references": [
-          "Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ]
       }
     ],
     "display": [
-      "Cod_examen_grupo",
-      "Grupo_Cod_Grupo"
+      "ID_SIMULACRO_HORARIO",
+      "ID_HORARIO_ACADEMICO"
     ]
   },
-  "Grupo": {
-    "name": "Grupo",
+  "HORARIO_ACADEMICO": {
+    "name": "HORARIO_ACADEMICO",
     "label": "Horarios académicos",
     "category": "Principal",
     "pk": [
-      "Cod_Grupo"
+      "ID_HORARIO_ACADEMICO"
     ],
     "columns": [
       {
-        "name": "Cod_Grupo",
+        "name": "ID_HORARIO_ACADEMICO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -951,7 +951,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Grupo",
+        "name": "NOMBRE_HORARIO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -961,7 +961,7 @@
         "references": null
       },
       {
-        "name": "Cupo_Max",
+        "name": "CAPACIDAD_MAXIMA",
         "type": "smallint",
         "length": null,
         "scale": null,
@@ -971,7 +971,7 @@
         "references": null
       },
       {
-        "name": "Activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -981,7 +981,7 @@
         "references": null
       },
       {
-        "name": "Turno_Cod_Turno",
+        "name": "ID_TURNO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -989,12 +989,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Turno",
-          "column": "Cod_Turno"
+          "table": "TURNO",
+          "column": "ID_TURNO"
         }
       },
       {
-        "name": "Aula_Cod_Aula",
+        "name": "ID_AULA",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1002,12 +1002,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Aula",
-          "column": "Cod_Aula"
+          "table": "AULA",
+          "column": "ID_AULA"
         }
       },
       {
-        "name": "Ciclo_Cod_Ciclo",
+        "name": "ID_CICLO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1015,55 +1015,55 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Ciclo",
-          "column": "Cod_Ciclo"
+          "table": "CICLO",
+          "column": "ID_CICLO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "Aula_Cod_Aula"
+          "ID_AULA"
         ],
-        "table": "Aula",
+        "table": "AULA",
         "references": [
-          "Cod_Aula"
+          "ID_AULA"
         ]
       },
       {
         "columns": [
-          "Ciclo_Cod_Ciclo"
+          "ID_CICLO"
         ],
-        "table": "Ciclo",
+        "table": "CICLO",
         "references": [
-          "Cod_Ciclo"
+          "ID_CICLO"
         ]
       },
       {
         "columns": [
-          "Turno_Cod_Turno"
+          "ID_TURNO"
         ],
-        "table": "Turno",
+        "table": "TURNO",
         "references": [
-          "Cod_Turno"
+          "ID_TURNO"
         ]
       }
     ],
     "display": [
-      "Nomb_Grupo",
-      "Cod_Grupo"
+      "NOMBRE_HORARIO",
+      "ID_HORARIO_ACADEMICO"
     ]
   },
-  "Horario": {
-    "name": "Horario",
+  "BLOQUE_HORARIO": {
+    "name": "BLOQUE_HORARIO",
     "label": "Horarios",
     "category": "Principal",
     "pk": [
-      "Cod_Horario"
+      "ID_BLOQUE_HORARIO"
     ],
     "columns": [
       {
-        "name": "Cod_Horario",
+        "name": "ID_BLOQUE_HORARIO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1073,7 +1073,7 @@
         "references": null
       },
       {
-        "name": "Dia_Semana",
+        "name": "DIA_SEMANA",
         "type": "tinyint",
         "length": null,
         "scale": null,
@@ -1083,7 +1083,7 @@
         "references": null
       },
       {
-        "name": "Hr_Inicio",
+        "name": "HORA_INICIO",
         "type": "time",
         "length": 0,
         "scale": null,
@@ -1093,7 +1093,7 @@
         "references": null
       },
       {
-        "name": "Hr_Fin",
+        "name": "HORA_FIN",
         "type": "time",
         "length": 0,
         "scale": null,
@@ -1103,7 +1103,7 @@
         "references": null
       },
       {
-        "name": "Activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -1113,7 +1113,7 @@
         "references": null
       },
       {
-        "name": "Grupo_Cod_Grupo",
+        "name": "ID_HORARIO_ACADEMICO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1121,12 +1121,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Grupo",
-          "column": "Cod_Grupo"
+          "table": "HORARIO_ACADEMICO",
+          "column": "ID_HORARIO_ACADEMICO"
         }
       },
       {
-        "name": "TIPO_BLOQUE_Cod_Tipo",
+        "name": "ID_TIPO_BLOQUE",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1135,11 +1135,11 @@
         "pk": false,
         "references": {
           "table": "TIPO_BLOQUE",
-          "column": "Cod_Tipo"
+          "column": "ID_TIPO_BLOQUE"
         }
       },
       {
-        "name": "Docente_Asignatura_CURSOS_Cod_Curso",
+        "name": "ID_CURSO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1147,12 +1147,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Docente_Asignatura",
-          "column": "CURSOS_Cod_Curso"
+          "table": "CURSO_DOCENTE",
+          "column": "ID_CURSO"
         }
       },
       {
-        "name": "Docente_Asignatura_Docente_DNI_Doc",
+        "name": "DNI_DOCENTE",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -1160,45 +1160,45 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Docente_Asignatura",
-          "column": "Docente_DNI_Doc"
+          "table": "CURSO_DOCENTE",
+          "column": "DNI_DOCENTE"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "Docente_Asignatura_CURSOS_Cod_Curso",
-          "Docente_Asignatura_Docente_DNI_Doc"
+          "ID_CURSO",
+          "DNI_DOCENTE"
         ],
-        "table": "Docente_Asignatura",
+        "table": "CURSO_DOCENTE",
         "references": [
-          "CURSOS_Cod_Curso",
-          "Docente_DNI_Doc"
+          "ID_CURSO",
+          "DNI_DOCENTE"
         ]
       },
       {
         "columns": [
-          "Grupo_Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ],
-        "table": "Grupo",
+        "table": "HORARIO_ACADEMICO",
         "references": [
-          "Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ]
       },
       {
         "columns": [
-          "TIPO_BLOQUE_Cod_Tipo"
+          "ID_TIPO_BLOQUE"
         ],
         "table": "TIPO_BLOQUE",
         "references": [
-          "Cod_Tipo"
+          "ID_TIPO_BLOQUE"
         ]
       }
     ],
     "display": [
-      "Cod_Horario",
-      "Dia_Semana"
+      "ID_BLOQUE_HORARIO",
+      "DIA_SEMANA"
     ]
   },
   "MATRICULA": {
@@ -1206,11 +1206,11 @@
     "label": "Matrículas",
     "category": "Principal",
     "pk": [
-      "Cod_Matricula"
+      "ID_MATRICULA"
     ],
     "columns": [
       {
-        "name": "ALUMNO_DNI_Alu",
+        "name": "DNI_ALUMNO",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -1219,11 +1219,11 @@
         "pk": false,
         "references": {
           "table": "ALUMNO",
-          "column": "DNI_Alu"
+          "column": "DNI_ALUMNO"
         }
       },
       {
-        "name": "Cod_Matricula",
+        "name": "ID_MATRICULA",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1233,7 +1233,7 @@
         "references": null
       },
       {
-        "name": "ESTADO_MATRICULA_Cod_Estado_Matricula",
+        "name": "ID_ESTADO_MATRICULA",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -1242,11 +1242,11 @@
         "pk": false,
         "references": {
           "table": "ESTADO_MATRICULA",
-          "column": "Cod_Estado_Matricula"
+          "column": "ID_ESTADO_MATRICULA"
         }
       },
       {
-        "name": "Fech_Matricula",
+        "name": "FECHA_MATRICULA",
         "type": "date",
         "length": null,
         "scale": null,
@@ -1256,7 +1256,7 @@
         "references": null
       },
       {
-        "name": "Observaciones",
+        "name": "OBSERVACIONES",
         "type": "varchar",
         "length": 250,
         "scale": null,
@@ -1266,7 +1266,7 @@
         "references": null
       },
       {
-        "name": "Grupo_Cod_Grupo",
+        "name": "ID_HORARIO_ACADEMICO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1274,55 +1274,55 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Grupo",
-          "column": "Cod_Grupo"
+          "table": "HORARIO_ACADEMICO",
+          "column": "ID_HORARIO_ACADEMICO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "ALUMNO_DNI_Alu"
+          "DNI_ALUMNO"
         ],
         "table": "ALUMNO",
         "references": [
-          "DNI_Alu"
+          "DNI_ALUMNO"
         ]
       },
       {
         "columns": [
-          "ESTADO_MATRICULA_Cod_Estado_Matricula"
+          "ID_ESTADO_MATRICULA"
         ],
         "table": "ESTADO_MATRICULA",
         "references": [
-          "Cod_Estado_Matricula"
+          "ID_ESTADO_MATRICULA"
         ]
       },
       {
         "columns": [
-          "Grupo_Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ],
-        "table": "Grupo",
+        "table": "HORARIO_ACADEMICO",
         "references": [
-          "Cod_Grupo"
+          "ID_HORARIO_ACADEMICO"
         ]
       }
     ],
     "display": [
-      "Cod_Matricula",
-      "ALUMNO_DNI_Alu"
+      "ID_MATRICULA",
+      "DNI_ALUMNO"
     ]
   },
-  "Nota_Examen": {
-    "name": "Nota_Examen",
+  "RESULTADO_SIMULACRO": {
+    "name": "RESULTADO_SIMULACRO",
     "label": "Notas de simulacros",
     "category": "Principal",
     "pk": [
-      "Cod_Nota"
+      "ID_RESULTADO"
     ],
     "columns": [
       {
-        "name": "Cod_Nota",
+        "name": "ID_RESULTADO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1332,7 +1332,7 @@
         "references": null
       },
       {
-        "name": "Puntaje_total",
+        "name": "PUNTAJE_TOTAL",
         "type": "decimal",
         "length": 8,
         "scale": 2,
@@ -1342,7 +1342,7 @@
         "references": null
       },
       {
-        "name": "Fech_registro",
+        "name": "FECHA_REGISTRO",
         "type": "datetime2",
         "length": 0,
         "scale": null,
@@ -1352,7 +1352,7 @@
         "references": null
       },
       {
-        "name": "MATRICULA_Cod_Matricula",
+        "name": "ID_MATRICULA",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1361,11 +1361,11 @@
         "pk": false,
         "references": {
           "table": "MATRICULA",
-          "column": "Cod_Matricula"
+          "column": "ID_MATRICULA"
         }
       },
       {
-        "name": "Examen_Grupo_Cod_examen_grupo",
+        "name": "ID_SIMULACRO_HORARIO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1373,12 +1373,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Examen_Grupo",
-          "column": "Cod_examen_grupo"
+          "table": "SIMULACRO_HORARIO",
+          "column": "ID_SIMULACRO_HORARIO"
         }
       },
       {
-        "name": "Grupo_Cod_Grupo",
+        "name": "ID_HORARIO_ACADEMICO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1386,38 +1386,38 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Examen_Grupo",
-          "column": "Grupo_Cod_Grupo"
+          "table": "SIMULACRO_HORARIO",
+          "column": "ID_HORARIO_ACADEMICO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "Examen_Grupo_Cod_examen_grupo",
-          "Grupo_Cod_Grupo"
+          "ID_SIMULACRO_HORARIO",
+          "ID_HORARIO_ACADEMICO"
         ],
-        "table": "Examen_Grupo",
+        "table": "SIMULACRO_HORARIO",
         "references": [
-          "Cod_examen_grupo",
-          "Grupo_Cod_Grupo"
+          "ID_SIMULACRO_HORARIO",
+          "ID_HORARIO_ACADEMICO"
         ]
       },
       {
         "columns": [
-          "MATRICULA_Cod_Matricula",
-          "Grupo_Cod_Grupo"
+          "ID_MATRICULA",
+          "ID_HORARIO_ACADEMICO"
         ],
         "table": "MATRICULA",
         "references": [
-          "Cod_Matricula",
-          "Grupo_Cod_Grupo"
+          "ID_MATRICULA",
+          "ID_HORARIO_ACADEMICO"
         ]
       }
     ],
     "display": [
-      "Cod_Nota",
-      "Puntaje_total"
+      "ID_RESULTADO",
+      "PUNTAJE_TOTAL"
     ]
   },
   "PARENTESCO": {
@@ -1425,11 +1425,11 @@
     "label": "Parentescos",
     "category": "Administración",
     "pk": [
-      "Cod_Paren"
+      "ID_PARENTESCO"
     ],
     "columns": [
       {
-        "name": "Cod_Paren",
+        "name": "ID_PARENTESCO",
         "type": "varchar",
         "length": 5,
         "scale": null,
@@ -1439,7 +1439,7 @@
         "references": null
       },
       {
-        "name": "Tipo_Paren",
+        "name": "PARENTESCO",
         "type": "varchar",
         "length": 40,
         "scale": null,
@@ -1451,20 +1451,20 @@
     ],
     "fks": [],
     "display": [
-      "Tipo_Paren",
-      "Cod_Paren"
+      "PARENTESCO",
+      "ID_PARENTESCO"
     ]
   },
-  "Pago": {
-    "name": "Pago",
+  "PAGO": {
+    "name": "PAGO",
     "label": "Pagos y pensiones",
     "category": "Principal",
     "pk": [
-      "Cod_Pago"
+      "ID_PAGO"
     ],
     "columns": [
       {
-        "name": "Cod_Pago",
+        "name": "ID_PAGO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1474,7 +1474,7 @@
         "references": null
       },
       {
-        "name": "CONCEPTO_PAGO_Cod_Concepto",
+        "name": "ID_CONCEPTO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1483,11 +1483,11 @@
         "pk": false,
         "references": {
           "table": "CONCEPTO_PAGO",
-          "column": "Cod_Concepto"
+          "column": "ID_CONCEPTO"
         }
       },
       {
-        "name": "Nro_Mensualidad",
+        "name": "NUMERO_MENSUALIDAD",
         "type": "tinyint",
         "length": null,
         "scale": null,
@@ -1497,7 +1497,7 @@
         "references": null
       },
       {
-        "name": "Monto",
+        "name": "MONTO",
         "type": "decimal",
         "length": 10,
         "scale": 2,
@@ -1507,7 +1507,7 @@
         "references": null
       },
       {
-        "name": "Fech_Vencimiento",
+        "name": "FECHA_VENCIMIENTO",
         "type": "date",
         "length": null,
         "scale": null,
@@ -1517,7 +1517,7 @@
         "references": null
       },
       {
-        "name": "ESTADO_PAGO_Cod_Estado",
+        "name": "ID_ESTADO_PAGO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1526,11 +1526,11 @@
         "pk": false,
         "references": {
           "table": "ESTADO_PAGO",
-          "column": "Cod_Estado"
+          "column": "ID_ESTADO_PAGO"
         }
       },
       {
-        "name": "Fech_Pago",
+        "name": "FECHA_PAGO",
         "type": "datetime2",
         "length": 0,
         "scale": null,
@@ -1540,7 +1540,7 @@
         "references": null
       },
       {
-        "name": "Medio_Pago",
+        "name": "ID_MEDIO_PAGO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1550,7 +1550,7 @@
         "references": null
       },
       {
-        "name": "Usuario_Cod_Usuario",
+        "name": "ID_USUARIO_RESPONSABLE",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1558,12 +1558,12 @@
         "default": false,
         "pk": false,
         "references": {
-          "table": "Usuario",
-          "column": "Cod_Usuario"
+          "table": "USUARIO",
+          "column": "ID_USUARIO"
         }
       },
       {
-        "name": "ALUMNO_DNI_Alu",
+        "name": "DNI_ALUMNO",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -1572,11 +1572,11 @@
         "pk": false,
         "references": {
           "table": "ALUMNO",
-          "column": "DNI_Alu"
+          "column": "DNI_ALUMNO"
         }
       },
       {
-        "name": "MATRICULA_Cod_Matricula",
+        "name": "ID_MATRICULA",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1585,74 +1585,74 @@
         "pk": false,
         "references": {
           "table": "MATRICULA",
-          "column": "Cod_Matricula"
+          "column": "ID_MATRICULA"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "ALUMNO_DNI_Alu"
+          "DNI_ALUMNO"
         ],
         "table": "ALUMNO",
         "references": [
-          "DNI_Alu"
+          "DNI_ALUMNO"
         ]
       },
       {
         "columns": [
-          "CONCEPTO_PAGO_Cod_Concepto"
+          "ID_CONCEPTO"
         ],
         "table": "CONCEPTO_PAGO",
         "references": [
-          "Cod_Concepto"
+          "ID_CONCEPTO"
         ]
       },
       {
         "columns": [
-          "ESTADO_PAGO_Cod_Estado"
+          "ID_ESTADO_PAGO"
         ],
         "table": "ESTADO_PAGO",
         "references": [
-          "Cod_Estado"
+          "ID_ESTADO_PAGO"
         ]
       },
       {
         "columns": [
-          "MATRICULA_Cod_Matricula",
-          "ALUMNO_DNI_Alu"
+          "ID_MATRICULA",
+          "DNI_ALUMNO"
         ],
         "table": "MATRICULA",
         "references": [
-          "Cod_Matricula",
-          "ALUMNO_DNI_Alu"
+          "ID_MATRICULA",
+          "DNI_ALUMNO"
         ]
       },
       {
         "columns": [
-          "Usuario_Cod_Usuario"
+          "ID_USUARIO_RESPONSABLE"
         ],
-        "table": "Usuario",
+        "table": "USUARIO",
         "references": [
-          "Cod_Usuario"
+          "ID_USUARIO"
         ]
       }
     ],
     "display": [
-      "Cod_Pago",
-      "Monto"
+      "ID_PAGO",
+      "MONTO"
     ]
   },
-  "Programa": {
-    "name": "Programa",
+  "PROGRAMA": {
+    "name": "PROGRAMA",
     "label": "Programas académicos",
     "category": "Académico",
     "pk": [
-      "Cod_Programa"
+      "ID_PROGRAMA"
     ],
     "columns": [
       {
-        "name": "Cod_Programa",
+        "name": "ID_PROGRAMA",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1662,7 +1662,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Programa",
+        "name": "NOMBRE_PROGRAMA",
         "type": "varchar",
         "length": 100,
         "scale": null,
@@ -1672,7 +1672,7 @@
         "references": null
       },
       {
-        "name": "Descripcion",
+        "name": "DESCRIPCION",
         "type": "varchar",
         "length": 250,
         "scale": null,
@@ -1682,7 +1682,7 @@
         "references": null
       },
       {
-        "name": "Activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -1694,8 +1694,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Programa",
-      "Cod_Programa"
+      "NOMBRE_PROGRAMA",
+      "ID_PROGRAMA"
     ]
   },
   "ROL": {
@@ -1703,11 +1703,11 @@
     "label": "Roles de acceso",
     "category": "Administración",
     "pk": [
-      "Cod_Rol"
+      "ID_ROL"
     ],
     "columns": [
       {
-        "name": "Cod_Rol",
+        "name": "ID_ROL",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1717,7 +1717,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Rol",
+        "name": "NOMBRE_ROL",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -1729,8 +1729,8 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Rol",
-      "Cod_Rol"
+      "NOMBRE_ROL",
+      "ID_ROL"
     ]
   },
   "TIPO_BLOQUE": {
@@ -1738,11 +1738,11 @@
     "label": "Tipos de bloque",
     "category": "Administración",
     "pk": [
-      "Cod_Tipo"
+      "ID_TIPO_BLOQUE"
     ],
     "columns": [
       {
-        "name": "Cod_Tipo",
+        "name": "ID_TIPO_BLOQUE",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1752,7 +1752,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Tipo",
+        "name": "NOMBRE_TIPO",
         "type": "varchar",
         "length": 60,
         "scale": null,
@@ -1764,20 +1764,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Tipo",
-      "Cod_Tipo"
+      "NOMBRE_TIPO",
+      "ID_TIPO_BLOQUE"
     ]
   },
-  "Turno": {
-    "name": "Turno",
+  "TURNO": {
+    "name": "TURNO",
     "label": "Turnos",
     "category": "Académico",
     "pk": [
-      "Cod_Turno"
+      "ID_TURNO"
     ],
     "columns": [
       {
-        "name": "Cod_Turno",
+        "name": "ID_TURNO",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1787,7 +1787,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Turno",
+        "name": "NOMBRE_TURNO",
         "type": "varchar",
         "length": 15,
         "scale": null,
@@ -1797,7 +1797,7 @@
         "references": null
       },
       {
-        "name": "Hr_Inicio",
+        "name": "HORA_INICIO",
         "type": "time",
         "length": 0,
         "scale": null,
@@ -1807,7 +1807,7 @@
         "references": null
       },
       {
-        "name": "Hr_Fin",
+        "name": "HORA_FIN",
         "type": "time",
         "length": 0,
         "scale": null,
@@ -1819,20 +1819,20 @@
     ],
     "fks": [],
     "display": [
-      "Nomb_Turno",
-      "Cod_Turno"
+      "NOMBRE_TURNO",
+      "ID_TURNO"
     ]
   },
-  "Usuario": {
-    "name": "Usuario",
+  "USUARIO": {
+    "name": "USUARIO",
     "label": "Usuarios",
     "category": "Administración",
     "pk": [
-      "Cod_Usuario"
+      "ID_USUARIO"
     ],
     "columns": [
       {
-        "name": "Cod_Usuario",
+        "name": "ID_USUARIO",
         "type": "varchar",
         "length": 20,
         "scale": null,
@@ -1842,7 +1842,7 @@
         "references": null
       },
       {
-        "name": "Nomb_Usuario",
+        "name": "NOMBRE_USUARIO",
         "type": "varchar",
         "length": 80,
         "scale": null,
@@ -1852,7 +1852,7 @@
         "references": null
       },
       {
-        "name": "Clave_Hash",
+        "name": "CLAVE_HASH",
         "type": "varchar",
         "length": 255,
         "scale": null,
@@ -1862,7 +1862,7 @@
         "references": null
       },
       {
-        "name": "ROL_Cod_Rol",
+        "name": "ID_ROL",
         "type": "varchar",
         "length": 10,
         "scale": null,
@@ -1871,11 +1871,11 @@
         "pk": false,
         "references": {
           "table": "ROL",
-          "column": "Cod_Rol"
+          "column": "ID_ROL"
         }
       },
       {
-        "name": "Activo",
+        "name": "ACTIVO",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -1885,7 +1885,7 @@
         "references": null
       },
       {
-        "name": "Debe_Cambiar_Clave",
+        "name": "DEBE_CAMBIAR_CLAVE",
         "type": "bit",
         "length": null,
         "scale": null,
@@ -1895,7 +1895,7 @@
         "references": null
       },
       {
-        "name": "ALUMNO_DNI_Alu",
+        "name": "DNI_ALUMNO",
         "type": "varchar",
         "length": 8,
         "scale": null,
@@ -1904,33 +1904,33 @@
         "pk": false,
         "references": {
           "table": "ALUMNO",
-          "column": "DNI_Alu"
+          "column": "DNI_ALUMNO"
         }
       }
     ],
     "fks": [
       {
         "columns": [
-          "ALUMNO_DNI_Alu"
+          "DNI_ALUMNO"
         ],
         "table": "ALUMNO",
         "references": [
-          "DNI_Alu"
+          "DNI_ALUMNO"
         ]
       },
       {
         "columns": [
-          "ROL_Cod_Rol"
+          "ID_ROL"
         ],
         "table": "ROL",
         "references": [
-          "Cod_Rol"
+          "ID_ROL"
         ]
       }
     ],
     "display": [
-      "Nomb_Usuario",
-      "Cod_Usuario"
+      "NOMBRE_USUARIO",
+      "ID_USUARIO"
     ]
   }
 }

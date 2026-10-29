@@ -38,23 +38,24 @@ const drawings={
 'heart':'<path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.8l-1-1.2a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>'
 };
 function ico(name,size=18){const shapes=drawings[name]||drawings.folder;return `<svg class="inline-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${shapes}</svg>`;}
-const navIcons={home:'layout-dashboard',ALUMNO:'users',MATRICULA:'clipboard',Pago:'wallet',Docente:'graduation',Grupo:'users',Horario:'calendar',Examen:'file-check',Examen_Grupo:'file-text',Nota_Examen:'award',Ciclo:'clock',Programa:'book',CURSOS:'book',Docente_Asignatura:'graduation',CARRERA:'graduation',Turno:'clock',Aula:'building',Usuario:'user-round',ROL:'shield'};
-const pretty={DNI_Alu:'DNI del estudiante',Nomb_Alu:'Nombres y apellidos',Correo_Alu:'Correo electrónico',Fech_Nac:'Fecha de nacimiento',Cel_Alu:'Celular',Dir_Alu:'Dirección',Nomb_Apoderado:'Nombre del apoderado',DNI_Apoderado:'DNI del apoderado',Cel_Apoderado:'Celular del apoderado',Correo_Apoderado:'Correo del apoderado',PARENTESCO_Cod_Paren:'Parentesco',CARRERA_Cod_Carrera:'Carrera de interés',DNI_Doc:'DNI del docente',Nom_Doc:'Nombres del docente',Cel_Doc:'Celular',Nomb_Usuario:'Usuario de acceso',ALUMNO_DNI_Alu:'Estudiante',ROL_Cod_Rol:'Rol de usuario',Fech_Matricula:'Fecha de matrícula',Grupo_Cod_Grupo:'Horario académico',Ciclo_Cod_Ciclo:'Ciclo académico',Aula_Cod_Aula:'Aula',Turno_Cod_Turno:'Turno',Programa_Cod_Programa:'Programa académico',ESTADO_CICLO_Cod_Estado:'Estado del ciclo',ESTADO_MATRICULA_Cod_Estado_Matricula:'Estado de matrícula',ESTADO_PAGO_Cod_Estado:'Estado de pago',CONCEPTO_PAGO_Cod_Concepto:'Concepto de pago',Nro_Mensualidad:'Número de mensualidad',Monto:'Monto (S/)',Medio_Pago:'Medio de pago',Fech_Pago:'Fecha y hora del pago',Fech_Vencimiento:'Fecha de vencimiento',MATRICULA_Cod_Matricula:'Matrícula relacionada',Usuario_Cod_Usuario:'Usuario que registró el cobro',Dia_Semana:'Día de la semana',Hr_Inicio:'Hora de inicio',Hr_Fin:'Hora de término',TIPO_BLOQUE_Cod_Tipo:'Tipo de bloque',Docente_Asignatura_CURSOS_Cod_Curso:'Curso',Docente_Asignatura_Docente_DNI_Doc:'Docente asignado',CURSOS_Cod_Curso:'Curso',Docente_DNI_Doc:'Docente',Examen_Cod_Examen:'Simulacro',Examen_Grupo_Cod_examen_grupo:'Simulacro asignado',ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen:'Estado del simulacro',Publicado:'Publicar resultados a estudiantes',Nro_Mensualidades:'Número de pensiones',Precio_Mensual:'Precio mensual (S/)',puntaje_maximo:'Puntaje máximo',Puntaje_total:'Puntaje obtenido',Cupo_Max:'Cupo máximo',Capacidad:'Capacidad del aula',Fech_Inicio:'Fecha de inicio',Fech_Fin:'Fecha de finalización',Fech_programada:'Fecha programada',Hr_inicio:'Hora del examen',Duracion_minutos:'Duración (minutos)',Fech_registro:'Fecha de registro',Cod_Nota:'Código de nota'};
-function label(k){if(k==='_estadoGestion')return 'Estado';if(pretty[k])return pretty[k];return k.replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^Cod /i,'Código de ').replace(/\b\w/g,c=>c.toUpperCase());}
+const navIcons={home:'layout-dashboard',ALUMNO:'users',MATRICULA:'clipboard',PAGO:'wallet',DOCENTE:'graduation',HORARIO_ACADEMICO:'users',BLOQUE_HORARIO:'calendar',SIMULACRO:'file-check',SIMULACRO_HORARIO:'file-text',RESULTADO_SIMULACRO:'award',CICLO:'clock',PROGRAMA:'book',CURSO:'book',CURSO_DOCENTE:'graduation',CARRERA:'graduation',TURNO:'clock',AULA:'building',USUARIO:'user-round',ROL:'shield'};
+const pretty={"DNI_ALUMNO":"DNI del estudiante","NOMBRE_COMPLETO":"Nombres y apellidos","CORREO":"Correo electrónico","FECHA_NACIMIENTO":"Fecha de nacimiento","CELULAR":"Celular","DIRECCION":"Dirección","NOMBRE_APODERADO":"Nombre del apoderado","DNI_APODERADO":"DNI del apoderado","CELULAR_APODERADO":"Celular del apoderado","CORREO_APODERADO":"Correo del apoderado","ID_PARENTESCO":"Parentesco","ID_CARRERA":"Carrera de interés","DNI_DOCENTE":"Docente","NOMBRE_USUARIO":"Usuario de acceso","ID_ROL":"Rol de usuario","FECHA_MATRICULA":"Fecha de matrícula","ID_HORARIO_ACADEMICO":"Horario académico","ID_CICLO":"Ciclo académico","ID_AULA":"Aula","ID_TURNO":"Turno","ID_PROGRAMA":"Programa académico","ID_ESTADO_CICLO":"Estado del ciclo","ID_ESTADO_MATRICULA":"Estado de matrícula","ID_ESTADO_PAGO":"Estado de pago","ID_CONCEPTO":"Concepto de pago","NUMERO_MENSUALIDAD":"Número de mensualidad","MONTO":"Monto (S/)","ID_MEDIO_PAGO":"Medio de pago","FECHA_PAGO":"Fecha y hora del pago","FECHA_VENCIMIENTO":"Fecha de vencimiento","ID_MATRICULA":"Matrícula relacionada","ID_USUARIO_RESPONSABLE":"Usuario responsable","DIA_SEMANA":"Día de la semana","HORA_INICIO":"Hora de inicio","HORA_FIN":"Hora de término","ID_TIPO_BLOQUE":"Tipo de bloque","ID_CURSO":"Curso","ID_SIMULACRO":"Simulacro","ID_SIMULACRO_HORARIO":"Simulacro asignado","ID_ESTADO_SIMULACRO":"Estado del simulacro","PUBLICADO":"Publicar resultados a estudiantes","NUMERO_MENSUALIDADES":"Número de pensiones","PRECIO_MENSUAL":"Precio mensual (S/)","PUNTAJE_MAXIMO":"Puntaje máximo","PUNTAJE_TOTAL":"Puntaje obtenido","CAPACIDAD_MAXIMA":"Cupo máximo","CAPACIDAD":"Capacidad del aula","FECHA_INICIO":"Fecha de inicio","FECHA_FIN":"Fecha de finalización","FECHA_PROGRAMADA":"Fecha programada","DURACION_MINUTOS":"Duración (minutos)","FECHA_REGISTRO":"Fecha de registro","ID_RESULTADO":"Código de nota"};
+function label(k){if(k==='_estadoGestion')return 'ESTADO';if(pretty[k])return pretty[k];return k.replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^Cod /i,'Código de ').replace(/\b\w/g,c=>c.toUpperCase());}
 function esc(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function fmtDate(value){if(!value)return '—';const s=String(value).slice(0,10);const parts=s.split('-');return parts.length===3?`${parts[2]}/${parts[1]}/${parts[0]}`:s;}
 function fmtTime(value){if(value==null)return '—';const s=String(value);return s.includes('T')?s.slice(11,16):s.slice(0,5);}
 function fmtDateTime(value){if(!value)return '—';const text=String(value);const date=new Date(/Z$|[+-]\d{2}:\d{2}$/.test(text)?text:text.replace(' ','T')+'Z');return Number.isNaN(date.getTime())?'—':new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',dateStyle:'short',timeStyle:'short'}).format(date);}
-function display(v,k){if(k==='Fech_Pago'||k==='Fech_registro')return esc(fmtDateTime(v));if(v===null||v===undefined||v==='')return '<span class="muted">—</span>';if(typeof v==='boolean')return `<span class="tag ${v?'good':'bad'}">${v?'Sí':'No'}</span>`;if(k==='Dia_Semana')return esc(days[Number(v)]||v);if(k.startsWith('Fech')||k==='Fech_registro')return fmtDate(v);if(k.toLowerCase().startsWith('hr_'))return fmtTime(v);if(k==='Monto'||k==='Precio_Mensual')return fmt.format(v);if(/^(ESTADO_|Estado$|Modalidad$)/.test(k)){const c=['PAGADO','ACTIVA','ACTIVO','RENDIDO','REGULAR'].includes(v)?'good':['PENDIENTE','PROGRAMADO'].includes(v)?'warn':'info';return `<span class="tag ${c}">${esc(v)}</span>`;}const t=String(v);return esc(t.length>56?t.slice(0,55)+'…':t);}
+function display(v,k){if(k==='FECHA_PAGO'||k==='FECHA_REGISTRO')return esc(fmtDateTime(v));if(v===null||v===undefined||v==='')return '<span class="muted">—</span>';if(typeof v==='boolean')return `<span class="tag ${v?'good':'bad'}">${v?'Sí':'No'}</span>`;if(k==='DIA_SEMANA')return esc(days[Number(v)]||v);if(k.startsWith('FECHA')||k==='FECHA_REGISTRO')return fmtDate(v);if(k.toLowerCase().startsWith('hora_'))return fmtTime(v);if(k==='MONTO'||k==='PRECIO_MENSUAL')return fmt.format(v);if(/^(ESTADO_|ESTADO$|MODALIDAD$)/.test(k)){const c=['PAGADO','ACTIVA','ACTIVO','RENDIDO','REGULAR'].includes(v)?'good':['PENDIENTE','PROGRAMADO'].includes(v)?'warn':'info';return `<span class="tag ${c}">${esc(v)}</span>`;}const t=String(v);return esc(t.length>56?t.slice(0,55)+'…':t);}
 async function api(route,options={}){
   const response=await fetch('/api'+route,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...options});
   let data;try{data=await response.json();}catch{throw Error('El servidor no devolvió una respuesta válida.');}
-  if(!response.ok){if(response.status===401&&state.user){state.user=null;showLogin();}throw Error(data.error||`Error ${response.status}`);}
+  if(!response.ok){if(response.status===401&&state.user){state.user=null;showLogin();}throw Error((data.error||`Error ${response.status}`)+(data.referencia?` Referencia: ${data.referencia}`:''));}
   return data;
 }
 let toastTimer;function toast(text,bad=false){const el=$('toast');el.innerHTML=`<span class="toast-symbol">${bad?'!':'✓'}</span><span>${esc(text)}</span>`;el.className='toast open'+(bad?' error':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='toast',4300);}
-function showLogin(){state.user=null;$('appView').hidden=true;$('loginView').hidden=false;closeModal();document.title='Iniciar sesión · Fractales Academy';}
-function showApp(user){state.user=user;$('appView').hidden=false;$('loginView').hidden=true;$('roleBadge').textContent=user.rol==='ADMIN'?'Administrador':'Estudiante';$('avatarInitials').textContent=user.nombre.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();$('profileName').textContent=user.nombre;renderNav();navigate('home');if(user.cambiar)passwordModal(true);}
+function syncSocialLinks(user){const root=$('studentSocialLinks');if(!root)return;root.replaceChildren();root.hidden=user?.rol!=='ALUMNO';if(root.hidden)return;root.innerHTML='<p>Síguenos en nuestras redes</p><div class="social-community-links">'+[['facebook','Facebook','https://www.facebook.com/fractalesacademia'],['instagram','Instagram','https://www.instagram.com/fractales_academy/']].map(([network,name,url])=>`<a class="social-network" href="${url}" target="_blank" rel="noopener noreferrer"><span class="social-network-icon social-${network}"><img src="/assets/social/${network}.svg" width="18" height="18" alt=""></span><span>${name}</span><span aria-hidden="true">↗</span></a>`).join('')+'</div>';}
+function showLogin(){state.user=null;syncSocialLinks(null);$('appView').hidden=true;$('loginView').hidden=false;closeModal();document.title='Iniciar sesión · Fractales Academy';}
+function showApp(user){state.user=user;syncSocialLinks(user);$('appView').hidden=false;$('loginView').hidden=true;$('roleBadge').textContent=user.rol==='ADMIN'?'Administrador':'Estudiante';$('avatarInitials').textContent=user.nombre.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();$('profileName').textContent=user.nombre;renderNav();navigate('home');if(user.cambiar)passwordModal(true);}
 async function boot(){
   $('today').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'}); $('loginYear').textContent=$('footerYear').textContent=new Date().getFullYear();
   $('loginForm').addEventListener('submit',async(e)=>{e.preventDefault();const btn=$('loginSubmit');btn.disabled=true;$('loginError').hidden=true;try{const data=await api('/auth/login',{method:'POST',body:JSON.stringify({usuario:$('loginUser').value,clave:$('loginPass').value,...($('loginActivation')?.value?{codigoActivacion:$('loginActivation').value}:{})})});$('loginPass').value='';if($('loginActivation'))$('loginActivation').value='';if(data.user.rol==='ADMIN'&&!data.user.cambiar)await loadMeta();showApp(data.user);}catch(err){$('loginError').textContent=err.message;$('loginError').hidden=false;}finally{btn.disabled=false;}});
@@ -76,7 +77,7 @@ async function navigate(id,page=1){openMenu(false);state.page=id;state.pageNo=pa
   try{if(state.user.cambiar){$('content').innerHTML='<div class="helper">Para empezar debes cambiar tu contraseña temporal.</div>';return;}
     if(typeof V41!=='undefined'&&await V41.route(id))return;
     if(state.user.rol==='ALUMNO')await studentView(id);
-    else if(id==='home')await dashboard();else if(id==='inscripcion')await V4.enrollmentView();else if(id==='Pago')await V4.paymentsView();else if(id==='Examen')await V4.examsView();else await tableView(id);
+    else if(id==='home')await dashboard();else if(id==='inscripcion')await V4.enrollmentView();else if(id==='PAGO')await V4.paymentsView();else if(id==='SIMULACRO')await V4.examsView();else await tableView(id);
   }catch(e){$('content').innerHTML=`<div class="panel empty-state"><span class="big">⚠</span><strong>No se pudo cargar esta sección</strong>${esc(e.message)}<br><button class="btn btn-secondary" id="retryBtn">Reintentar</button></div>`;$('retryBtn').onclick=()=>navigate(id);}
 }
 async function dashboard(){
@@ -96,16 +97,16 @@ async function dashboard(){
     <section class="banner-card"><div class="banner-copy"><span class="eyebrow">FRACTALES ACADEMY / GESTIÓN ACADÉMICA</span><h2>Un gran futuro<br><span>se construye hoy.</span></h2><p>Organiza estudiantes, matrículas y clases desde tu espacio de trabajo.</p><button class="banner-mini-btn" data-jump="MATRICULA">Gestionar matrículas ${ico('arrow-up-right',14)}</button></div><div class="banner-photo"><img src="/assets/banner-fractales.png" alt="Campaña institucional Fractales Academy"></div></section>
     <div class="stats-grid">${kpis.map(k=>`<div class="stat-card"><div class="stat-top"><span>${esc(k.label)}</span><div class="stat-icon">${ico(k.icon)}</div></div><div class="stat-value">${esc(k.value)}</div><div class="stat-hint">${esc(k.hint)}</div></div>`).join('')}</div>
     <div class="section-grid">
-      <section class="panel"><div class="panel-head"><div><h3>Últimas matrículas</h3><p>Movimientos recientes de inscripción</p></div><button data-jump="MATRICULA" class="link-action">Ver todas ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.recent.length?d.recent.map(x=>`<div class="item-row"><div class="item-icon">${ico('user-round')}</div><div class="item-row-content"><strong>${esc(x.Nomb_Alu)}</strong><small>${esc(x.Nomb_Grupo)} · ${esc(x.Cod_Matricula)}</small></div><span class="tag">${fmtDate(x.Fech_Matricula)}</span></div>`).join(''):emptyInline('Todavía no hay matrículas recientes.')}</div></section>
-      <section class="panel"><div class="panel-head"><div><h3>Agenda de simulacros</h3><p>Próximas evaluaciones programadas</p></div><button data-jump="Examen_Grupo" class="link-action">Ver agenda ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.exams.length?d.exams.map(x=>`<div class="item-row"><div class="item-icon">${ico('file-check')}</div><div class="item-row-content"><strong>${esc(x.Nomb_Examen)}</strong><small>${esc(x.Nomb_Grupo)}</small></div><span class="tag warn">${fmtDate(x.Fech_programada)}</span></div>`).join(''):emptyInline('No hay simulacros próximos en el calendario.')}</div></section>
+      <section class="panel"><div class="panel-head"><div><h3>Últimas matrículas</h3><p>Movimientos recientes de inscripción</p></div><button data-jump="MATRICULA" class="link-action">Ver todas ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.recent.length?d.recent.map(x=>`<div class="item-row"><div class="item-icon">${ico('user-round')}</div><div class="item-row-content"><strong>${esc(x.NOMBRE_COMPLETO)}</strong><small>${esc(x.NOMBRE_HORARIO)} · ${esc(x.ID_MATRICULA)}</small></div><span class="tag">${fmtDate(x.FECHA_MATRICULA)}</span></div>`).join(''):emptyInline('Todavía no hay matrículas recientes.')}</div></section>
+      <section class="panel"><div class="panel-head"><div><h3>Agenda de simulacros</h3><p>Próximas evaluaciones programadas</p></div><button data-jump="SIMULACRO_HORARIO" class="link-action">Ver agenda ${ico('arrow-right',13)}</button></div><div class="panel-inner">${d.exams.length?d.exams.map(x=>`<div class="item-row"><div class="item-icon">${ico('file-check')}</div><div class="item-row-content"><strong>${esc(x.NOMBRE_SIMULACRO)}</strong><small>${esc(x.NOMBRE_HORARIO)}</small></div><span class="tag warn">${fmtDate(x.FECHA_PROGRAMADA)}</span></div>`).join(''):emptyInline('No hay simulacros próximos en el calendario.')}</div></section>
     </div>
     <h3 class="dashboard-section-title">${ico('sparkles',18)} Accesos rápidos</h3><div class="quick-actions">${[
-      ['ALUMNO','Nuevo estudiante','user-plus'],['MATRICULA','Nueva matrícula','clipboard'],['Pago','Registrar pago','wallet'],['Horario','Gestionar horarios','calendar']
+      ['ALUMNO','Nuevo estudiante','user-plus'],['MATRICULA','Nueva matrícula','clipboard'],['PAGO','Registrar pago','wallet'],['BLOQUE_HORARIO','Gestionar horarios','calendar']
     ].map(([key,value,iconName])=>`<button class="quick-action" data-jump="${key}"><span class="quick-action-symbol">${ico(iconName,18)}</span><span>${value}</span><span class="quick-action-arrow">↗</span></button>`).join('')}</div>`;
   $('content').querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>navigate(b.dataset.jump));
 }
 function emptyInline(msg){return `<div class="empty-state" style="padding:24px 8px">${esc(msg)}</div>`;}
-function columnsFor(m){const ordered=[...m.display,...m.columns.map(c=>c.name)];return [...new Set(ordered)].filter(k=>!['Clave_Hash','Observaciones','Descripcion','Dir_Alu'].includes(k)).slice(0,6);}
+function columnsFor(m){const ordered=[...m.display,...m.columns.map(c=>c.name)];return [...new Set(ordered)].filter(k=>!['CLAVE_HASH','OBSERVACIONES','DESCRIPCION','DIRECCION'].includes(k)).slice(0,6);}
 let searchDebounce;
 async function tableView(id){
   if(typeof V41!=='undefined')return V41.tableView(id);
@@ -114,11 +115,11 @@ async function tableView(id){
   const data=await api(url);const cols=columnsFor(m);
   $('content').innerHTML=`
     <div class="module-header"><div><span class="eyebrow">${esc(m.category)} / ADMINISTRACIÓN</span><h2>${esc(m.label)}</h2><p>Organiza, consulta y actualiza la información de este módulo.</p></div><button class="btn btn-primary" id="addRecord">${ico('plus',16)} Crear registro</button></div>
-    ${id==='Horario'?'<div class="helper"><strong>Control de horarios:</strong> se validan los cruces por grupo, aula y docente, considerando el ciclo y el turno.</div>':''}
-    ${id==='Pago'?'<div class="helper"><strong>Política de cobros:</strong> verifica conceptos, matrícula inicial y mensualidades según las restricciones de SQL Server.</div>':''}
+    ${id==='BLOQUE_HORARIO'?'<div class="helper"><strong>Control de horarios:</strong> se validan los cruces por grupo, aula y docente, considerando el ciclo y el turno.</div>':''}
+    ${id==='PAGO'?'<div class="helper"><strong>Política de cobros:</strong> verifica conceptos, matrícula inicial y mensualidades según las restricciones de SQL Server.</div>':''}
     <section class="panel"><div class="module-toolbar"><div class="search-wrap"><span aria-hidden="true">⌕</span><input class="search-input" type="search" id="searchRecords" value="${esc(state.q)}" placeholder="Buscar por nombre o código…" aria-label="Buscar registros"></div><span class="search-meta">${Number(data.count).toLocaleString('es-PE')} registros</span></div>
     ${data.rows.length?`<div class="table-scroll"><table><thead><tr>${cols.map(c=>`<th scope="col">${esc(label(c))}</th>`).join('')}<th scope="col">Acciones</th></tr></thead><tbody>${data.rows.map(row=>`<tr>${cols.map((col,i)=>`<td class="${i===0?'td-title':''}">${display(row[col],col)}</td>`).join('')}<td><div class="actions-cell"><button class="btn btn-secondary btn-sm" data-edit="${esc(row._id)}" aria-label="Editar registro">${ico('pencil',13)} Editar</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><span class="big">${ico('folder',26)}</span><strong>Sin registros ${state.q?'para esta búsqueda':''}</strong><p>${state.q?'Prueba con otro nombre o código.':'Todavía no hay datos aquí. Crea tu primer registro para empezar.'}</p></div>`}
-    <div class="table-bottom"><span>Página ${state.pageNo} de ${Math.max(1,Math.ceil(data.count/data.pageSize))}</span><div class="pager"><button id="prevPage" ${state.pageNo===1?'disabled':''}>← Anterior</button><button id="nextPage" ${state.pageNo*data.pageSize>=data.count?'disabled':''}>Siguiente →</button></div></div></section>`;
+    <div class="table-bottom"><span>Página ${state.pageNo} de ${Math.max(1,Math.ceil(data.count/data.pageSize))}</span><div class="pager"><button id="prevPage" ${state.pageNo===1?'disabled':''}>← DATOS_ANTERIORES</button><button id="nextPage" ${state.pageNo*data.pageSize>=data.count?'disabled':''}>Siguiente →</button></div></div></section>`;
   $('addRecord').onclick=()=>recordModal(m,null);
   $('searchRecords').addEventListener('input',e=>{const q=e.target.value;const pos=e.target.selectionStart;clearTimeout(searchDebounce);searchDebounce=setTimeout(async()=>{
     state.q=q;state.pageNo=1;try{await tableView(id);const input=$('searchRecords');if(input&&document.activeElement!==input){input.focus();try{input.setSelectionRange(pos,pos);}catch{}}}catch(err){toast(err.message,true);}
@@ -132,54 +133,54 @@ let modalFocusOrigin=null;function modal(title,sub,body,footer){modalFocusOrigin
   $('modalRoot').querySelector('.close-modal').onclick=closeModal;setTimeout(()=>$('modalRoot').querySelector('input,button')?.focus(),0);}
 function closeModal(){const root=$('modalRoot');root.hidden=true;root.innerHTML='';document.body.classList.remove('modal-open');if(modalFocusOrigin?.isConnected)modalFocusOrigin.focus();modalFocusOrigin=null;}
 function initialValue(col,m,existing){if(existing)return existing[col.name];const key=col.name;
-  if(key==='ESTADO_MATRICULA_Cod_Estado_Matricula')return 'ACTIVA';
-  if(key==='ESTADO_PAGO_Cod_Estado')return 'PENDIENTE';
-  if(key==='ESTADO_CICLO_Cod_Estado'||key==='ESTADO_EXAMEN_GRUPO_Cod_Estado_Examen')return 'PROGRAMADO';
-  if(key==='Modalidad')return 'REGULAR';if(key==='Nro_Mensualidades')return 4;
-  if(key==='Precio_Mensual')return 250;
-  if(key==='ROL_Cod_Rol')return 'ADMIN';
-  if(key==='Activo'||key==='Activa'||key==='activo')return true;
-  if(key==='Fech_Matricula')return new Date().toISOString().slice(0,10);
-  if(key==='Publicado'||key==='Debe_Cambiar_Clave')return false;
+  if(key==='ID_ESTADO_MATRICULA')return 'ACTIVA';
+  if(key==='ID_ESTADO_PAGO')return 'PENDIENTE';
+  if(key==='ID_ESTADO_CICLO'||key==='ID_ESTADO_SIMULACRO')return 'PROGRAMADO';
+  if(key==='MODALIDAD')return 'REGULAR';if(key==='NUMERO_MENSUALIDADES')return 4;
+  if(key==='PRECIO_MENSUAL')return 250;
+  if(key==='ID_ROL')return 'ADMIN';
+  if(key==='ACTIVO'||key==='ACTIVO'||key==='ACTIVO')return true;
+  if(key==='FECHA_MATRICULA')return new Date().toISOString().slice(0,10);
+  if(key==='PUBLICADO'||key==='DEBE_CAMBIAR_CLAVE')return false;
   return '';
 }
 function htmlValue(v,col){if(v==null)return '';if(col.type==='time')return fmtTime(v);if(col.type==='date')return String(v).slice(0,10);if(col.type==='datetime2')return String(v).slice(0,16);return String(v);}
 function selectOptions(field,value){let opts=[];
-  if(field.name==='Modalidad')opts=['REGULAR','ACELERADO'];
-  if(field.name==='Medio_Pago')opts=['YAPE','EFECTIVO','TARJETA'];
-  if(field.name==='Estado'&&state.page==='Examen_Grupo')opts=['PROGRAMADO','RENDIDO','CANCELADO'];
-  if(field.name==='Dia_Semana')opts=[1,2,3,4,5,6,7];
-  return opts.map(v=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${field.name==='Dia_Semana'?days[v]:esc(v)}</option>`).join('');
+  if(field.name==='MODALIDAD')opts=['REGULAR','ACELERADO'];
+  if(field.name==='ID_MEDIO_PAGO')opts=['YAPE','EFECTIVO','TARJETA'];
+  if(field.name==='ESTADO'&&state.page==='SIMULACRO_HORARIO')opts=['PROGRAMADO','RENDIDO','CANCELADO'];
+  if(field.name==='DIA_SEMANA')opts=[1,2,3,4,5,6,7];
+  return opts.map(v=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${field.name==='DIA_SEMANA'?days[v]:esc(v)}</option>`).join('');
 }
 function formControl(col,m,existing){const name=col.name;
-  if(name==='Usuario_Cod_Usuario'&&m.name==='Pago')return '';
-  if(name==='Fech_Pago'&&m.name==='Pago')return '';
-  if(name==='Estado'&&m.name==='Examen_Grupo')return '';
-  if(name==='Clave_Hash')return '';
-  if(name==='Debe_Cambiar_Clave'&&m.name==='Usuario')return '';
-  const immutable=existing&&(({MATRICULA:['ALUMNO_DNI_Alu','Grupo_Cod_Grupo','Fech_Matricula'],Nota_Examen:['MATRICULA_Cod_Matricula','Examen_Grupo_Cod_examen_grupo','Grupo_Cod_Grupo','Fech_registro'],Examen_Grupo:['Examen_Cod_Examen','Grupo_Cod_Grupo'],Usuario:['Nomb_Usuario','ROL_Cod_Rol','ALUMNO_DNI_Alu']})[m.name]||[]).includes(name);
+  if(name==='ID_USUARIO_RESPONSABLE'&&m.name==='PAGO')return '';
+  if(name==='FECHA_PAGO'&&m.name==='PAGO')return '';
+  if(name==='ESTADO'&&m.name==='SIMULACRO_HORARIO')return '';
+  if(name==='CLAVE_HASH')return '';
+  if(name==='DEBE_CAMBIAR_CLAVE'&&m.name==='USUARIO')return '';
+  const immutable=existing&&(({MATRICULA:['DNI_ALUMNO','ID_HORARIO_ACADEMICO','FECHA_MATRICULA'],RESULTADO_SIMULACRO:['ID_MATRICULA','ID_SIMULACRO_HORARIO','ID_HORARIO_ACADEMICO','FECHA_REGISTRO'],SIMULACRO_HORARIO:['ID_SIMULACRO','ID_HORARIO_ACADEMICO'],USUARIO:['NOMBRE_USUARIO','ID_ROL','DNI_ALUMNO']})[m.name]||[]).includes(name);
   const v=initialValue(col,m,existing);
-  const pkAuto=!existing&&col.pk&&m.pk.length===1&&/^Cod_/i.test(name)&&['MATRICULA','Pago','Usuario','Nota_Examen','Examen_Grupo'].includes(m.name);
+  const pkAuto=!existing&&col.pk&&m.pk.length===1&&/^ID_/i.test(name)&&['MATRICULA','PAGO','USUARIO','RESULTADO_SIMULACRO','SIMULACRO_HORARIO'].includes(m.name);
   if(pkAuto)return '';
   const required=col.required&&!col.default&&!pkAuto&&!existing;
   const mark=required?'<span class="required-mark"> *</span>':'';
-  const inpBase=`name="${esc(name)}" id="field-${esc(name)}" data-field="${esc(name)}" ${required?'required':''} ${existing&&col.pk||immutable?'disabled':''} ${/^Cel_/.test(name)?'inputmode="numeric" pattern="[0-9]{9}" minlength="9" title="Exactamente nueve dígitos sin espacios ni símbolos"':/^DNI_/.test(name)?'inputmode="numeric" pattern="[0-9]{8}" minlength="8"':col.pk&&!col.references?'pattern="[A-Za-z0-9_-]+" title="Código obligatorio: letras, números, guion o guion bajo"':''}`;
+  const inpBase=`name="${esc(name)}" id="field-${esc(name)}" data-field="${esc(name)}" ${required?'required':''} ${existing&&col.pk||immutable?'disabled':''} ${/^CELULAR/.test(name)?'inputmode="numeric" pattern="[0-9]{9}" minlength="9" title="Exactamente nueve dígitos sin espacios ni símbolos"':/^DNI_/.test(name)?'inputmode="numeric" pattern="[0-9]{8}" minlength="8"':col.pk&&!col.references?'pattern="[A-Za-z0-9_-]+" title="Código obligatorio: letras, números, guion o guion bajo"':''}`;
   let el='';
   if(col.references){el=`<select ${inpBase}><option value="">${col.required?'Selecciona una opción':'Sin asignar'}</option>${v!==''&&v!=null?`<option value="${esc(v)}" selected>${esc(v)}</option>`:''}</select>`;}
   else if(col.type==='bit')el=`<select ${inpBase}><option value="true" ${v===true||v===1?'selected':''}>Sí</option><option value="false" ${v===false||v===0||v===''?'selected':''}>No</option></select>`;
-  else if(['Dia_Semana','Modalidad','Medio_Pago'].includes(name))el=`<select ${inpBase}>${name==='Medio_Pago'?'<option value="">Sin especificar</option>':''}${selectOptions(col,v)}</select>`;
-  else if(['Descripcion','Observaciones','Dir_Alu'].includes(name))el=`<textarea ${inpBase} maxlength="${col.length||250}" placeholder="Escribe aquí…">${esc(htmlValue(v,col))}</textarea>`;
+  else if(['DIA_SEMANA','MODALIDAD','ID_MEDIO_PAGO'].includes(name))el=`<select ${inpBase}>${name==='ID_MEDIO_PAGO'?'<option value="">Sin especificar</option>':''}${selectOptions(col,v)}</select>`;
+  else if(['DESCRIPCION','OBSERVACIONES','DIRECCION'].includes(name))el=`<textarea ${inpBase} maxlength="${col.length||250}" placeholder="Escribe aquí…">${esc(htmlValue(v,col))}</textarea>`;
   else {const type=col.type==='date'?'date':col.type==='time'?'time':col.type==='datetime2'?'datetime-local':['tinyint','smallint','decimal'].includes(col.type)?'number':'text';
     const num=type==='number'?` min="0" step="${col.type==='decimal'?'0.01':'1'}"`:'';
     el=`<input ${inpBase} type="${type}" ${num} ${col.length&&type==='text'?`maxlength="${col.length}"`:''} value="${esc(htmlValue(v,col))}" placeholder="${pkAuto?'Automático si lo dejas vacío':`Ingresa ${label(name).toLowerCase()}`}">`;
   }
   const note=pkAuto?'<div class="field-note">Opcional: se genera un código único automáticamente.</div>':null;
-  return `<div class="field ${['Descripcion','Observaciones','Dir_Alu'].includes(name)?'full':''}"><label for="field-${esc(name)}">${esc(label(name))}${mark}</label>${el}${note||''}</div>`;
+  return `<div class="field ${['DESCRIPCION','OBSERVACIONES','DIRECCION'].includes(name)?'full':''}"><label for="field-${esc(name)}">${esc(label(name))}${mark}</label>${el}${note||''}</div>`;
 }
 async function recordModal(m,record){
   if(!record&&['ALUMNO','MATRICULA'].includes(m.name)){await navigate('inscripcion');return;}
-  if(['Horario','Grupo'].includes(m.name)){await V44.editor(record?.Grupo_Cod_Grupo||record?.Cod_Grupo||null);return;}
-  const creating=!record;const body=`<form id="recordForm"><div class="form-grid">${m.columns.map(c=>formControl(c,m,record)).join('')}${!creating&&['Nota_Examen','Examen_Grupo'].includes(m.name)?'<div class="field full"><label for="changeReason">Motivo del cambio *</label><input id="changeReason" required minlength="5" maxlength="250"></div>':''}${m.name==='Usuario'?`<div class="field full"><label for="newSecret">${creating?'Contraseña inicial *':'Nueva contraseña (opcional)'}</label><input type="password" id="newSecret" minlength="12" maxlength="72" ${creating?'required':''} autocomplete="new-password" placeholder="Mínimo 12 caracteres"><div class="field-note">Las contraseñas se almacenan mediante hash seguro.</div></div>`:''}</div><div class="form-actions"><button class="btn btn-secondary" type="button" id="cancelRecord">Cancelar</button><button class="btn btn-primary" id="saveRecord" type="submit">${creating?'Crear registro':'Guardar cambios'} →</button></div></form>`;
+  if(['BLOQUE_HORARIO','HORARIO_ACADEMICO'].includes(m.name)){await V44.editor(record?.ID_HORARIO_ACADEMICO||record?.ID_HORARIO_ACADEMICO||null);return;}
+  const creating=!record;const body=`<form id="recordForm"><div class="form-grid">${m.columns.map(c=>formControl(c,m,record)).join('')}${!creating&&['RESULTADO_SIMULACRO','SIMULACRO_HORARIO'].includes(m.name)?'<div class="field full"><label for="changeReason">Motivo del cambio *</label><input id="changeReason" required minlength="5" maxlength="250"></div>':''}${m.name==='USUARIO'?`<div class="field full"><label for="newSecret">${creating?'Contraseña inicial *':'Nueva contraseña (opcional)'}</label><input type="password" id="newSecret" minlength="12" maxlength="72" ${creating?'required':''} autocomplete="new-password" placeholder="Mínimo 12 caracteres"><div class="field-note">Las contraseñas se almacenan mediante hash seguro.</div></div>`:''}</div><div class="form-actions"><button class="btn btn-secondary" type="button" id="cancelRecord">Cancelar</button><button class="btn btn-primary" id="saveRecord" type="submit">${creating?'Crear registro':'Guardar cambios'} →</button></div></form>`;
   modal(creating?'Nuevo registro':'Editar registro',m.label,body);
   $('cancelRecord').onclick=closeModal;
   const refs=m.columns.filter(c=>c.references).map(c=>({field:c.name,ref:c.references.table,refCol:c.references.column}));
@@ -193,8 +194,8 @@ async function recordModal(m,record){
       select.value=old;
     }catch(err){toast(`No se cargaron opciones de ${ref}: ${err.message}`,true);}
   }));
-  const cycle=$('field-Modalidad');if(cycle)cycle.addEventListener('change',()=>{if(!record&&$('field-Nro_Mensualidades'))$('field-Nro_Mensualidades').value=cycle.value==='ACELERADO'?2:4;});
-  const eg=$('field-Examen_Grupo_Cod_examen_grupo');if(eg&&m.name==='Nota_Examen')eg.addEventListener('change',async()=>{if(!eg.value)return;try{const d=await api(`/options/Examen_Grupo?q=${encodeURIComponent(eg.value)}`);const match=d.rows.find(x=>x.value===eg.value);if(match&&$('field-Grupo_Cod_Grupo'))$('field-Grupo_Cod_Grupo').value=match.row.Grupo_Cod_Grupo;}catch{}});
+  const cycle=$('field-MODALIDAD');if(cycle)cycle.addEventListener('change',()=>{if(!record&&$('field-NUMERO_MENSUALIDADES'))$('field-NUMERO_MENSUALIDADES').value=cycle.value==='ACELERADO'?2:4;});
+  const eg=$('field-ID_SIMULACRO_HORARIO');if(eg&&m.name==='RESULTADO_SIMULACRO')eg.addEventListener('change',async()=>{if(!eg.value)return;try{const d=await api(`/options/SIMULACRO_HORARIO?q=${encodeURIComponent(eg.value)}`);const match=d.rows.find(x=>x.value===eg.value);if(match&&$('field-ID_HORARIO_ACADEMICO'))$('field-ID_HORARIO_ACADEMICO').value=match.row.ID_HORARIO_ACADEMICO;}catch{}});
   // El usuario puede cerrar la ventana mientras se cargan los catálogos.
   if(!$('recordForm'))return;
   $('recordForm').addEventListener('submit',async(e)=>{e.preventDefault();const data={};
@@ -204,7 +205,7 @@ async function recordModal(m,record){
       else if(['tinyint','smallint','decimal'].includes(c.type))v=Number(v);
       data[c.name]=v;
     }
-    if(m.name==='Usuario'){const secret=$('newSecret').value;if(secret)data.Nueva_Clave=secret;}
+    if(m.name==='USUARIO'){const secret=$('newSecret').value;if(secret)data.NUEVA_CLAVE=secret;}
     if($('changeReason'))data.Motivo_Cambio=$('changeReason').value;
     const btn=$('saveRecord');btn.disabled=true;btn.textContent='Guardando…';
     try{const url=`/records/${encodeURIComponent(m.name)}${record?'/'+encodeURIComponent(record._id):''}`;
@@ -230,37 +231,37 @@ function statStudent(title,value,subtitle,icon,style='orange'){
   return `<article class="student-metric ${style}"><div class="student-metric-symbol">${ico(icon,20)}</div><p>${esc(title)}</p><strong>${esc(value)}</strong><small>${esc(subtitle)}</small></article>`;
 }
 function studentEmpty(icon,title,text){return `<div class="student-empty">${ico(icon,28)}<strong>${esc(title)}</strong><p>${esc(text)}</p></div>`;}
-function studentGroupCard(g){return `<article class="student-group-card"><div class="group-tile-art">${ico('graduation',26)}</div><div><span class="tiny-label">MI GRUPO</span><h4>${esc(g.Nomb_Grupo||'Grupo asignado')}</h4><p>${esc(g.Nomb_Ciclo||'Ciclo')} · ${esc(g.Nomb_Programa||'Programa')}<br>${esc(g.Cod_Matricula||'')} · ${esc(g.Nomb_Turno||'')}<br>${fmtDate(g.Fech_Inicio)} al ${fmtDate(g.Fech_Fin)}</p></div>${schoolTag(g.ESTADO_MATRICULA_Cod_Estado_Matricula)}</article>`;}
+function studentGroupCard(g){return `<article class="student-group-card"><div class="group-tile-art">${ico('graduation',26)}</div><div><span class="tiny-label">MI GRUPO</span><h4>${esc(g.NOMBRE_HORARIO||'HORARIO_ACADEMICO asignado')}</h4><p>${esc(g.NOMBRE_CICLO||'CICLO')} · ${esc(g.NOMBRE_PROGRAMA||'PROGRAMA')}<br>${esc(g.ID_MATRICULA||'')} · ${esc(g.NOMBRE_TURNO||'')}<br>${fmtDate(g.FECHA_INICIO)} al ${fmtDate(g.FECHA_FIN)}</p></div>${schoolTag(g.ID_ESTADO_MATRICULA)}</article>`;}
 function studentResults(d){
   if(!d.notes.length)return studentEmpty('award','Tus notas aparecerán aquí','Verás los puntajes de simulacros cuando la academia los publique.');
   return `<div class="student-result-list">${d.notes.map(n=>{
-    const score=Number(n.Puntaje_total),maximum=Number(n.puntaje_maximo);
+    const score=Number(n.PUNTAJE_TOTAL),maximum=Number(n.PUNTAJE_MAXIMO);
     const ok=Number.isFinite(score)&&Number.isFinite(maximum)&&maximum>0;
     const width=ok?Math.max(0,Math.min(100,score/maximum*100)):0;
-    return `<article class="student-result"><div class="student-result-head"><div><span class="tiny-label">SIMULACRO PUBLICADO</span><h4>${esc(n.Nomb_Examen||'Evaluación')}</h4><p>${esc(n.Nomb_Grupo||'')} · ${fmtDate(n.Fech_programada)}</p></div><div class="result-score"><strong>${esc(n.Puntaje_total)}</strong><small>${ok?'de '+esc(n.puntaje_maximo)+' puntos':'puntos'}</small></div></div>${ok?`<div class="student-progress-track" role="progressbar" aria-label="Porcentaje de puntaje en ${esc(n.Nomb_Examen)}" aria-valuenow="${Math.round(width)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${width}%"></span></div>`:''}</article>`;
+    return `<article class="student-result"><div class="student-result-head"><div><span class="tiny-label">SIMULACRO PUBLICADO</span><h4>${esc(n.NOMBRE_SIMULACRO||'Evaluación')}</h4><p>${esc(n.NOMBRE_HORARIO||'')} · ${fmtDate(n.FECHA_PROGRAMADA)}</p></div><div class="result-score"><strong>${esc(n.PUNTAJE_TOTAL)}</strong><small>${ok?'de '+esc(n.PUNTAJE_MAXIMO)+' puntos':'puntos'}</small></div></div>${ok?`<div class="student-progress-track" role="progressbar" aria-label="Porcentaje de puntaje en ${esc(n.NOMBRE_SIMULACRO)}" aria-valuenow="${Math.round(width)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${width}%"></span></div>`:''}</article>`;
   }).join('')}</div>`;
 }
 function studentCalendar(d){
   if(typeof V4!=='undefined')return V4.weekly(d.schedule);
   if(!d.schedule.length)return studentEmpty('calendar','Sin horarios publicados','Tus clases se mostrarán cuando la academia registre un horario para tu grupo.');
   const grouped=new Map();
-  for(const item of d.schedule){const day=Number(item.Dia_Semana);const name=days[day]||String(item.Dia_Semana||'Día');if(!grouped.has(name))grouped.set(name,[]);grouped.get(name).push(item);}
-  return `<div class="student-timetable">${[...grouped].map(([day,rows])=>`<section class="student-day"><div class="student-day-title"><span class="day-dot"></span><h4>${esc(day)}</h4><span>${rows.length} ${rows.length===1?'bloque':'bloques'}</span></div><div class="student-classes">${rows.map(r=>`<article class="student-class"><span class="class-clock">${ico('clock',15)} ${fmtTime(r.Hr_Inicio)}–${fmtTime(r.Hr_Fin)}</span><div><strong>${esc(r.Nomb_Curso||'Bloque académico')}</strong><small>${esc(r.Nom_Doc||'Docente por confirmar')} · ${esc(r.Nomb_Grupo||'')}</small></div></article>`).join('')}</div></section>`).join('')}</div>`;
+  for(const item of d.schedule){const day=Number(item.DIA_SEMANA);const name=days[day]||String(item.DIA_SEMANA||'Día');if(!grouped.has(name))grouped.set(name,[]);grouped.get(name).push(item);}
+  return `<div class="student-timetable">${[...grouped].map(([day,rows])=>`<section class="student-day"><div class="student-day-title"><span class="day-dot"></span><h4>${esc(day)}</h4><span>${rows.length} ${rows.length===1?'bloque':'bloques'}</span></div><div class="student-classes">${rows.map(r=>`<article class="student-class"><span class="class-clock">${ico('clock',15)} ${fmtTime(r.HORA_INICIO)}–${fmtTime(r.HORA_FIN)}</span><div><strong>${esc(r.NOMBRE_CURSO||'Bloque académico')}</strong><small>${esc(r.NOMBRE_COMPLETO||'DOCENTE por confirmar')} · ${esc(r.NOMBRE_HORARIO||'')}</small></div></article>`).join('')}</div></section>`).join('')}</div>`;
 }
 function studentPaymentCard(p){
- const status=String(p.ESTADO_PAGO_Cod_Estado||'').toUpperCase();
+ const status=String(p.ID_ESTADO_PAGO||'').toUpperCase();
  const statusClass=status==='PAGADO'?'paid':status==='PENDIENTE'?'pending':'neutral';
- return `<article class="student-payment"><div class="payment-icon">${ico('credit-card',20)}</div><div class="payment-details"><strong>${esc(p.CONCEPTO_PAGO_Cod_Concepto||'Concepto académico')}${p.Nro_Mensualidad?' · Cuota '+esc(p.Nro_Mensualidad):''}</strong><small>Matrícula: ${esc(p.MATRICULA_Cod_Matricula||'Inscripción inicial')} · Vence: ${fmtDate(p.Fech_Vencimiento)}${p.Fech_Pago?' · Pagado: '+esc(fmtDateTime(p.Fech_Pago))+' (Perú) · '+esc(p.Medio_Pago):''}</small></div><div class="payment-amount"><b>${fmt.format(Number(p.Monto)||0)}</b><span class="payment-status ${statusClass}">${esc(status||'SIN ESTADO')}</span></div></article>`;
+ return `<article class="student-payment"><div class="payment-icon">${ico('credit-card',20)}</div><div class="payment-details"><strong>${esc(p.ID_CONCEPTO||'Concepto académico')}${p.NUMERO_MENSUALIDAD?' · Cuota '+esc(p.NUMERO_MENSUALIDAD):''}</strong><small>Matrícula: ${esc(p.ID_MATRICULA||'Inscripción inicial')} · Vence: ${fmtDate(p.FECHA_VENCIMIENTO)}${p.FECHA_PAGO?' · Pagado: '+esc(fmtDateTime(p.FECHA_PAGO))+' (Perú) · '+esc(p.ID_MEDIO_PAGO):''}</small></div><div class="payment-amount"><b>${fmt.format(Number(p.MONTO)||0)}</b><span class="payment-status ${statusClass}">${esc(status||'SIN ESTADO')}</span></div></article>`;
 }
 async function studentView(page){
   if(typeof V41!=='undefined')return V41.studentView(page);
   header('Portal del estudiante','Mi espacio académico');
   const d=await api('/student/overview');
-  const first=String(d.profile?.Nomb_Alu||state.user.nombre||'Estudiante').trim().split(/\s+/)[0];
+  const first=String(d.profile?.NOMBRE_COMPLETO||state.user.nombre||'Estudiante').trim().split(/\s+/)[0];
   const now=new Date();
   const tabs=[['resumen','Inicio','layout-dashboard'],['horario','Mi horario','calendar'],['notas','Mis notas','award'],['pagos','Mis pagos','credit-card']];
   let tab=page==='student-notes'?'notas':page==='student-schedule'?'horario':page==='student-payments'?'pagos':'resumen';
-  const pending=d.payments.filter(x=>String(x.ESTADO_PAGO_Cod_Estado).toUpperCase()==='PENDIENTE');
+  const pending=d.payments.filter(x=>String(x.ID_ESTADO_PAGO).toUpperCase()==='PENDIENTE');
   const headline=`${studentWelcome()}, ${esc(first)}!`;
   $('content').innerHTML=`<div class="student-page"><section class="student-welcome">
      <div class="student-welcome-overlay"></div><div class="student-floating-spark spark-one" aria-hidden="true">✦</div><div class="student-floating-spark spark-two" aria-hidden="true">✳</div>
@@ -281,7 +282,7 @@ async function studentView(page){
       content+=studentSection('Tu próximo paso','Accede rápidamente a tu información académica',`<div class="student-access-grid"><button data-student-go="horario" class="student-access-card"><span class="access-illustration blue">${ico('calendar',26)}</span><strong>Organiza tu semana</strong><small>Revisa tus días y horarios de clase</small><span class="access-arrow">↗</span></button><button data-student-go="notas" class="student-access-card"><span class="access-illustration violet">${ico('award',26)}</span><strong>Sigue tus logros</strong><small>Consulta las notas ya publicadas</small><span class="access-arrow">↗</span></button><button data-student-go="pagos" class="student-access-card"><span class="access-illustration peach">${ico('credit-card',26)}</span><strong>Consulta tus pagos</strong><small>${pending.length?`${pending.length} registro(s) pendiente(s)`:'Revisa tu historial y vencimientos'}</small><span class="access-arrow">↗</span></button></div>`);
       content+=studentSection('Mis grupos','Tu lugar en Fractales Academy',d.groups.length?`<div class="student-groups">${d.groups.map(studentGroupCard).join('')}</div>`:studentEmpty('users','No tienes grupos registrados','Cuando te matricules, tus grupos se mostrarán aquí.'));
       content+=`</div><aside class="student-dashboard-side"><section class="student-story-card"><img src="/assets/estudio-ilustracion.svg" alt="Ilustración de cuadernos y materiales para estudiar" loading="lazy"><span class="tiny-label">TU MOTIVACIÓN DEL DÍA</span><h3>Tu esfuerzo abre posibilidades.</h3><p>Aprende, crece y trasciende. Cada clase es una oportunidad.</p></section>`;
-      content+=`<section class="student-aside-panel"><div class="student-aside-title">${ico('file-check',20)}<h3>Próximos simulacros</h3></div>${d.exams.length?`<div class="student-exam-list">${d.exams.slice(0,4).map(x=>`<div class="student-exam"><span class="exam-date">${fmtDate(x.Fech_programada)}</span><strong>${esc(x.Nomb_Examen)}</strong><small>${esc(x.Nomb_Grupo||'')} · ${fmtTime(x.Hr_inicio)}</small></div>`).join('')}</div>`:studentEmpty('calendar','Sin simulacros programados','La academia publicará los próximos exámenes aquí.')}</section></aside></div>`;
+      content+=`<section class="student-aside-panel"><div class="student-aside-title">${ico('file-check',20)}<h3>Próximos simulacros</h3></div>${d.exams.length?`<div class="student-exam-list">${d.exams.slice(0,4).map(x=>`<div class="student-exam"><span class="exam-date">${fmtDate(x.FECHA_PROGRAMADA)}</span><strong>${esc(x.NOMBRE_SIMULACRO)}</strong><small>${esc(x.NOMBRE_HORARIO||'')} · ${fmtTime(x.HORA_INICIO)}</small></div>`).join('')}</div>`:studentEmpty('calendar','Sin simulacros programados','La academia publicará los próximos exámenes aquí.')}</section></aside></div>`;
     }else if(tab==='horario'){
       content=studentSection('Tu horario semanal','Revisa tus clases de los grupos con matrícula activa',studentCalendar(d));
     }else if(tab==='notas'){
@@ -298,7 +299,7 @@ async function studentView(page){
 function openQuickFind(){
   if(typeof V41!=='undefined')return V41.quickFind();
   if(!state.user)return;
-  const aliases={ALUMNO:'alumno alumnos estudiante estudiantes',MATRICULA:'matricula matrícula inscripción inscripciones',Pago:'pago pagos cobro cobros',Docente:'profesor profesores docentes',Horario:'horario horarios clase clases',Examen:'examen simulacro evaluación',Examen_Grupo:'simulacro programación',Nota_Examen:'nota notas resultados',Usuario:'usuario usuarios cuentas'};
+  const aliases={ALUMNO:'alumno alumnos estudiante estudiantes',MATRICULA:'matricula matrícula inscripción inscripciones',PAGO:'pago pagos cobro cobros',DOCENTE:'profesor profesores docentes',BLOQUE_HORARIO:'horario horarios clase clases',SIMULACRO:'examen simulacro evaluación',SIMULACRO_HORARIO:'simulacro programación',RESULTADO_SIMULACRO:'nota notas resultados',USUARIO:'usuario usuarios cuentas'};
   const entries=state.user.rol==='ADMIN'?[{id:'home',name:'Panel general',cat:'Principal'},...Object.values(state.modules).map(m=>({id:m.name,name:m.label,cat:m.category}))]:[
     {id:'home',name:'Mi espacio',cat:'Estudiante'}, {id:'student-notes',name:'Mis resultados',cat:'Estudiante'},
     {id:'student-schedule',name:'Mi horario',cat:'Estudiante'},{id:'student-payments',name:'Mis pagos',cat:'Estudiante'}];

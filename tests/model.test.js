@@ -17,7 +17,7 @@ test('todas las tablas tienen PK y los destinos de relaciones existen',()=>{
   }
 });
 test('los DNI conservan VARCHAR(8) como claves primarias',()=>{
-  for(const [table,col] of [['ALUMNO','DNI_Alu'],['Docente','DNI_Doc']]) {
+  for(const [table,col] of [['ALUMNO','DNI_ALUMNO'],['DOCENTE','DNI_DOCENTE']]) {
     const c=model[table].columns.find(x=>x.name===col);
     assert.equal(c.type,'varchar');assert.equal(c.length,8);assert.ok(c.pk);
   }
@@ -26,8 +26,8 @@ test('el material gráfico original está disponible',()=>{
   for(const asset of ['logo-original.png','banner-fractales.png']) assert.ok(fs.statSync(path.join(root,'public','assets',asset)).size>10000);
 });
 test('la API nunca expone el hash en las columnas de la interfaz',()=>{
-  const cols=model.Usuario.columns.map(c=>c.name);
-  assert.ok(cols.includes('Clave_Hash'));
+  const cols=model.USUARIO.columns.map(c=>c.name);
+  assert.ok(cols.includes('CLAVE_HASH'));
   const script=fs.readFileSync(path.join(root,'server','api.js'),'utf8');
-  assert.match(script,/function projection\(m\)\{return m.columns.filter\(c=>c.name!=='Clave_Hash'\)/);
+  assert.match(script,/function projection\(m\)\{return m.columns.filter\(c=>c.name!=='CLAVE_HASH'\)/);
 });

@@ -6,10 +6,10 @@ test('códigos protegidos dependen de cuenta, propósito, nonce y secreto del se
   const previous=process.env.JWT_SECRET;process.env.JWT_SECRET='secreto-local-de-pruebas-v41-de-mas-de-32-caracteres';
   try{
     const nonce='a'.repeat(32),hash=protectedCode('U1','RECUPERACION',nonce,'001234');assert.match(hash,/^[0-9a-f]{64}$/);assert.notEqual(hash,'001234');
-    assert.ok(matches('U1',{Proposito:'RECUPERACION',Nonce:nonce,Codigo_Hash:hash},'001234'));
-    assert.ok(!matches('U2',{Proposito:'RECUPERACION',Nonce:nonce,Codigo_Hash:hash},'001234'));
-    assert.ok(!matches('U1',{Proposito:'ACTIVACION',Nonce:nonce,Codigo_Hash:hash},'001234'));
-    assert.ok(!matches('U1',{Proposito:'RECUPERACION',Nonce:nonce,Codigo_Hash:'x'.repeat(64)},'001234'));
+    assert.ok(matches('U1',{PROPOSITO:'RECUPERACION',NONCE:nonce,CODIGO_HASH:hash},'001234'));
+    assert.ok(!matches('U2',{PROPOSITO:'RECUPERACION',NONCE:nonce,CODIGO_HASH:hash},'001234'));
+    assert.ok(!matches('U1',{PROPOSITO:'ACTIVACION',NONCE:nonce,CODIGO_HASH:hash},'001234'));
+    assert.ok(!matches('U1',{PROPOSITO:'RECUPERACION',NONCE:nonce,CODIGO_HASH:'x'.repeat(64)},'001234'));
   }finally{if(previous===undefined)delete process.env.JWT_SECRET;else process.env.JWT_SECRET=previous;}
 });
 test('contraseña personal exige confirmación coherente y evita truncamiento bcrypt',()=>{

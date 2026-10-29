@@ -4,13 +4,16 @@
 name: Build and deploy Node.js app to Azure Web App - api-fractales-academy
 
 on:
-  push:
-    branches:
-      - 'main'
   workflow_dispatch:
+    inputs:
+      schema_confirmation:
+        description: 'Tras validar SQL 09 y pruebas en Azure, escribir V45_VERIFICADA'
+        required: true
+        type: string
 
 jobs:
   build:
+    if: ${{ inputs.schema_confirmation == 'V45_VERIFICADA' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
@@ -19,15 +22,25 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.x'
+
+      - name: Install and validate application
+        run: |
+          npm ci --ignore-scripts
+          npm run check
+          npm test
+          npm prune --omit=dev --ignore-scripts
+
+      - name: Prepare application artifact without local data
+        run: zip -qr app-v45.zip server public package.json package-lock.json node_modules
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: app-v45.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,7 +54,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -55,5 +68,5 @@ jobs:
         with:
           app-name: 'api-fractales-academy'
           slot-name: 'Production'
-          package: .
-          
+          package: app-v45.zip
+

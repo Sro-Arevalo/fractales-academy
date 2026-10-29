@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-28T23:07:16.610Z",
+  "source": "FractalesAcademy_Pruebas_V4_5_20261028_d36ee1efb5_Origen",
+  "database": "FractalesAcademy_Pruebas_V4_5_20261028_d36ee1efb5",
+  "passed": [
+    "01 Copia V4.4 reproduce FK de auditoria que bloquea cuenta",
+    "02 Migracion completa y reejecucion sin cambios de datos",
+    "03 Autenticacion y permisos de todas las listas normalizadas",
+    "04 Horario publicado multibloque, sabado y borrador",
+    "05 Inscripcion regular sin apoderado, cuenta y cuotas atomicas 1050",
+    "06 Duplicados, carrera/turno incorrecto, celular y SQL547 identificado sin datos parciales",
+    "07 Modalidad acelerada 550 y reinscripcion sin repetir cargo inicial",
+    "08 Primer acceso, cambio de clave, portal de estudiante y aislamiento administrativo",
+    "09 Papelera oculta ficha y revoca acceso, restauracion conserva matriculas y pagos",
+    "10 Pago confirmado, anulacion auditada y bloqueo destructivo financiero",
+    "11 Eliminar legado 99999999 conserva sus tres auditorias protegidas e identidad",
+    "12 Papelera y eliminacion de prueba sin pagos, confirmacion incorrecta no altera datos",
+    "13 Auditoria filtros, cambios sanitizados y politica con contrasena actual",
+    "14 Depuracion y anonimizacion solo prueba vencida, constancia independiente inmutable",
+    "15 Recuperacion local: entrega simulada, limite intentos, caducidad y un solo uso",
+    "16 Cuenta SQL limitada: deniega DELETE directo, ejecuta depuracion autorizada",
+    "18 Simulacros, puntajes, publicacion y reportes de regresion",
+    "17 Integridad final, nombres SQL actuales y ausencia de cascadas",
+    "19 Scripts opcionales de datos, limpieza y permisos solo en copia local"
+  ],
+  "production": false,
+  "smtp": "local only"
+}
